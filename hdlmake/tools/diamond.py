@@ -75,7 +75,8 @@ class ToolDiamond(MakefileSyn):
                                  ' -impl $(PROJECT) -task Bitgen\n'
                                  '$(TCL_SAVE)\n'
                                  '$(TCL_CLOSE)',
-                    'install_source': '$(PROJECT)/$(PROJECT)_$(PROJECT).jed'}
+                    'install_source': '$(PROJECT)/$(PROJECT)_$(PROJECT).jed',
+                    'files': 'prj_src remove -all'}
 
     def __init__(self):
         super(ToolDiamond, self).__init__()
