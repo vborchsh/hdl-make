@@ -43,11 +43,12 @@ class ToolDiamond(MakefileSyn):
     STANDARD_LIBS = ['ieee', 'std']
 
     _LATTICE_SOURCE = 'prj_src {0} {{srcfile}}'
+    _LATTICE_SETTINGS_DUMMY = '#prj_src {0} {{srcfile}}'
     _LATTICE_PURGE_SOURCE = 'prj_src remove -all'
 
     SUPPORTED_FILES = {
         EDFFile: _LATTICE_SOURCE.format('add'),
-        LPFFile: _LATTICE_SOURCE.format('add -exclude') + '; ' +
+        LPFFile: _LATTICE_SETTINGS_DUMMY.format('add -exclude') + '; ' +
                  _LATTICE_SOURCE.format('enable')}
 
     HDL_FILES = {
