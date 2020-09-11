@@ -40,7 +40,7 @@ class ToolDiamond(MakefileSyn):
         'linux_bin': 'diamondc',
         'project_ext': 'ldf'}
 
-    STANDARD_LIBS = ['ieee', 'std']
+    STANDARD_LIBS = ['ieee', 'std', 'machxo2', 'machxo3']
 
     _LATTICE_SOURCE = 'prj_src {0} {{srcfile}}'
     _LATTICE_SETTINGS_DUMMY = '#prj_src {0} {{srcfile}}'
