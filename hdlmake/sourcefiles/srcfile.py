@@ -235,6 +235,13 @@ class EDFFile(File):
     """EDIF Netlist Files"""
     pass
 
+class IPXFile(File):
+    """This is the class providing the Lattice Diamond IP Express Manifest file"""
+    pass
+
+class LPCFile(File):
+    """This is the class providing the Lattice Diamond IP Customization file"""
+    pass
 
 LATTICE_FILE_DICT = {
     'ldf': LDFFile,
@@ -243,7 +250,9 @@ LATTICE_FILE_DICT = {
     'edif': EDFFile,
     'edi': EDFFile,
     'edn': EDFFile,
-    'pcf': PCFFile}
+    'pcf': PCFFile,
+    'ipx': IPXFile,
+    'lpc': LPCFile}
 
 
 # MICROSEMI/ACTEL FILES
