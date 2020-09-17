@@ -79,6 +79,11 @@ class ToolDiamond(MakefileSyn):
                                  ' -impl $(PROJECT) -task Bitgen\n'
                                  '$(TCL_SAVE)\n'
                                  '$(TCL_CLOSE)',
+                    'prom': '$(TCL_OPEN)\n'
+                            'prj_run Export'
+                            ' -impl $(PROJECT) -task Jedecgen\n'
+                            '$(TCL_SAVE)\n'
+                            '$(TCL_CLOSE)',
                     'install_source': '$(PROJECT)/$(PROJECT)_$(PROJECT).jed',
                     'files': 'prj_src remove -all'}
 
