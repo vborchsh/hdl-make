@@ -26,7 +26,7 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from ..sourcefiles.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile, IPXFile, LPCFile
+from ..sourcefiles.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile, IPXFile, LPCFile, RVLFile, RVAFile
 
 
 class ToolDiamond(MakefileSyn):
@@ -51,7 +51,9 @@ class ToolDiamond(MakefileSyn):
         LPFFile: _LATTICE_SETTINGS_DUMMY.format('add -exclude') + '; ' +
                  _LATTICE_SOURCE.format('enable'),
         IPXFile: _LATTICE_SOURCE.format('add'),
-        LPCFile: _LATTICE_SOURCE.format('add')}
+        LPCFile: _LATTICE_SOURCE.format('add'),
+        RVLFile: _LATTICE_SOURCE.format('add'),
+        RVAFile: _LATTICE_SOURCE.format('add')}
 
     HDL_FILES = {
         VHDLFile: _LATTICE_SOURCE.format('add'),
