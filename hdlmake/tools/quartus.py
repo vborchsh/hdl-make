@@ -32,8 +32,8 @@ from .makefilesyn import MakefileSyn
 from ..util import path as path_mod
 from ..util import shell
 from ..sourcefiles.srcfile import (VHDLFile, VerilogFile, SVFile, DPFFile,
-                                   SignalTapFile, SDCFile, QIPFile, QSYSFile,
-                                   QSFFile, BSFFile, BDFFile, TDFFile, GDFFile)
+                                   SignalTapFile, SDCFile, QIPFile, QSYSFile, IPFile,
+                                   QSFFile, TCLFile, BSFFile, BDFFile, TDFFile, GDFFile)
 
 
 class ToolQuartus(MakefileSyn):
@@ -56,8 +56,10 @@ class ToolQuartus(MakefileSyn):
         SDCFile: _QUARTUS_SOURCE.format('SDC_FILE'),
         QIPFile: _QUARTUS_SOURCE.format('QIP_FILE'),
         QSYSFile: _QUARTUS_SOURCE.format('QSYS_FILE'),
+        IPFile: _QUARTUS_SOURCE.format('IP_FILE'),
         DPFFile: _QUARTUS_SOURCE.format('MISC_FILE'),
         QSFFile: _QUARTUS_SOURCE.format('SOURCE_TCL_SCRIPT_FILE'),
+        TCLFile: _QUARTUS_SOURCE.format('SOURCE_TCL_SCRIPT_FILE'),
         BSFFile: _QUARTUS_SOURCE.format('BSF_FILE'),
         BDFFile: _QUARTUS_SOURCE.format('BDF_FILE'),
         TDFFile: _QUARTUS_SOURCE.format('AHDL_FILE'),
