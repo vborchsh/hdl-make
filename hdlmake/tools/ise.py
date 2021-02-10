@@ -148,9 +148,14 @@ $(TCL_CLOSE)'''
         project_new = []
         project_tcl = self._tcl_controls["project"]
         if shell.check_windows_commands():
-            tmp = 'project set "{0}" "{1}"'
+            tmpl = 'project set "{0}" "{1}"'
         else:
-            tmp = 'project set \\"{0}\\" \\"{1}\\"'
+            # TCL needs quotes, so they must be escaped from the shell.
+            # But parentheses may appear in the property name, so the name is
+            # also quoted using single quote.  But the value may need
+            # substitution, so they are not protected.
+            # In addition to the shell, there is also python to protect against!
+            tmpl = 'project set \'"{0}"\' \\"{1}\\"'
         properties = [
             ['family', '$(SYN_FAMILY)'],
             ['device', '$(SYN_DEVICE)'],
@@ -162,7 +167,7 @@ $(TCL_CLOSE)'''
         if not syn_properties is None:
             properties.extend(syn_properties)
         for prop in properties:
-            project_new.append(tmp.format(prop[0], prop[1]))
+            project_new.append(tmpl.format(prop[0], prop[1]))
         project_new.append('set compile_directory .')
         self._tcl_controls["project"] = project_tcl.format(
             "\n".join(project_new))
