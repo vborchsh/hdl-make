@@ -63,13 +63,13 @@ def run(args, **kwargs):
     with Config(**kwargs) as _:
         hdlmake.main.hdlmake(args)
 
-def test_ise():
+def test_ise_001():
     run_compare(path="001ise")
 
-def test_ise_windows():
+def test_ise_windows_071():
     run_compare(path="071ise_windows", my_os='windows')
 
-def test_ise_cygwin():
+def test_ise_cygwin_082():
     run_compare(path="082ise_cygwin", my_os='cygwin')
 
 def test_makefile_002():
@@ -81,7 +81,7 @@ def test_makefile_003():
 def test_makefile_004():
     run_compare(path="004msim")
 
-def test_filename_opt():
+def test_filename_opt_062():
     run(['-f', 'my.mk'], path="062filename_opt")
     os.remove("062filename_opt/my.mk")
 
@@ -319,10 +319,10 @@ def test_manifest_nameerr_098():
         run([], path="098manifest_nameerr")
         assert False
 
-def test_manifest_vars():
+def test_manifest_vars_032():
     run([], path="032manifest_vars")
 
-def test_srcfiles():
+def test_srcfiles_040():
     run_compare(path="040srcfiles")
 
 def test_no_syn_tool():
@@ -483,7 +483,7 @@ def test_err_syn_package():
         run([], path="069err_synpackage")
         assert False
 
-def test_err_syn_top():
+def test_err_syn_top_070():
     run_compare(path="070err_syntop")
 
 def test_extra_modules():

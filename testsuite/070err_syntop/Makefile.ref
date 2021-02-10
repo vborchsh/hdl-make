@@ -53,13 +53,13 @@ project.tcl:
 		echo $(TCL_CREATE) >> $@
 		echo xfile remove [search \* -type file] >> $@
 		echo source files.tcl >> $@
-		echo project set \"family\" \"$(SYN_FAMILY)\" >> $@
-		echo project set \"device\" \"$(SYN_DEVICE)\" >> $@
-		echo project set \"package\" \"$(SYN_PACKAGE)\" >> $@
-		echo project set \"speed\" \"$(SYN_GRADE)\" >> $@
-		echo project set \"Manual Implementation Compile Order\" \"false\" >> $@
-		echo project set \"Auto Implementation Top\" \"false\" >> $@
-		echo project set \"Create Binary Configuration File\" \"true\" >> $@
+		echo project set '"family"' \"$(SYN_FAMILY)\" >> $@
+		echo project set '"device"' \"$(SYN_DEVICE)\" >> $@
+		echo project set '"package"' \"$(SYN_PACKAGE)\" >> $@
+		echo project set '"speed"' \"$(SYN_GRADE)\" >> $@
+		echo project set '"Manual Implementation Compile Order"' \"false\" >> $@
+		echo project set '"Auto Implementation Top"' \"false\" >> $@
+		echo project set '"Create Binary Configuration File"' \"true\" >> $@
 		echo set compile_directory . >> $@
 		echo project set top $(TOP_MODULE) >> $@
 		echo $(TCL_SAVE) >> $@
