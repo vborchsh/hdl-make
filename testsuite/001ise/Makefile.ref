@@ -21,10 +21,6 @@ TCL_CREATE := project new $(PROJECT_FILE)
 TCL_OPEN := project open $(PROJECT_FILE)
 TCL_SAVE := project save
 TCL_CLOSE := project close
-ifneq ($(wildcard $(PROJECT_FILE)),)
-TCL_CREATE := $(TCL_OPEN)
-endif
-
 #target for performing local synthesis
 all: bitstream
 
@@ -50,6 +46,7 @@ SYN_PRE_BITSTREAM_CMD :=
 SYN_POST_BITSTREAM_CMD := 
 
 project.tcl:
+		echo file delete $(PROJECT_FILE) >> $@
 		echo $(TCL_CREATE) >> $@
 		echo xfile remove [search \* -type file] >> $@
 		echo source files.tcl >> $@
