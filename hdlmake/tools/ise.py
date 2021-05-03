@@ -108,7 +108,8 @@ $(TCL_CLOSE)'''
         'open': 'project open $(PROJECT_FILE)',
         'save': 'project save',
         'close': 'project close',
-        'project': '$(TCL_CREATE)\n'
+        'project': 'file delete $(PROJECT_FILE)\n'
+                   '$(TCL_CREATE)\n'
                    'xfile remove [search \\* -type file]\n'
                    'source files.tcl\n'
                    '{0}\n'
@@ -172,3 +173,8 @@ $(TCL_CLOSE)'''
         self._tcl_controls["project"] = project_tcl.format(
             "\n".join(project_new))
         super(ToolISE, self)._makefile_syn_tcl()
+
+    def _makefile_syn_override_prj_tcl_create(self):
+        # As the project is always deleted before being created, TCL_CREATE must not be
+        # overwritten.
+        pass
