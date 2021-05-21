@@ -61,7 +61,7 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
         """Generate a project file (to be used by vivado)"""
         self.writeln("project.tcl: Makefile")
         q = '' if shell.check_windows_commands() else '"'
-        self.writeln("\t@echo {q}create_project -force $(TOP_MODULE)_prj ./{q} >> $@".format(q=q))
+        self.writeln("\t@echo {q}create_project -force $(TOP_MODULE)_prj ./{q} > $@".format(q=q))
         self.write_commands_project()
         self.writeln("\t@echo {q}exit{q} >> $@".format(q=q))
         self.writeln()
