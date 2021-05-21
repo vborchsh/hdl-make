@@ -23,7 +23,7 @@ work/gate/.gate_vhdl: ../files/gate.vhdl
 
 
 project.tcl: Makefile
-	@echo "create_project -force $(TOP_MODULE)_prj ./" >> $@
+	@echo "create_project -force $(TOP_MODULE)_prj ./" > $@
 	@echo add_files -norecurse "{" >> $@
 	@echo "../files/gate.vhdl" >> $@
 	@echo "}" >> $@
