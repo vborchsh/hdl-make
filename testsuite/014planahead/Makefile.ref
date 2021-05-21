@@ -29,7 +29,7 @@ all: bitstream
 
 files.tcl:
 	echo add_files -norecurse "{" >> $@
-	echo " ../files/gate.vhdl" >> $@
+	echo "../files/gate.vhdl" >> $@
 	echo "}" >> $@
 	echo "set_property LIBRARY work [get_files ../files/gate.vhdl]" >> $@
 
