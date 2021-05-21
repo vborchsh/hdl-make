@@ -48,26 +48,26 @@ class ToolVivado(ToolXilinx):
     SYSTEM_LIBS = ['xilinx']
 
     SUPPORTED_FILES = {
-         XDCFile: ToolXilinx._XILINX_ANY_SOURCE,
-         XCFFile: ToolXilinx._XILINX_ANY_SOURCE,
-         NGCFile: ToolXilinx._XILINX_ANY_SOURCE,
-         XMPFile: ToolXilinx._XILINX_ANY_SOURCE,
-         XCOFile: ToolXilinx._XILINX_ANY_SOURCE,
-         COEFile: ToolXilinx._XILINX_ANY_SOURCE,
-         BDFile: ToolXilinx._XILINX_ANY_SOURCE,
-         BMMFile: ToolXilinx._XILINX_ANY_SOURCE,
-         TCLFile: ToolXilinx._XILINX_ANY_SOURCE,
-         MIFFile: ToolXilinx._XILINX_ANY_SOURCE,
-         RAMFile: ToolXilinx._XILINX_ANY_SOURCE,
-         VHOFile: ToolXilinx._XILINX_ANY_SOURCE,
-         VEOFile: ToolXilinx._XILINX_ANY_SOURCE}
+         XDCFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         XCFFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         NGCFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         XMPFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         XCOFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         COEFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         BDFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         BMMFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         TCLFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         MIFFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         RAMFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         VHOFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+         VEOFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
     SUPPORTED_FILES.update(ToolXilinx.SUPPORTED_FILES)
 
     HDL_FILES = {
-        VHDLFile:    ToolXilinx._XILINX_VHDL_SOURCE,
-        VerilogFile: ToolXilinx._XILINX_VERILOG_SOURCE,
-        SVFile:      ToolXilinx._XILINX_VERILOG_SOURCE,
-        XCIFile:     ToolXilinx._XILINX_ANY_SOURCE}
+        VHDLFile:    ToolXilinx._XILINX_VHDL_PROPERTY,
+        VerilogFile: ToolXilinx._XILINX_VERILOG_PROPERTY,
+        SVFile:      ToolXilinx._XILINX_VERILOG_PROPERTY,
+        XCIFile:     ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
 
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",

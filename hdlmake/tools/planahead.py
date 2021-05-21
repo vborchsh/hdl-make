@@ -43,11 +43,11 @@ class ToolPlanAhead(ToolXilinx):
                      'synopsys', 'unimacro', 'unisim', 'XilinxCoreLib']
 
     SUPPORTED_FILES = {
-        UCFFile: ToolXilinx._XILINX_ANY_SOURCE,
-        NGCFile: ToolXilinx._XILINX_ANY_SOURCE,
-        XMPFile: ToolXilinx._XILINX_ANY_SOURCE,
-        BMMFile: ToolXilinx._XILINX_ANY_SOURCE,
-        XCOFile: ToolXilinx._XILINX_ANY_SOURCE}
+        UCFFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        NGCFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        XMPFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        BMMFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        XCOFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
 
     CLEAN_TARGETS = {'clean': ["planAhead_*", "planAhead.*",
                                ".Xil", "$(PROJECT).cache", "$(PROJECT).data",
