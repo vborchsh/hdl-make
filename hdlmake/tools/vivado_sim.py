@@ -27,8 +27,11 @@
 from __future__ import absolute_import
 from .makefilesim import MakefileSim
 from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
+from .xilinx_prj import ToolXilinxProject
+from ..util import shell
 
-class ToolVivadoSim(MakefileSim):
+
+class ToolVivadoSim(ToolXilinxProject, MakefileSim):
 
     """Class providing the interface for Xilinx Vivado synthesis"""
 
@@ -42,8 +45,6 @@ class ToolVivadoSim(MakefileSim):
     STANDARD_LIBS = ['ieee', 'std']
     SYSTEM_LIBS = ['xilinx']
 
-    HDL_FILES = {VerilogFile: '', VHDLFile: '', SVFile: ''}
-
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb",
                                "work", "xsim.dir"],
                      'mrproper': ["*.wdb", "*.vcd"]}
@@ -56,9 +57,22 @@ class ToolVivadoSim(MakefileSim):
     def __init__(self):
         super(ToolVivadoSim, self).__init__()
 
+    def _makefile_sim_project(self):
+        """Generate a project file (to be used by vivado)"""
+        self.writeln("project.tcl: Makefile")
+        q = '' if shell.check_windows_commands() else '"'
+        self.writeln("\t@echo {q}create_project -force $(TOP_MODULE)_prj ./{q} >> $@".format(q=q))
+        self.write_commands_project()
+        self.writeln("\t@echo {q}exit{q} >> $@".format(q=q))
+        self.writeln()
+        self.writeln("project: project.tcl")
+        self.writeln("\t{} $<".format(self.get_tool_bin()))
+        self.writeln()
+
     def _makefile_sim_compilation(self):
         """Generate compile simulation Makefile target for Vivado Simulator"""
         self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln()
         self._makefile_sim_dep_files()
+        self._makefile_sim_project()

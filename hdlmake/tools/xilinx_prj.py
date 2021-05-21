@@ -25,15 +25,13 @@
 
 
 from __future__ import absolute_import
-from .makefilesyn import MakefileSyn
 from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile, SourceFile
 from ..util import shell
-import logging
 
 
 class ToolXilinxProject:
 
-    _XILINX_ANY_SOURCE_PROPERTY = ""
+    _XILINX_ANY_SOURCE_PROPERTY = None
 
     # Commands to be executed to complete the addition of a source file
     # in the project (like setting the library)
@@ -81,4 +79,3 @@ class ToolXilinxProject:
                                          library=library)
                 self.writeln('\techo {q}{cmd}{q} >> $@'.format(
                     q=q, cmd=command))
-        self.writeln()

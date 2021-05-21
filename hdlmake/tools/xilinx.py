@@ -94,6 +94,7 @@ $(TCL_CLOSE)'''
         # Xilinx has no extra commands before source files.
         assert "files" not in self._tcl_controls
         self.write_commands_project()
+        self.writeln()
 
     def _makefile_syn_tcl(self):
         """Create a Xilinx synthesis project by TCL"""
