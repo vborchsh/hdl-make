@@ -28,10 +28,10 @@ endif
 all: bitstream
 
 files.tcl:
-	echo add_files -norecurse "{" >> $@
-	echo "../files/gate.vhdl" >> $@
-	echo "}" >> $@
-	echo "set_property LIBRARY work [get_files ../files/gate.vhdl]" >> $@
+	@echo add_files -norecurse "{" >> $@
+	@echo "../files/gate.vhdl" >> $@
+	@echo "}" >> $@
+	@echo "set_property LIBRARY work [get_files ../files/gate.vhdl]" >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

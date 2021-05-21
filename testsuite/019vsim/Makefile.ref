@@ -24,10 +24,10 @@ work/gate/.gate_vhdl: ../files/gate.vhdl
 
 project.tcl: Makefile
 	@echo "create_project -force $(TOP_MODULE)_prj ./" >> $@
-	echo add_files -norecurse "{" >> $@
-	echo "../files/gate.vhdl" >> $@
-	echo "}" >> $@
-	echo "set_property LIBRARY work [get_files ../files/gate.vhdl]" >> $@
+	@echo add_files -norecurse "{" >> $@
+	@echo "../files/gate.vhdl" >> $@
+	@echo "}" >> $@
+	@echo "set_property LIBRARY work [get_files ../files/gate.vhdl]" >> $@
 	@echo "exit" >> $@
 
 project: project.tcl
