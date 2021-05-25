@@ -281,6 +281,9 @@ def test_vlog_parser025():
 def test_vlog_parser099():
     run_compare(path="099vlog_parser")
 
+def test_vlog_inc103():
+    run_compare(path="103vlog_inc")
+
 def test_gitsm_fetch026():
     with Config(path="026gitsm_fetch") as _:
         hdlmake.main.hdlmake(['fetch'])
