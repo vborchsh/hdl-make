@@ -29,14 +29,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 import re
-import sys
 import logging
 
 from .new_dep_solver import DepParser
 from .dep_file import DepRelation
-from .srcfile import create_source_file
 from collections import namedtuple
-import six
 
 
 class VerilogPreprocessor(object):
