@@ -44,7 +44,7 @@ def build_xilinx():
               'bufgmux_ctrl', 'bufgmux', 'bufg', 'bufgce', 'bufr', 'bufpll', 'bufmr',
               'startupe2',
               'mmcme2_adv', 'mmcme2_base', 'pll_base', 'pll_adv', 'dcm_base', 'dcm_adv', 'dcm_sp',
-              'plle2_adv',
+              'plle2_adv', 'plle2_base',
               'bufpll_mcb', 'mcb', 'iodrp2', 'iodrp2_mcb',
               'mmcme3_adv',
               'icap_spartan6', 'bscan_spartan6',
