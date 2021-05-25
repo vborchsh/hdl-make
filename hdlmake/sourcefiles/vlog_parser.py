@@ -560,7 +560,15 @@ class VerilogParser(DepParser):
             r"\s*\b(\w+)\s+(?:#\s*\(.*?\)\s*)?(\w+)\s*(?:\[.*?\]\s*)?\(.*?\)$",
             re.DOTALL | re.MULTILINE)
 
-        m_stmt = re.compile(r'''(?:\s*(?:(?:\b(?:function|task)\b.*?\bend(?:function|task)\b)|(?:\bbegin(?:\s*:\s*\w+)?)|(?:\bend\b(?:\s*:\s*\w+)?)|(?:end(?:generate|case)\b)|(?:\b(?:case|if|for)\s*\(.*?\))|(?:\b(?:else|generate)\b)|\b(?:assign|localparam|wire|logic|reg)\b[^;]*?(?:=.*?)?;|\balways(?:_ff|_latch|_comb)?\b\s*(?:@\s*(?:\*|(?:\(.*?\))))?|;)\s*)+''',
+        m_stmt = re.compile(r'(?:\s*(?:(?:\b(?:function|task)\b.*?\bend(?:function|task)\b)'
+                                     r'|(?:\bbegin(?:\s*:\s*\w+)?)'
+                                     r'|(?:\bend\b(?:\s*:\s*\w+)?)'
+                                     r'|(?:end(?:generate|case)\b)'
+                                     r'|(?:\b(?:case|if|for)\s*\(.*?\))'
+                                     r'|(?:\b(?:else|generate)\b)'
+                                     r'|\b(?:assign|localparam|wire|logic|reg)\b[^;]*?(?:=.*?)?;'
+                                     r'|\balways(?:_ff|_latch|_comb)?\b\s*(?:@\s*(?:\*|(?:\(.*?\))))?'
+                                     r'|;)\s*)+',
                             re.MULTILINE | re.DOTALL)
 
         def do_module(text):
