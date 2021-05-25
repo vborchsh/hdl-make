@@ -122,7 +122,22 @@ class VerilogPreprocessor(object):
                 return rlist
 
             def _tok_string(text):
-                toks = re.split(r'((?:`(ifn?def|elsif|else|endif|define|include)((?<=ifdef\b)\s+(?:\w+)|(?<=ifndef\b)\s+(?:\w+)|(?<=elsif\b)\s+(?:\w+)|(?:(?<=define\b)\s+(\w+)(?:\(([\w\s,]*)\))?[ \t]*((?:\\\n|[^\n\r])*)$)|(?<=include\b)\s+"(.+?)")?)|(?:`(\w+)(?:\(([\w\s,]*)\))?))', text, flags=re.MULTILINE)
+                # Quick help on patterns:
+                # (?:...)   Non-grouping version of reguler parentheses
+                # (?<=...)  Matches if preceded by ...
+                # Tokens: 0:full text, 1:keyword, 2:identifier, 3:define-macro, 4:define-args. 5:define-value, 6:include-file
+                #         7:macro-use, 8:macro-args
+                toks = re.split(r'('
+                                  r'(?:`(ifn?def|elsif|else|endif|define|include)'
+                                    r'('
+                                      r'(?<=ifdef\b)\s+(?:\w+)'
+                                      r'|(?<=ifndef\b)\s+(?:\w+)'
+                                      r'|(?<=elsif\b)\s+(?:\w+)'
+                                      r'|(?:(?<=define\b)\s+(\w+)(?:\(([\w\s,]*)\))?[ \t]*((?:\\\n|[^\n\r])*)$)'
+                                      r'|(?<=include\b)\s+["<](.+?)[">]'
+                                    r')?'
+                                  r')'
+                                r'|(?:`(\w+)(?:\(([\w\s,]*)\))?))', text, flags=re.MULTILINE)
                 return _munge_list(toks)
 
             parts = _tok_string(text)
@@ -187,8 +202,7 @@ class VerilogPreprocessor(object):
                         if enabled:
                             # maybe add a check for recusion here?
                             included_file_path = self._search_include(front.incfile, os.path.dirname(file_name))
-                            logging.debug("File being parsed %s (library %s) "
-                                          "includes %s",
+                            logging.debug("File being parsed %s (library %s) includes %s",
                                           file_name, library, included_file_path)
                             # add include file to the dependancies
                             self.included_files.add(included_file_path)
