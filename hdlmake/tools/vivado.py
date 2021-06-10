@@ -54,7 +54,6 @@ class ToolVivado(ToolXilinx):
          XMPFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
          XCOFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
          COEFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
-         BDFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
          BMMFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
          TCLFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
          MIFFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
@@ -67,7 +66,8 @@ class ToolVivado(ToolXilinx):
         VHDLFile:    ToolXilinx._XILINX_VHDL_PROPERTY,
         VerilogFile: ToolXilinx._XILINX_VERILOG_PROPERTY,
         SVFile:      ToolXilinx._XILINX_VERILOG_PROPERTY,
-        XCIFile:     ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
+        XCIFile:     ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        BDFile:      ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
 
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",

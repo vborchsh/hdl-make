@@ -116,11 +116,6 @@ class XPRFile(File):
     pass
 
 
-class BDFile(File):
-    """Xilinx Block Design"""
-    pass
-
-
 class XCOFile(File):
     """Xilinx Core Generator File"""
     pass
@@ -178,6 +173,16 @@ class XCIFile(SourceFile):
         SourceFile.__init__(self, path=path, module=module, library=library)
         from .xci_parser import XCIParser
         self.parser = XCIParser()
+
+
+class BDFile(SourceFile):
+    """Xilinx Block Design"""
+
+    def __init__(self, path, module, library=None):
+        SourceFile.__init__(self, path=path, module=module, library=library)
+        from .bd_parser import BDParser
+        self.parser = BDParser()
+
 
 XILINX_FILE_DICT = {
     'xise': XISEFile,
