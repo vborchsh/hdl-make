@@ -66,13 +66,17 @@ def run(command):
 
 
 def tclpath(path):
-    """Convert a O.S. specific path into a TCL friendly one"""
-    return path.replace(makefile_slash_char(), "/")
+    """TCL always wants '/', convert '\' to '/' on windows"""
+    if check_windows_tools():
+        return path.replace('\\', "/")
+    else:
+        return path
 
 
 def check_windows_tools():
     """Check if we are using windows version of synthesis/simulation tools"""
     return platform.system() == 'Windows' or sys.platform == 'cygwin'
+
 
 def check_windows_commands():
     """Check if we are using windows commands (del/type).
