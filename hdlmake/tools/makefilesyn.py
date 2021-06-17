@@ -121,11 +121,7 @@ endif""")
         # Extra commands before source files.
         if "files" in self._tcl_controls:
             for command in self._tcl_controls["files"].split('\n'):
-                command_string = '\t\t@echo {0} >> $@'.format(command)
-                if shell.check_windows_commands():
-                    # Need to remove quotes as they are needed only for unix shell.
-                    command_string = command_string.replace("'", "")
-                self.writeln(command_string)
+                self.writeln('\t\t@echo {0} >> $@'.format(command))
         # Add each source file
         for srcfile in self.fileset.sort():
             command = fileset_dict.get(type(srcfile))
@@ -161,12 +157,6 @@ endif""")
                 for command in self._tcl_controls[stage].split('\n'):
                     tcl_command.append(echo_command.format(command))
                 command_string = "\n".join(tcl_command)
-                if shell.check_windows_commands():
-                    # Remove quote on windows.
-                    command_string = command_string.replace("'", "")
-                    # Need to escape the '&' for the 'par' command
-                    # on windows shell.
-                    command_string = command_string.replace("&", "^&")
                 self.writeln(self.MAKEFILE_SYN_BUILD_CMD.format(
                     stage, stage_previous, stage.upper(),
                     command_string, shell.touch_command()))

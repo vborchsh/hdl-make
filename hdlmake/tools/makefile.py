@@ -174,10 +174,14 @@ class ToolMakefile(object):
 
     def write(self, line=None):
         """Write a string in the manifest, no new line"""
+        l = line
         if shell.check_windows_commands():
-            self._file.write(line.replace('\\"', '"'))
-        else:
-            self._file.write(line)
+            # Change escaping of '&'.
+            l = l.replace("'&'", "^&")
+            # Need to remove quotes as they are needed only for unix shell.
+            l = l.replace('\\"', '"')
+            l = l.replace("'", "")
+        self._file.write(l)
 
     def writeln(self, text=None):
         """Write a string in the manifest, automatically add new line"""
