@@ -118,9 +118,7 @@ $(TCL_CLOSE)'''
         'synthesize': _ISE_RUN.format("Synthesize - XST"),
         'translate': _ISE_RUN.format("Translate"),
         'map': _ISE_RUN.format("Map"),
-        'par': _ISE_RUN.format("Place "
-            + ("^&" if shell.check_windows_commands() else "'&'")
-            + " Route"),
+        'par': _ISE_RUN.format("Place '&' Route"),
         'bitstream': _ISE_RUN.format("Generate Programming File"),
         'install_source': "*.bit *.bin"}
 

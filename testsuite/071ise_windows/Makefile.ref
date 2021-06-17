@@ -121,7 +121,7 @@ map: translate map.tcl
 
 par.tcl:
 		echo $(TCL_OPEN) >> $@
-		echo set process {Place & Route} >> $@
+		echo set process {Place ^& Route} >> $@
 		echo process run $$process >> $@
 		echo set result [process get $$process status] >> $@
 		echo if { $$result == "errors" } { >> $@
