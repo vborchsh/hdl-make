@@ -79,7 +79,7 @@ def check_windows_tools():
 
 
 def check_windows_commands():
-    """Check if we are using windows commands (del/type).
+    """Check if we are using windows commands (del/type) and not a unix shell.
        False on cygwin"""
     if commands_os == 'auto':
         return platform.system() == 'Windows'

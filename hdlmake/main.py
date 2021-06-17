@@ -56,6 +56,13 @@ def hdlmake(args):
     try:
         set_logging_level(options)
 
+        # Handle the --cygwin/--windows options
+        # Must be done early because functions in shell are called early.
+        # Need to use __dict__ as the 'makefile' subparser may not have been selected.
+        make_value = options.__dict__.get('make')
+        if make_value:
+            shell.set_commands_os(make_value)
+
         # Create a ModulePool object, this will become our workspace
         action = Commands(options)
 
