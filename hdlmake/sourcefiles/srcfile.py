@@ -151,6 +151,13 @@ class MIFFile(File):
 
 class RAMFile(File):
     """Xilinx RAM  File"""
+
+    pass
+
+
+class HEXFile(SourceFile):
+    """Memory initialization binary file in .hex format"""
+
     pass
 
 

@@ -33,7 +33,7 @@ from ..util import path as path_mod
 from ..util import shell
 from ..sourcefiles.srcfile import (VHDLFile, VerilogFile, SVFile, DPFFile,
                                    SignalTapFile, SDCFile, QIPFile, QSYSFile, IPFile,
-                                   QSFFile, TCLFile, BSFFile, BDFFile, TDFFile, GDFFile)
+                                   QSFFile, TCLFile, BSFFile, BDFFile, TDFFile, GDFFile, HEXFile)
 
 
 class ToolQuartus(MakefileSyn):
@@ -63,7 +63,8 @@ class ToolQuartus(MakefileSyn):
         BSFFile: _QUARTUS_SOURCE.format('BSF_FILE'),
         BDFFile: _QUARTUS_SOURCE.format('BDF_FILE'),
         TDFFile: _QUARTUS_SOURCE.format('AHDL_FILE'),
-        GDFFile: _QUARTUS_SOURCE.format('GDF_FILE')}
+        GDFFile: _QUARTUS_SOURCE.format('GDF_FILE'),
+        HEXFile: _QUARTUS_SOURCE.format("HEX_FILE")}
 
     _QUARTUS_LIBRARY = " -library {library}"
 
