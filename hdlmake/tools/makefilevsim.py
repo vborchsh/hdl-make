@@ -92,17 +92,17 @@ class MakefileVsim(MakefileSim):
 
     def get_stamp_library_dir(self, lib):
         """Return the directory that contains the stamp files"""
-        return os.path.join(lib, "hdlmake")
+        return lib + shell.makefile_slash_char() + "hdlmake"
 
     def get_stamp_library(self, lib):
         """Return the stamp file for :param lib:  It must be a proper file
         and not a directory (whose mtime is updated when a new file is created)"""
-        return os.path.join(self.get_stamp_library_dir(lib), lib + "-stamp")
+        return self.get_stamp_library_dir(lib) + shell.makefile_slash_char() + lib + "-stamp"
 
     def get_stamp_file(self, dep_file):
         """Stamp file for source file :param file:"""
-        return os.path.join(self.get_stamp_library_dir(dep_file.library),
-            "{}_{}".format(dep_file.purename, dep_file.extension()))
+        return self.get_stamp_library_dir(dep_file.library) + shell.makefile_slash_char() + \
+            "{}_{}".format(dep_file.purename, dep_file.extension())
 
     def _makefile_touch_stamp_file(self):
         self.write("\t\t@" + shell.touch_command() + " $@\n")

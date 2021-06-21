@@ -76,16 +76,16 @@ class MakefileSim(ToolMakefile):
         """Generic method to write the simulation Makefile HDL sources"""
         fileset = self.fileset
         self.write("{}_SRC := ".format(name))
-        for vlog in fileset.filter(klass).sort():
-            self.writeln(vlog.rel_path() + " \\")
+        for f in fileset.filter(klass).sort():
+            self.writeln(shell.toolpath(f.rel_path()) + " \\")
         self.writeln()
         self.write("{}_OBJ := ".format(name))
-        for vlog in fileset.filter(klass).sort():
+        for f in fileset.filter(klass).sort():
             # make a file compilation indicator (these .dat files are made even
             # if the compilation process fails) and add an ending according
             # to file's extension (.sv and .vhd files may have the same
             # corename and this causes a mess
-            self.writeln(self.get_stamp_file(vlog) + " \\")
+            self.writeln(self.get_stamp_file(f) + " \\")
         self.writeln()
 
     def _makefile_sim_sources(self):
