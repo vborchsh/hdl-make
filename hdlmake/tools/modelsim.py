@@ -47,8 +47,8 @@ class ToolModelsim(MakefileVsim):
 
     def __init__(self):
         super(ToolModelsim, self).__init__()
-        self.copy_rules["modelsim.ini"] = os.path.join(
-            "$(MODELSIM_INI_PATH)", "modelsim.ini")
+        self.copy_rules["modelsim.ini"] = \
+            "$(MODELSIM_INI_PATH)" + shell.makefile_slash_char () + "modelsim.ini"
         self.additional_deps.append("modelsim.ini")
 
     def _makefile_sim_options(self):
