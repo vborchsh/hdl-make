@@ -28,7 +28,7 @@ simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): modelsim.ini
 $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 
-modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
+modelsim.ini: $(MODELSIM_INI_PATH)\modelsim.ini
 		copy $< . 2>&1
 
 work\hdlmake\work-stamp:
