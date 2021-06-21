@@ -73,8 +73,8 @@ def tclpath(path):
         return path
 
 
-def toolpath(path):
-    """Convert :param path: to the shell path"""
+def makefile_path(path):
+    """Convert :param path: to the shell path (for the makefile)"""
     if platform.system() == 'Windows' and not check_windows_commands():
         # The python is windows, but the make is cygwin.  So windows paths
         # must be converted to cygwin paths

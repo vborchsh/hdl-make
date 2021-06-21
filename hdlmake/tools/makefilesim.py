@@ -77,7 +77,7 @@ class MakefileSim(ToolMakefile):
         fileset = self.fileset
         self.write("{}_SRC := ".format(name))
         for f in fileset.filter(klass).sort():
-            self.writeln(shell.toolpath(f.rel_path()) + " \\")
+            self.writeln(shell.makefile_path(f.rel_path()) + " \\")
         self.writeln()
         self.write("{}_OBJ := ".format(name))
         for f in fileset.filter(klass).sort():
