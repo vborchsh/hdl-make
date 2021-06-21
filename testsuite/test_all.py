@@ -445,7 +445,7 @@ def test_dep_level():
     run(['list-files', '--reverse'], path="053vlog_dep_level")
     run(['list-files', '--top', 'level2'], path="053vlog_dep_level")
 
-def test_modelsim_windows():
+def test_modelsim_windows_057():
     assert hdlmake.util.shell.check_windows_tools() is False
     run_compare(path="057msim_windows", my_os='windows')
 
