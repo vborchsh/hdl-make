@@ -73,6 +73,16 @@ def tclpath(path):
         return path
 
 
+def toolpath(path):
+    """Convert :param path: to the shell path"""
+    if platform.system() == 'Windows' and not check_windows_commands():
+        # The python is windows, but the make is cygwin.  So windows paths
+        # must be converted to cygwin paths
+        return path.replace('\\', '/')
+    # TODO: cygwin python but windows make (does that exist ?)
+    return path
+
+
 def check_windows_tools():
     """Check if we are using windows version of synthesis/simulation tools"""
     return platform.system() == 'Windows' or sys.platform == 'cygwin'

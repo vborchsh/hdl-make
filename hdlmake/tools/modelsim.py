@@ -28,6 +28,7 @@ from __future__ import absolute_import
 import os
 
 from .makefilevsim import MakefileVsim
+from ..util import shell
 
 
 class ToolModelsim(MakefileVsim):
@@ -60,6 +61,7 @@ class ToolModelsim(MakefileVsim):
             else:
                 modelsim_ini_path = os.path.join(
                     "$(HDLMAKE_MODELSIM_PATH)", "..")
+        modelsim_ini_path = shell.toolpath(modelsim_ini_path)
         self.custom_variables["MODELSIM_INI_PATH"] = modelsim_ini_path
         modelsim_ini = "-modelsimini modelsim.ini "
         vcom_opt = self.manifest_dict.get("vcom_opt", '')
