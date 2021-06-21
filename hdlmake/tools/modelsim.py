@@ -56,11 +56,11 @@ class ToolModelsim(MakefileVsim):
         modelsim_ini_path = self.manifest_dict.get("modelsim_ini_path")
         if modelsim_ini_path == None:
             if self.manifest_dict['sim_path']:
-                modelsim_ini_path = os.path.join(
-                    self.manifest_dict["sim_path"], "..")
+                modelsim_ini_prefix = self.manifest_dict["sim_path"]
             else:
-                modelsim_ini_path = os.path.join(
-                    "$(HDLMAKE_MODELSIM_PATH)", "..")
+                modelsim_ini_prefix = "$(HDLMAKE_MODELSIM_PATH)"
+            modelsim_ini_path = modelsim_ini_prefix \
+                + shell.makefile_slash_char () + ".."
         modelsim_ini_path = shell.makefile_path(modelsim_ini_path)
         self.custom_variables["MODELSIM_INI_PATH"] = modelsim_ini_path
         modelsim_ini = "-modelsimini modelsim.ini "
