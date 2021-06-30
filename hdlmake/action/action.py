@@ -85,6 +85,7 @@ class Action(object):
         """Set tool and top_entity"""
         top_dict = self.top_manifest.manifest_dict
         action = top_dict.get("action")
+        deflib = "work"
         if action == None:
             self.tool = None
             self.top_entity = top_dict.get("top_module")
@@ -104,8 +105,16 @@ class Action(object):
             self.top_entity = top_dict.get("syn_top") \
                 or top_dict.get("top_module")
             top_dict["syn_top"] = self.top_entity
+            # deflib = None
         else:
             raise Exception("Unknown requested action: {}".format(action))
+        # Set default library
+        if deflib:
+            for mod in self.all_manifests:
+                if mod.files is not None and mod.library is None:
+                    mod.library = deflib
+                    for f in mod.files:
+                        f.library = deflib
 
     def _build_complete_file_set(self):
         """Build file set with all the files listed in the complete pool"""
@@ -120,6 +129,7 @@ class Action(object):
         """Initialize the parseable and privative fileset contents"""
         all_files = self._build_complete_file_set()
         for file_aux in all_files:
+            print(file_aux)
             if self.tool:
                 if any(isinstance(file_aux, file_type)
                        for file_type in self.tool.get_parseable_files()):

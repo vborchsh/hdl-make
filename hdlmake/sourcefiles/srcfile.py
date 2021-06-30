@@ -44,7 +44,10 @@ class SourceFile(DepFile):
         DepFile.__init__(self, path=path, module=module)
 
     def __hash__(self):
-        return hash(self.path + self.library)
+        s = self.path
+        if self.library is not None:
+            s += self.library
+        return hash(s)
 
 
 # SOURCE FILES

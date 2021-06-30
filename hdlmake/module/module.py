@@ -75,7 +75,7 @@ class Module(object):
         # Manifest Modules Properties
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []                # List of paths of makefile files to include.
-        self.library = "work"
+        self.library = None
         self.action = action
         self.top_manifest = action.get_top_manifest()
         self.manifest_dict = {}
@@ -384,6 +384,7 @@ PARSE MANIFEST START: %s
                     self.path, type(name_error), name_error))
 
         # Process the parsed manifest_dict to assign the module properties
+        # Also create the SourceFileSet
         self._process_manifest()
 
         # Recurse: parse every detected submodule
