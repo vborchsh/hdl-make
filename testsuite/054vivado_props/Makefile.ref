@@ -28,9 +28,9 @@ endif
 all: bitstream
 
 files.tcl:
-	@echo add_files -norecurse "{" >> $@
-	@echo "../files/gate.vhdl" >> $@
-	@echo "}" >> $@
+	@echo add_files -norecurse '{' >> $@
+	@echo '../files/gate.vhdl' >> $@
+	@echo '}' >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 

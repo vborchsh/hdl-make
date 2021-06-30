@@ -59,14 +59,13 @@ class ToolXilinxProject:
         fileset_dict = {}
         fileset_dict.update(self.HDL_FILES)
         fileset_dict.update(self.SUPPORTED_FILES)
-        q = '' if shell.check_windows_commands() else '"'
         # Add all files at once.
-        self.writeln('\t@echo add_files -norecurse {q}{{{q} >> $@'.format(q=q))
+        self.writeln("\t@echo add_files -norecurse '{' >> $@")
         for srcfile in self.fileset.sort():
             if type(srcfile) in fileset_dict:
-                self.writeln('\t@echo {q}{srcfile}{q} >> $@'.format(
-                    q=q, srcfile=shell.tclpath(srcfile.rel_path())))
-        self.writeln('\t@echo {q}}}{q} >> $@'.format(q=q))
+                self.writeln("\t@echo '{}' >> $@".format(
+                    shell.tclpath(srcfile.rel_path())))
+        self.writeln("\t@echo '}' >> $@")
         # Add per file properties (like library)
         for srcfile in self.fileset.sort():
             command = fileset_dict.get(type(srcfile))
@@ -82,5 +81,4 @@ class ToolXilinxProject:
                 cmd = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
                                      library=library)
                 if cmd:
-                    self.writeln('\t@echo {q}{cmd}{q} >> $@'.format(
-                        q=q, cmd=cmd))
+                    self.writeln("\t@echo '{}' >> $@".format(cmd))
