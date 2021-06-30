@@ -59,7 +59,7 @@ class ManifestParser(ConfigParser):
              'help': "Default language to be used by the tool ",
              'type': ''},
             {'name': 'library',
-             'default': "work",
+             'default': None,
              'help': "Destination library for module's VHDL files",
              'type': ""},
             {'name': 'incl_makefiles',

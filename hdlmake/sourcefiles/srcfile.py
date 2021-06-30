@@ -40,7 +40,7 @@ class SourceFile(DepFile):
 
     def __init__(self, path, module, library):
         assert isinstance(path, six.string_types)
-        self.library = library or "work"
+        self.library = library
         DepFile.__init__(self, path=path, module=module)
 
     def __hash__(self):
