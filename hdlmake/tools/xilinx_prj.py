@@ -36,7 +36,7 @@ class ToolXilinxProject:
     # Commands to be executed to complete the addition of a source file
     # in the project (like setting the library)
     _XILINX_VHDL_PROPERTY = (
-        "set_property LIBRARY {library} [get_files {srcfile}]")
+        lambda srcfile: "set_property LIBRARY {library} [get_files {srcfile}]" if srcfile.library is not None else "")
 
     _XILINX_VERILOG_PROPERTY = (
         "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]; ")
@@ -48,7 +48,9 @@ class ToolXilinxProject:
         SVFile: _XILINX_VERILOG_PROPERTY
     }
 
-    SUPPORTED_FILES = {TCLFile: 'source {srcfile}'}
+    SUPPORTED_FILES = {
+        TCLFile: 'source {srcfile}'
+    }
 
     def write_commands_project(self):
         """Write TCL commands (in a makefile) to populate a Xilinx project
@@ -75,7 +77,10 @@ class ToolXilinxProject:
                     library = srcfile.library
                 else:
                     library = None
-                command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
-                                         library=library)
-                self.writeln('\t@echo {q}{cmd}{q} >> $@'.format(
-                    q=q, cmd=command))
+                if callable(command):
+                    command = command(srcfile)
+                cmd = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
+                                     library=library)
+                if cmd:
+                    self.writeln('\t@echo {q}{cmd}{q} >> $@'.format(
+                        q=q, cmd=cmd))

@@ -184,7 +184,7 @@ def make_dependency_sorted_list(fileset):
     return fset
 
 
-def make_dependency_set(graph, fileset, top_level_entity, extra_modules=None):
+def make_dependency_set(graph, fileset, top_library, top_entity, extra_modules=None):
     """Create the set of all files required to build the named
      top_level_entity."""
     from ..sourcefiles.sourcefileset import SourceFileSet
@@ -192,13 +192,13 @@ def make_dependency_set(graph, fileset, top_level_entity, extra_modules=None):
     assert isinstance(fileset, SourceFileSet)
 
     # Find top file
-    rel = DepRelation(top_level_entity, "work", DepRelation.MODULE)
+    rel = DepRelation(top_entity, top_library, DepRelation.MODULE)
     rel = graph.find_provider(rel)
     if rel is None:
         logging.critical(
             'Could not find a top level file that provides the '
             '"%s" top module. Continuing with the full file set.',
-            top_level_entity)
+            top_entity)
         return fileset
     top_file = list(rel.provided_by)
     # TODO: warn if multiple providers ?
@@ -207,7 +207,7 @@ def make_dependency_set(graph, fileset, top_level_entity, extra_modules=None):
     extra_files = []
     if extra_modules is not None:
         for name in extra_modules:
-            rel = DepRelation(name, "work", DepRelation.MODULE)
+            rel = DepRelation(name, top_library, DepRelation.MODULE)
             rel = graph.find_provider(rel)
             if rel is None:
                 logging.critical(
@@ -226,7 +226,7 @@ def make_dependency_set(graph, fileset, top_level_entity, extra_modules=None):
             for f in chk_file.depends_on:
                 file_set.add(f)
 
-    hierarchy_drivers = [top_level_entity]
+    hierarchy_drivers = [top_entity]
     if extra_modules is not None:
         hierarchy_drivers += extra_modules
     logging.info("Found %d files as dependancies of %s.",

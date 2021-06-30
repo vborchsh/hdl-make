@@ -43,6 +43,7 @@ class MakefileSyn(ToolMakefile):
     def __init__(self):
         super(MakefileSyn, self).__init__()
         self._tcl_controls = {}
+        self.default_library = "work"
 
     def write_makefile(self, top_manifest, fileset, filename=None):
         """Generate a Makefile for the specific synthesis tool"""

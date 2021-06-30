@@ -48,6 +48,7 @@ class Action(object):
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
         self.options = options
+        self.top_library = None
 
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.
@@ -105,10 +106,11 @@ class Action(object):
             self.top_entity = top_dict.get("syn_top") \
                 or top_dict.get("top_module")
             top_dict["syn_top"] = self.top_entity
-            # deflib = None
+            deflib = self.tool.default_library
         else:
             raise Exception("Unknown requested action: {}".format(action))
         # Set default library
+        self.top_library = deflib
         if deflib:
             for mod in self.all_manifests:
                 if mod.files is not None and mod.library is None:
@@ -180,7 +182,8 @@ class Action(object):
             # Only keep top_entity, extra_modules and their dependencies
             extra_modules = self.top_manifest.manifest_dict.get("extra_modules")
             self.parseable_fileset = dep_solver.make_dependency_set(
-                graph, self.parseable_fileset, self.top_entity, extra_modules)
+                graph, self.parseable_fileset,
+                self.top_library, self.top_entity, extra_modules)
         dep_solver.check_graph(graph, self.parseable_fileset, system_libs, libs)
 
     def get_top_manifest(self):
