@@ -120,30 +120,30 @@ def test_icestorm():
         hdlmake.main.hdlmake([])
         compare_makefile_filter("TOOL_PATH")
 
-def test_isim_010():
+def test_isim010():
     with Config(path="010isim") as _:
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
-def test_isim_windows_060():
+def test_isim_windows060():
     with Config(path="060isim_windows",
                 my_os='windows', fakebin="windows_fakebin") as _:
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
-def test_icarus_012():
+def test_icarus012():
     run_compare(path="012icarus")
 
 def test_icarus_include_083():
     run_compare(path="083icarus_include")
 
-def test_libero():
+def test_libero013():
     run_compare(path="013libero")
 
-def test_planahead():
+def test_planahead014():
     run_compare(path="014planahead")
 
-def test_quartus():
+def test_quartus015():
     run_compare(path="015quartus")
 
 def test_quartus016():
@@ -185,10 +185,10 @@ def test_quartus039():
         run([], path="039quartus_err")
     #os.remove('039quartus_err/Makefile')
 
-def test_riviera():
+def test_riviera017():
     run_compare(path="017riviera")
 
-def test_vivado():
+def test_vivado018():
     run_compare(path="018vivado")
 
 def test_vivado_props():
@@ -269,8 +269,11 @@ def test_err_fetch():
         run([], path="065fetch_pre_post")
         assert False
 
-def test_xci():
+def test_xci023():
     run_compare(path="023xci")
+
+def test_xci104():
+    run_compare(path="104xci")
 
 def test_vlog_parser024():
     run_compare(path="024vlog_parser")
