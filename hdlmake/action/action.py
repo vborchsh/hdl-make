@@ -131,7 +131,6 @@ class Action(object):
         """Initialize the parseable and privative fileset contents"""
         all_files = self._build_complete_file_set()
         for file_aux in all_files:
-            print(file_aux)
             if self.tool:
                 if any(isinstance(file_aux, file_type)
                        for file_type in self.tool.get_parseable_files()):
