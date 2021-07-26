@@ -112,17 +112,34 @@ endif""")
         self._makefile_syn_prj_tcl_cmd()
         self._makefile_syn_override_prj_tcl_create()
 
+
+    def _makefile_syn_files_predefinelibs(self):
+        """Stub to allow a child class to create libraries before adding files to the files.tcl file"""
+
+
+    def _makefile_syn_files_map_files_to_lib(self):
+        """Stub to allow a child class to map specific files to specific libraries when it has to be a separate command"""
+
+
     def _makefile_syn_files(self):
         """Write the files TCL section of the Makefile"""
         fileset_dict = {}
+
+        self.writeln('files.tcl:')
+
+        # this function will add the ligrary creation commands, and if there are none
+        # it will change self.HDLFILES so that no library commands are used!
+        self._makefile_syn_files_predefinelibs()        
+        
         fileset_dict.update(self.HDL_FILES)
         fileset_dict.update(self.SUPPORTED_FILES)
-        # Create files.tcl target
-        self.writeln('files.tcl:')
         # Extra commands before source files.
         if "files" in self._tcl_controls:
             for command in self._tcl_controls["files"].split('\n'):
                 self.writeln('\t\t@echo {0} >> $@'.format(command))
+
+
+
         # Add each source file
         for srcfile in self.fileset.sort():
             command = fileset_dict.get(type(srcfile))
@@ -139,6 +156,8 @@ endif""")
                 if shell.check_windows_commands():
                     command = command.replace('"', '')
                 self.writeln(command)
+
+        self._makefile_syn_files_map_files_to_lib()
         self.writeln()
 
     def _makefile_syn_local(self):
@@ -191,3 +210,20 @@ SYN_POST_{0}_CMD := {2}
         """Print synthesis PHONY target list to the Makefile"""
         self.writeln(
             ".PHONY: mrproper clean all")
+
+    def get_all_libs(self):
+        """Return a sorted list of all the libraries name"""
+        # BUG: need to filter this down to VHDL, VERILOG, SystemVERILOG
+        fileset_dict = {}
+        sources_with_libs_list = []
+        fileset_dict.update(self.HDL_FILES)
+        for filetype in fileset_dict:
+          for specific_file in self.fileset:
+            if isinstance(specific_file, filetype):
+              sources_with_libs_list.append(specific_file)	
+        return sorted(set(f.library for f in sources_with_libs_list))
+
+
+    def get_num_hdl_libs(self):
+       num_libs = len(self.get_all_libs());
+       return num_libs;
