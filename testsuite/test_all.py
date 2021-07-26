@@ -542,6 +542,11 @@ def test_sys_package_097():
         hdlmake.main.hdlmake([])
         compare_makefile_xilinx()
 
+def test_vhdl_libraries_ise_113():
+    run_compare(path="113_ise_libraries")
+
+
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""
