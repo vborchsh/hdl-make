@@ -135,9 +135,7 @@ endif""")
                     library = None
                 command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
                                          library=library)
-                command = '\t\techo "{}" >> $@'.format(command)
-                if shell.check_windows_commands():
-                    command = command.replace('"', '')
+                command = "\t\techo '{}' >> $@".format(command)
                 self.writeln(command)
         self.writeln()
 
