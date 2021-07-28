@@ -135,6 +135,15 @@ class File(object):
         return ext
 
 
+class ParamFile(File):
+    """Class that serves as base to all parameter files.  Those files
+    doesn't create or need dependencies.  Avoid a 'not parseable'
+    warning"""
+
+    def __init__(self, path, module):
+        File.__init__(self, path=path, module=module)
+
+
 class DepFile(File):
 
     """Class that serves as base to all those HDL files that can be

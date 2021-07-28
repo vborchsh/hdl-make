@@ -29,7 +29,7 @@ import os
 import logging
 
 from ..util import path as path_mod
-from .dep_file import DepFile, File
+from .dep_file import DepFile, File, ParamFile
 import six
 
 
@@ -88,7 +88,7 @@ class TCLFile(File):
 
 # XILINX FILES
 
-class UCFFile(File):
+class UCFFile(ParamFile):
     """This is the class providing the User Constraint Guide file"""
     pass
 
@@ -98,7 +98,7 @@ class XISEFile(File):
     pass
 
 
-class CDCFile(File):
+class CDCFile(ParamFile):
     """This is the class providing the Xilinx ChipScope Definition
     and Connection file"""
     pass
@@ -129,12 +129,12 @@ class NGCFile(File):
     pass
 
 
-class XDCFile(File):
+class XDCFile(ParamFile):
     """Xilinx Design Constraint File"""
     pass
 
 
-class XCFFile(File):
+class XCFFile(ParamFile):
     """Xilinx XST Constraint File"""
     pass
 

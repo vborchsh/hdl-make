@@ -31,7 +31,7 @@ import sys
 from ..tools.load_tool import load_syn_tool, load_sim_tool
 from ..util import shell
 from ..sourcefiles import new_dep_solver as dep_solver
-from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, ParamFile
 from ..sourcefiles.sourcefileset import SourceFileSet
 from ..module.module import Module, ModuleArgs
 from ..sourcefiles import systemlibs
@@ -148,12 +148,13 @@ class Action(object):
                     self.parseable_fileset.add(file_aux)
                 else:
                     self.privative_fileset.add(file_aux)
-        if len(self.privative_fileset) > 0:
+        not_parseable = [f for f in self.privative_fileset if not isinstance(f, ParamFile)]
+        if not_parseable:
             # Do we need to warn about those files ?  This may simply confuse the user.
             logging.info("Detected %d supported files that are not parseable",
-                         len(self.privative_fileset))
+                         len(not_parseable))
             logging.info("Potential dependencies cannot be extracted from them")
-            for f in self.privative_fileset:
+            for f in not_parseable:
                 logging.info("not parseable: %s", f)
         if len(self.parseable_fileset) > 0:
             logging.info("Detected %d supported files that can be parsed",
