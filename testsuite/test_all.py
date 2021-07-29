@@ -546,6 +546,9 @@ def test_vhdl_libraries_ise_113():
     run_compare(path="113_ise_libraries")
 
 
+def test_vhdl_libraries_GHDLSyn_115():
+    run_compare(path="115_ghdlsyn_libraries")
+
 
 @pytest.mark.xfail
 def test_xfail():
