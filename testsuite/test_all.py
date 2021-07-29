@@ -50,14 +50,19 @@ def compare_makefile_filter(start):
     assert out == ref
     os.remove('Makefile')
 
-def compare_makefile_xilinx():
-    # HDLmake make the path absolute.  Remove this line.
-    compare_makefile_filter("XILINX_INI_PATH")
-
 def run_compare(**kwargs):
     with Config(**kwargs) as _:
         hdlmake.main.hdlmake([])
         compare_makefile()
+
+def run_compare_filter(filter, **kwargs):
+    with Config(**kwargs) as _:
+        hdlmake.main.hdlmake([])
+        compare_makefile_filter(filter)
+
+def run_compare_xilinx(**kwargs):
+    # HDLmake make the path absolute.  Remove this line.
+    run_compare_filter(filter="XILINX_INI_PATH", **kwargs)
 
 def run(args, **kwargs):
     with Config(**kwargs) as _:
@@ -116,20 +121,14 @@ def test_ghdl():
     run_compare(path="008ghdl")
 
 def test_icestorm():
-    with Config(path="009icestorm") as _:
-        hdlmake.main.hdlmake([])
-        compare_makefile_filter("TOOL_PATH")
+    run_compare_filter(filter="TOOL_PATH", path="009icestorm")
 
 def test_isim010():
-    with Config(path="010isim") as _:
-        hdlmake.main.hdlmake([])
-        compare_makefile_xilinx()
+    run_compare_xilinx(path="010isim")
 
 def test_isim_windows060():
-    with Config(path="060isim_windows",
-                my_os='windows', fakebin="windows_fakebin") as _:
-        hdlmake.main.hdlmake([])
-        compare_makefile_xilinx()
+    run_compare_xilinx(path="060isim_windows",
+                       my_os='windows', fakebin="windows_fakebin")
 
 def test_icarus012():
     run_compare(path="012icarus")
@@ -340,9 +339,7 @@ def test_no_files():
     run([], path="042nofiles")
 
 def test_no_bin_061():
-    with Config(path="061err_nobin", fakebin="no_fakebin") as _:
-        hdlmake.main.hdlmake([])
-        compare_makefile_xilinx()
+    run_compare_xilinx(path="061err_nobin", fakebin="no_fakebin")
 
 def test_local043():
     run_compare(path="043local_fetch")
@@ -538,18 +535,14 @@ def test_multi_sat():
     run_compare(path="093multi_sat")
 
 def test_sys_package_097():
-    with Config(path="097sys_package") as _:
-        hdlmake.main.hdlmake([])
-        compare_makefile_xilinx()
+    run_compare_xilinx(path="097sys_package")
 
 def test_vhdl_libraries_ise_113():
     run_compare(path="113_ise_libraries")
 
 
 def test_vhdl_libraries_GHDLSyn_115():
-    with Config(path="115_ghdlsyn_libraries") as _:
-        hdlmake.main.hdlmake([])
-        compare_makefile_filter("TOOL_PATH")
+    run_compare_filter(filter="TOOL_PATH", path="115_ghdlsyn_libraries")
 
 
 @pytest.mark.xfail
