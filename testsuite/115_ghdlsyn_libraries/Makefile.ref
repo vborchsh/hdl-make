@@ -4,7 +4,6 @@
 ########################################
 
 TOP_MODULE := lib_c.repinned_top
-TOOL_PATH := /usr/local/bin
 GHDL := ghdl
 GHDL_OPT := 
 #target for performing local synthesis

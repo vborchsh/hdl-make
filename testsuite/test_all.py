@@ -547,7 +547,9 @@ def test_vhdl_libraries_ise_113():
 
 
 def test_vhdl_libraries_GHDLSyn_115():
-    run_compare(path="115_ghdlsyn_libraries")
+    with Config(path="115_ghdlsyn_libraries") as _:
+        hdlmake.main.hdlmake([])
+        compare_makefile_filter("TOOL_PATH")
 
 
 @pytest.mark.xfail
