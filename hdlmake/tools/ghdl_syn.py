@@ -29,8 +29,8 @@ class GhdlSyn(ToolMakefile):
         'linux_bin': 'ghdl',
         'project_ext': ''}
 
-    CLEAN_TARGETS = {'clean': [],
-                     'mrproper': []}
+    CLEAN_TARGETS = {'clean': ["files.tcl", "*.vhd"],
+                     'mrproper': ["files.tcl", "*.vhd"]}
     SYSTEM_LIBS = ['vhdl']
 
     HDL_FILES = {VHDLFile: '$(sourcefile)'}
@@ -38,6 +38,7 @@ class GhdlSyn(ToolMakefile):
     def __init__(self):
         super(GhdlSyn, self).__init__()
         self._tcl_controls = {}
+        self.default_library = "work"
 
     def write_makefile(self, top_manifest, fileset, filename=None):
         """Generate a Makefile for the specific synthesis tool"""
@@ -68,19 +69,21 @@ class GhdlSyn(ToolMakefile):
         sources_list = []
         fileset_dict.update(self.HDL_FILES)
         fileset_dict.update(self.SUPPORTED_FILES)
+        file_list = []
         for filetype in fileset_dict:
-            file_list = []
-            for file_aux in self.fileset:
+            for file_aux in self.fileset.sort():
                 if isinstance(file_aux, filetype):
                     if filetype == VerilogFile and isinstance(file_aux, SVFile):
                         # Discard SVerilog files for verilog type.
                         continue
-                    file_list.append(shell.tclpath(file_aux.rel_path()))
+                    #file_list.append(shell.tclpath(file_aux.rel_path()))
+                    libname  = '--work={0} '.format(file_aux.library)
+                    filename = shell.tclpath(file_aux.rel_path())
+                    out_string = libname + filename
+                    logging.info(self.TOOL_INFO['name'] + "OK: " + out_string)
+                    file_list.append( out_string)
+                    #  need to change the above to have a prefix of: --work=<libname>   
             if not file_list == []:
-                ret.append(
-                   'SOURCES_{0} := \\\n'
-                   '{1}\n'.format(filetype.__name__,
-                               ' \\\n'.join(file_list)))
                 if not fileset_dict[filetype] is None:
                     sources_list.append(filetype)
         self.writeln('\n'.join(ret))
@@ -94,14 +97,14 @@ class GhdlSyn(ToolMakefile):
             if shell.check_windows_commands():
                 command_string = command_string.replace("'", "")
             self.writeln(command_string)
+
         for filetype in sources_list:
-            filetype_string = ('\t\t@$(foreach sourcefile,'
-                ' $(SOURCES_{0}), echo "{1}" >> $@ &)'.format(
-                filetype.__name__, fileset_dict[filetype]))
-            if shell.check_windows_commands():
-                filetype_string = filetype_string.replace(
-                    '"', '')
-            self.writeln(filetype_string)
+            for srcfile_str in file_list:
+               filetype_string = '\t\t@echo ' + srcfile_str + ' >> $@'
+               if shell.check_windows_commands():
+                   filetype_string = filetype_string.replace(
+                       '"', '')
+               self.writeln(filetype_string)
         self.writeln()
 
     def _makefile_syn_local(self):
@@ -111,6 +114,7 @@ class GhdlSyn(ToolMakefile):
 
     def _makefile_syn_build(self):
         """Generate the synthesis Makefile targets for handling design build"""
+        # HOW to set a file to write the synthesis result into.... 
         self.writeln("""\
 synthesis: files.tcl
 \t$(GHDL) --synth $(GHDL_OPT) @files.tcl -e $(TOP_MODULE)
