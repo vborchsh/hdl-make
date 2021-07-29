@@ -26,6 +26,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
 
+
 from .makefilesyn import MakefileSyn
 
 from ..util import shell
@@ -61,18 +62,25 @@ class ToolISE(MakefileSyn):
     STANDARD_LIBS = ['ieee', 'ieee_proposed', 'iSE', 'simprims', 'std',
                      'synopsys', 'unimacro', 'unisim', 'XilinxCoreLib']
     SYSTEM_LIBS = ['xilinx']
-    
+
+
+    _ISE_VHDL_LIBRARY = ' -lib_vhdl {library}'
+    _ISE_ADD_SRCFILE =  'xfile add {srcfile}'
+
+
     SUPPORTED_FILES = {
-        UCFFile: 'xfile add {srcfile}',
-        CDCFile: 'xfile add {srcfile}',
-        BMMFile: 'xfile add {srcfile}',
-        NGCFile: 'xfile add {srcfile}',
-        XCOFile: 'xfile add {srcfile}'}
+        UCFFile: _ISE_ADD_SRCFILE,
+        CDCFile: _ISE_ADD_SRCFILE,
+        BMMFile: _ISE_ADD_SRCFILE,
+        NGCFile: _ISE_ADD_SRCFILE,
+        XCOFile: _ISE_ADD_SRCFILE}
 
     HDL_FILES = {
-        VHDLFile: 'xfile add {srcfile}',
-        VerilogFile: 'xfile add {srcfile}',
-        SVFile: 'xfile add {srcfile}'}
+        VHDLFile:    'HDL_FILES[VHDLFile] - NEEDS SETTING!!!',
+        VerilogFile: _ISE_ADD_SRCFILE,
+        SVFile:      _ISE_ADD_SRCFILE}
+
+
 
     CLEAN_TARGETS = {'clean': ["xst", "xlnx_auto_0_xdb", "iseconfig _xmsgs",
                                "_ngo", "*.b", "*_summary.html",
@@ -125,6 +133,21 @@ $(TCL_CLOSE)'''
     def __init__(self):
         super(ToolISE, self).__init__()
         self._tcl_controls.update(ToolISE.TCL_CONTROLS)
+
+    def _makefile_syn_files_predefinelibs(self):
+        """create libraries before adding files to the files.tcl file"""
+        libraries = self.get_all_libs()
+        # if there is more than one library in use, then...
+        if len(libraries) > 1:
+          # make sure we use the library name when adding a file!
+          self.HDL_FILES[VHDLFile] = self._ISE_ADD_SRCFILE + self._ISE_VHDL_LIBRARY          
+          # add a library creation tcl command for each VHDL library
+          for libname in libraries:	
+            self.writeln('\t\techo lib_vhdl new ' + libname + ' >> $@')
+        else :
+          # Else make sure that the file name is added on its own 
+          self.HDL_FILES[VHDLFile] = self._ISE_ADD_SRCFILE
+
 
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile for ISE"""
