@@ -151,7 +151,6 @@ class ToolLiberoSoC(MakefileSyn):
         else:
            logging.info(self.TOOL_INFO['name'] + "TODO:  Somebody needs to add device support for this family, PolarFireSoC and IGLOO2 are supported. Can you do it?")
 
-
     def _makefile_syn_files_map_files_to_lib(self):
         """map specific files to specific libraries when it has to be a separate command"""
         fileset_dict = {}
@@ -173,13 +172,8 @@ class ToolLiberoSoC(MakefileSyn):
 
                 command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
                                          library=library)
-                command = '\t\techo "{}" >> $@'.format(command)
-                if shell.check_windows_commands():
-                    command = command.replace('"', '')
+                command = "\t\techo '{}' >> $@".format(command)
                 self.writeln(command)
-
-
-
 
     def _makefile_syn_tcl(self):
         """Create a Libero synthesis project by TCL"""
