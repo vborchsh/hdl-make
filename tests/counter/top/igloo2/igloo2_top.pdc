@@ -4,11 +4,12 @@
 #
 # IO banks setting
 #
-set_iobank Bank2 -vcci 3.3 -fixed yes 
-set_iobank Bank4 -vcci 3.3 -fixed no 
-set_iobank Bank5 -vcci 3.3 -fixed yes 
-set_iobank Bank6 -vcci 3.3 -fixed yes 
-set_iobank Bank9 -vcci 3.3 -fixed yes 
+# Bank default bank voltage assignments commented out for Libero 2021.1 Silver
+#set_iobank Bank2 -vcci 3.3 -fixed yes 
+#set_iobank Bank4 -vcci 3.3 -fixed no 
+#set_iobank Bank5 -vcci 3.3 -fixed yes 
+#set_iobank Bank6 -vcci 3.3 -fixed yes 
+#set_iobank Bank9 -vcci 3.3 -fixed yes 
 
 #
 # I/O constraints

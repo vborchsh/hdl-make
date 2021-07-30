@@ -27,7 +27,11 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SDCFile, PDCFile, CXFFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SDCFile, PDCFile, CXFFile, SourceFile
+from ..util import shell
+
+
+import logging
 
 
 class ToolLiberoSoC(MakefileSyn):
@@ -44,6 +48,7 @@ class ToolLiberoSoC(MakefileSyn):
     STANDARD_LIBS = ['ieee', 'std']
 
     _LIBERO_SOURCE = 'create_links {0} {{srcfile}}'
+    _LIBERO_LIB = 'add_file_to_library -library {{library}} -file {{srcfile}}'
 
     SUPPORTED_FILES = {
         SDCFile: _LIBERO_SOURCE.format('-sdc'),
@@ -54,8 +59,16 @@ class ToolLiberoSoC(MakefileSyn):
         VerilogFile: _LIBERO_SOURCE.format('-hdl_source'),
         CXFFile: ''}
 
-    CLEAN_TARGETS = {'clean': ["$(PROJECT)"],
+
+    HDL_LIBRARIES = {
+           VHDLFile: _LIBERO_LIB.format(),
+           VerilogFile: _LIBERO_LIB.format()
+                    }
+
+
+    CLEAN_TARGETS = {'clean': ["$(PROJECT)", "*.log"],
                      'mrproper': ["*.pdb", "*.stp"]}
+
 
     TCL_CONTROLS = {
         'create': 'new_project -location {{./{0}}} '
@@ -68,22 +81,10 @@ class ToolLiberoSoC(MakefileSyn):
         'project': '$(TCL_CREATE)\n'
                    'source files.tcl\n'
                    'refresh\n'
-                   'set_root $(TOP_MODULE)\n'
                    '{0}\n'
                    '$(TCL_SAVE)\n'
                    '$(TCL_CLOSE)',
-        'bitstream': '$(TCL_OPEN)\n'
-                     'run_tool -name {GENERATEPROGRAMMINGDATA}\n'
-                     'file mkdir ./$(PROJECT)/bitstream\n'
-                     'export_bitstream_file '
-                     '-file_name {$(PROJECT)} '
-                     '-export_dir {$(PROJECT)/bitstream} '
-                     '-format {STP} -trusted_facility_file 1 '
-                     '-trusted_facility_file_components {FABRIC} '
-                     '-serialization_stapl_type {SINGLE} '
-                     '-serialization_target_solution {FLASHPRO_3_4_5}\n'
-                     '$(TCL_SAVE)\n'
-                     '$(TCL_CLOSE)',
+        'bitstream': ' Device not supported, so no bitstream for now!',
         'install_source': '$(PROJECT)/designer/impl1/$(SYN_TOP).pdb'}
 
     # Override the build command, because no space is expected between TCL_INTERPRETER and the tcl file
@@ -93,14 +94,92 @@ class ToolLiberoSoC(MakefileSyn):
 
 {0}: {1} {0}.tcl
 \t$(SYN_PRE_{2}_CMD)
-\t$(TCL_INTERPRETER)$@.tcl
+\t$(TCL_INTERPRETER)$@.tcl LOGFILE:{0}_output.log
 \t$(SYN_POST_{2}_CMD)
 \t{4} $@
 """
 
+
+    _BITSTREAM_POLARFIRESOC =  "$(TCL_OPEN)\n"\
+                             + "run_tool -name {GENERATEPROGRAMMINGDATA}\n" \
+                             + "file mkdir ./$(PROJECT)/bitstream\n" \
+                             + "export_bitstream_file "\
+                             + "-file_name {$(PROJECT)} "\
+                             + "-export_dir {$(PROJECT)/bitstream} "\
+                             + "-format {STP} -trusted_facility_file 1 "\
+                             + "-trusted_facility_file_components {FABRIC} \n"\
+                             + "$(TCL_SAVE)\n"\
+                             + "$(TCL_CLOSE)"
+
+
+    _BITSTREAM_IGLOO2 =        "$(TCL_OPEN)\n"\
+                             + "run_tool -name {GENERATEPROGRAMMINGDATA}\n" \
+                             + "file mkdir ./$(PROJECT)/bitstream\n" \
+                             + "export_bitstream_file "\
+                             + "-file_name {$(PROJECT)} "\
+                             + "-export_dir {$(PROJECT)/bitstream} "\
+                             + "-format {STP} -trusted_facility_file 1 "\
+                             + "-trusted_facility_file_components {FABRIC} "\
+                             + "-serialization_stapl_type {SINGLE} "\
+                             + "-serialization_target_solution {FLASHPRO_3_4_5}\n"\
+                             + "$(TCL_SAVE)\n"\
+                             + "$(TCL_CLOSE)"
+
     def __init__(self):
         super(ToolLiberoSoC, self).__init__()
         self._tcl_controls.update(ToolLiberoSoC.TCL_CONTROLS)
+
+
+    def _makefile_syn_files_predefinelibs(self):
+        """create libraries before adding files to the files.tcl file"""
+        libraries = self.get_all_libs()
+        if len(libraries) > 1:
+          for libname in  libraries:
+            self.writeln('\t\t@echo add_library -library ' + libname + ' >> $@')
+
+        # PROBABLY NAUGHTY:   as at this point we know what the device type is; let's also adjust the
+        # TCL_CONTROLS[bitstream] so it is device appropriate
+        # shouldl this really be done in : _makefile_syn_top??
+        syn_family = self.manifest_dict.get("syn_family", '')
+        #logging.info(self.TOOL_INFO['name'] + " _makefile_syn_files_predefinelibs got family_name as:" + syn_family)
+        if syn_family == "PolarFireSoC":
+           self._tcl_controls['bitstream'] = self._BITSTREAM_POLARFIRESOC
+          #logging.info(self.TOOL_INFO['name'] + " set GENERATEPROGRAMMINGDATA for PolarfireSoc.")
+        elif syn_family == "IGLOO2":
+           self._tcl_controls['bitstream'] = self._BITSTREAM_IGLOO2
+           #logging.info(self.TOOL_INFO['name'] + " set GENERATEPROGRAMMINGDATA for IGLOO2.")
+        else:
+           logging.info(self.TOOL_INFO['name'] + "TODO:  Somebody needs to add device support for this family, PolarFireSoC and IGLOO2 are supported. Can you do it?")
+
+
+    def _makefile_syn_files_map_files_to_lib(self):
+        """map specific files to specific libraries when it has to be a separate command"""
+        fileset_dict = {}
+        fileset_dict.update(self.HDL_LIBRARIES)
+
+        libraries = self.get_all_libs()
+        if len(libraries) > 1:
+          for srcfile in self.fileset.sort():
+            command = fileset_dict.get(type(srcfile))
+            # Put the file in files.tcl only if it is supported.
+            #logging.info(self.TOOL_INFO['name'] + " looping")
+
+            if command is not None:
+                # Libraries are defined only for hdl files.
+                if isinstance(srcfile, SourceFile):
+                    library = srcfile.library
+                else:
+                    library = None
+
+                command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
+                                         library=library)
+                command = '\t\techo "{}" >> $@'.format(command)
+                if shell.check_windows_commands():
+                    command = command.replace('"', '')
+                self.writeln(command)
+
+
+
 
     def _makefile_syn_tcl(self):
         """Create a Libero synthesis project by TCL"""
@@ -123,14 +202,26 @@ class ToolLiberoSoC(MakefileSyn):
                                                          syn_package.upper(),
                                                          syn_grade)
         project_tmp = self._tcl_controls["project"]
-        synthesis_constraints = []
+        synthesis_constraints   = []
         compilation_constraints = []
+        timing_constraints = []
         ret = []
+
+        library_for_top_module = str(self.get_library_for_top_module())
+
+        libraries = self.get_all_libs()
+        if len(libraries) > 1:
+           line = 'set_root -module {$(TOP_MODULE)::' + library_for_top_module + '}'
+        else:
+           line = 'set_root -module {$(TOP_MODULE)}'
+        ret.append(line)
+
         # First stage: linking files
         for file_aux in self.fileset.sort():
             if isinstance(file_aux, SDCFile):
                 synthesis_constraints.append(file_aux)
                 compilation_constraints.append(file_aux)
+                timing_constraints.append(file_aux)
             elif isinstance(file_aux, PDCFile):
                 compilation_constraints.append(file_aux)
         # Second stage: Organizing / activating synthesis constraints (the top
@@ -140,7 +231,7 @@ class ToolLiberoSoC(MakefileSyn):
             for file_aux in synthesis_constraints:
                 line = line + '-file {' + file_aux.rel_path() + '} '
             line = line + \
-                '-module {$(TOP_MODULE)::work} -input_type {constraint} '
+                '-module {$(TOP_MODULE)::' + library_for_top_module + '} -input_type {constraint} '
             ret.append(line)
         # Third stage: Organizing / activating compilation constraints (the top
         # module needs to be present!)
@@ -149,10 +240,17 @@ class ToolLiberoSoC(MakefileSyn):
             for file_aux in compilation_constraints:
                 line = line + '-file {' + file_aux.rel_path() + '} '
             line = line + \
-                '-module {$(TOP_MODULE)::work} -input_type {constraint} '
+                '-module {$(TOP_MODULE)::' + library_for_top_module + '} -input_type {constraint} '
             ret.append(line)
-        # Fourth stage: set root/top module
-        line = 'set_root -module {$(TOP_MODULE)::work}'
-        ret.append(line)
+
+        # is this device dependant?
+        if timing_constraints:
+            line = 'organize_tool_files -tool {VERIFYTIMING} '
+            for file_aux in timing_constraints:
+                line = line + '-file {' + file_aux.rel_path() + '} '
+            line = line + \
+                '-module {$(TOP_MODULE)::' + library_for_top_module + '} -input_type {constraint} '
+            ret.append(line)
+
         self._tcl_controls['project'] = project_tmp.format('\n'.join(ret))
         super(ToolLiberoSoC, self)._makefile_syn_tcl()
