@@ -58,7 +58,8 @@ class MakefileSim(ToolMakefile):
     def get_stamp_file(self, dep_file):
         """Stamp file for source file :param file:"""
         name = dep_file.purename
-        return os.path.join(dep_file.library, name, ".{}_{}".format(name, dep_file.extension()))
+        p = shell.makefile_slash_char()
+        return p.join([dep_file.library, name, ".{}_{}".format(name, dep_file.extension())])
 
     def get_stamp_library(self, lib):
         return lib + shell.makefile_slash_char() + "." + lib
