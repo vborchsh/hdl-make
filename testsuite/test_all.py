@@ -111,7 +111,7 @@ def test_noact():
         hdlmake.main.hdlmake(['list-files'])
         hdlmake.main.hdlmake(['list-mods', '--with-files'])
 
-def test_ahdl():
+def test_ahdl006():
     run_compare(path="006ahdl", my_os='windows')
 
 def test_diamond():
