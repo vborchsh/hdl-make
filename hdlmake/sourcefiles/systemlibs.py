@@ -31,6 +31,7 @@ def build_xilinx():
     """Modules and packages provided by Xilinx system libraries"""
     res = []
     add_package(res, 'unisim', 'vcomponents')
+    add_package(res, 'unimacro', 'vcomponents')
     for n in ['ibuf', 'ibufds', 'ibufgds', 'ibufds_diff_out',
               'ibufds_gte2',
               'obuf', 'obufds', 'obuft', 'obuftds', 'oddr',
