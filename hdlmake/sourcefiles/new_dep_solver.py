@@ -157,7 +157,7 @@ def check_graph(graph, fileset, syslibs, standard_libs=None):
                               "standard libs.",
                               str(rel), investigated_file.name)
                 continue
-            logging.warning("File '%s' depends on %s, but the latter was not found in any source file",
+            logging.warning("File '%s' depends on undeclared (not found) %s",
                             investigated_file.name, str(rel))
             not_satisfied += 1
     logging.debug("SOLVE END")
