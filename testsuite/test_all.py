@@ -489,7 +489,7 @@ def test_err_syn_package():
 def test_err_syn_top_070():
     run_compare(path="070err_syntop")
 
-def test_extra_modules():
+def test_extra_modules076():
     run_compare(path="076extra_modules")
 
 def test_err_syntool():
@@ -531,7 +531,7 @@ def test_err_filetype():
         run([], path="092bad_filetype")
         assert False
 
-def test_multi_sat():
+def test_multi_sat093():
     run_compare(path="093multi_sat")
 
 def test_sys_package_097():
