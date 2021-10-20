@@ -53,8 +53,8 @@ class DepRelation(object):
         self.obj_name = obj_name.lower()
         self.lib_name = None if lib_name is None else lib_name.lower()
         # Set of DepFile provided/required by this relation.
-        # In general, provided_by has only one element.
-        self.provided_by = set()
+        # A unit can be provided only by one file, but required by many.
+        self.provided_by = None
         self.required_by = set()
 
     def satisfies(self, rel_b):

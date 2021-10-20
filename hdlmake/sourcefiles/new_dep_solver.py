@@ -59,15 +59,22 @@ class AllRelations(object):
         rel.required_by.add(file)
 
     def add_provide(self, file, rel):
-        """Called by a parsed when :param file: provides :param rel:"""
+        """Called by a parser when :param file: provides :param rel:"""
         if rel in file.provides:
             # Alreay present
             assert rel in self.rels
+            return
         # Get the existing relation or insert the new one
         rel = self.rels.setdefault(rel, rel)
-        # Update the graph
+        # Update the graph:
+        # :param file: provides :param rel:
         file.provides.add(rel)
-        rel.provided_by.add(file)
+        if rel.provided_by is None:
+            rel.provided_by = file
+        else:
+            logging.warning(
+                "The %s is already provided by %s, discarding the same unit in %s",
+                    str(rel), rel.provided_by, file)
 
     def find_provider(self, rel):
         return self.rels.get(rel)
@@ -95,10 +102,11 @@ def parse_source_files(graph, fileset):
     # Compute file dependencies
     for investigated_file in fileset:
         for rel in investigated_file.requires:
-            for dep_file in rel.provided_by:
-                if dep_file is not investigated_file:
-                    # A file cannot depends on itself.
-                    investigated_file.depends_on.add(dep_file)
+            if rel.provided_by is None:
+                continue
+            if rel.provided_by is not investigated_file:
+                # A file cannot depends on itself.
+                investigated_file.depends_on.add(rel.provided_by)
 
 
 def check_graph(graph, fileset, syslibs, standard_libs=None):
@@ -124,21 +132,11 @@ def check_graph(graph, fileset, syslibs, standard_libs=None):
                 # Already handled.  Avoid to warn several times
                 continue
             done.add(rel)
-            lst = list(rel.provided_by)
-            if len(lst) > 1:
-                logging.warning(
-                    "Relation %s satisfied by multiple (%d) files:\n %s",
-                    str(rel),
-                    len(lst),
-                    '\n '.join([file_aux.path for file_aux in lst]))
-                continue
-            if len(lst) == 1:
-                # Perfect!
+            if rel.provided_by is not None:
+                # Perfect.
                 continue
 
             # So we are handling an unsatisfied dependency.
-            assert(len(lst) == 0)
-
             # Maybe provided by system libraries
             found = False
             for r in system_rels:
@@ -200,8 +198,7 @@ def make_dependency_set(graph, fileset, top_library, top_entity, extra_modules=N
             '"%s" top module. Continuing with the full file set.',
             top_entity)
         return fileset
-    top_file = list(rel.provided_by)
-    # TODO: warn if multiple providers ?
+    top_file = rel.provided_by
 
     # Add extra modules
     extra_files = []
@@ -213,12 +210,14 @@ def make_dependency_set(graph, fileset, top_library, top_entity, extra_modules=N
                 logging.critical(
                     'Could not find a extra module %s (ignored)', name)
             else:
-                extra_files.extend(list(rel.provided_by))
+                if rel.provided_by is not None:
+                    extra_files.append(rel.provided_by)
 
     # Collect only the files that the top level entity is dependant on, by
     # walking the dependancy tree.
     dep_file_set = SourceFileSet()
-    file_set = set(top_file + extra_files)
+    file_set = set(extra_files)
+    file_set.add(top_file)
     while len(file_set) > 0:
         chk_file = file_set.pop()
         if chk_file not in dep_file_set:
