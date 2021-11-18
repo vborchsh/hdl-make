@@ -532,7 +532,14 @@ def test_err_filetype():
         assert False
 
 def test_multi_sat093():
-    run_compare(path="093multi_sat")
+    with Config(path="093multi_sat"):
+        hdlmake.main.hdlmake([])
+        # Output is not deterministic
+        ref1 = open('Makefile.ref1', 'r').read()
+        ref2 = open('Makefile.ref2', 'r').read()
+        out = open('Makefile', 'r').read()
+        assert out == ref1 or out == ref2
+        os.remove('Makefile')
 
 def test_sys_package_097():
     run_compare_xilinx(path="097sys_package")
