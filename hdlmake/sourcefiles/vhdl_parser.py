@@ -238,25 +238,6 @@ class VHDLParser(DepParser):
 
         buf = re.sub(record_pattern, do_record, buf)
 
-        # function declaration
-        function_pattern = re.compile(
-            r"^\s*function\s+(?P<name>\w+)"
-            r".*?" # gobble arguments if any.
-            r"return\s+\w+"
-            r"(\s+is.*?end\s+function.*?)?" # gobble body if any.
-            r"\s*;",
-            re.DOTALL | re.MULTILINE | re.IGNORECASE)
-
-        def do_function(text):
-            """Function to be applied by re.sub to every match of the
-            funtion_pattern in the VHDL code -- group() returns positive
-            matches as indexed plain strings. It doesn't add the relations
-            to the file"""
-            logging.debug("found function declaration %s", text.group(1))
-            return "<hdlmake function %s>" % text.group(1)
-
-        buf = re.sub(function_pattern, do_function, buf)
-
         # component instantiation
         instance_component_pattern = re.compile(
             r"^\s*(?P<LABEL>\w+)\s*:"
