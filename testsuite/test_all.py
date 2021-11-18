@@ -553,6 +553,9 @@ def test_vhdl_libraries_liberosoc_114():
 def test_vhdl_libraries_GHDLSyn_115():
     run_compare_filter(filter="TOOL_PATH", path="115_ghdlsyn_libraries")
 
+def test_vhdl_parser_116():
+    run_compare(path="116vhdl_parser")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""
