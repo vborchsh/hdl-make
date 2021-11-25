@@ -25,7 +25,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 import logging
 import os
-import sys
 import os.path
 
 from ..sourcefiles import new_dep_solver as dep_solver
@@ -34,7 +33,6 @@ from ..fetch.svn import Svn
 from ..fetch.git import Git, GitSM
 from ..fetch.local import Local
 from .action import Action
-from ..util import shell
 from .gen_edalize import Edalize
 
 class Commands(Action):
@@ -243,7 +241,6 @@ class Commands(Action):
         self.solve_file_set()
 
         from ..sourcefiles.srcfile import DepFile
-        from ..sourcefiles.dep_file import DepRelation
         fset = self.parseable_fileset.filter(DepFile)
         for f in sorted(fset, key=(lambda x: x.path)):
             print('{}:'.format(f.path))
@@ -251,3 +248,8 @@ class Commands(Action):
                 print(' provide {}'.format(dep))
             for dep in sorted([str(x) for x in f.requires]):
                 print(' require {}'.format(dep))
+
+    def generate_tree(self):
+        from .tree import ActionTree
+        t = ActionTree(self)
+        t.generate_tree()
