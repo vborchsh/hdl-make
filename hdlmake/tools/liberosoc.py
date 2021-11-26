@@ -145,11 +145,11 @@ class ToolLiberoSoC(MakefileSyn):
         if syn_family == "PolarFireSoC":
            self._tcl_controls['bitstream'] = self._BITSTREAM_POLARFIRESOC
           #logging.info(self.TOOL_INFO['name'] + " set GENERATEPROGRAMMINGDATA for PolarfireSoc.")
-        elif syn_family == "IGLOO2":
+        elif syn_family == "IGLOO2" or syn_family == 'SmartFusion2':
            self._tcl_controls['bitstream'] = self._BITSTREAM_IGLOO2
            #logging.info(self.TOOL_INFO['name'] + " set GENERATEPROGRAMMINGDATA for IGLOO2.")
         else:
-           logging.info(self.TOOL_INFO['name'] + "TODO:  Somebody needs to add device support for this family, PolarFireSoC and IGLOO2 are supported. Can you do it?")
+           logging.info(self.TOOL_INFO['name'] + ":TODO:  Somebody needs to add device support for this family, PolarFireSoC and IGLOO2 are supported. Can you do it?")
 
     def _makefile_syn_files_map_files_to_lib(self):
         """map specific files to specific libraries when it has to be a separate command"""
