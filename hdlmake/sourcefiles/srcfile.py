@@ -211,7 +211,7 @@ XILINX_FILE_DICT = {
 
 # SYNOPSYS FILES
 
-class SDCFile(File):
+class SDCFile(ParamFile):
     """Synopsys Design Constraints"""
     pass
 
@@ -248,7 +248,7 @@ LATTICE_FILE_DICT = {
 
 # MICROSEMI/ACTEL FILES
 
-class PDCFile(File):
+class PDCFile(ParamFile):
     """Physical Design Constraints"""
     pass
 
