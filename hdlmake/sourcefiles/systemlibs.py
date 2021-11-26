@@ -74,6 +74,15 @@ def build_altera():
         add_entity(res, n)
     return res
 
+def build_smartfusion2():
+    res = []
+    for n in ['xtlosc', 'xtlosc_fab', 'ccc', 'sysreset',
+              'clkint',
+              'inbuf', 'outbuf', 'tribuff',
+              'gnd', 'vcc']:
+        add_entity(res, n)
+    return res
+
 def build_vhdl():
     res = []
     # TODO: dependency for any package of a library.
@@ -88,5 +97,6 @@ def build_vhdl():
 all_system_libs = {
     'xilinx': build_xilinx,
     'vhdl': build_vhdl,
-    'altera': build_altera
+    'altera': build_altera,
+    'smartfusion2': build_smartfusion2
 }
