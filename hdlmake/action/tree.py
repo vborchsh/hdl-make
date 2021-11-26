@@ -34,8 +34,9 @@ class ActionTree(Action):
 
     """Class providing methods to create a graph from pool and to analyze it"""
 
-    def __init__(self, *args):
-        super(ActionTree, self).__init__(*args)
+    def __init__(self, cmd):
+        super(ActionTree, self).__init__(cmd.options)
+        self.cmd = cmd
 
     def _generate_tree_web(self, hierarchy, top_id):
         """Create a JSON file containing the graph hierarchy from pool"""
@@ -45,9 +46,9 @@ class ActionTree(Action):
             from networkx.readwrite import json_graph
         except ImportError as error_import:
             raise Exception(error_import)
-        if self.options.mode == 'dfs':
+        if self.cmd.options.mode == 'dfs':
             hierarchy = nx.dfs_tree(hierarchy, top_id)
-        elif self.options.mode == 'bfs':
+        elif self.cmd.options.mode == 'bfs':
             hierarchy = nx.bfs_tree(hierarchy, top_id, reverse=False)
         data = json_graph.tree_data(hierarchy, root=top_id)
         json_string = json.dumps(data)
@@ -64,8 +65,9 @@ class ActionTree(Action):
         unfetched_modules = False
         hierarchy = nx.DiGraph()
 
-        if self.options.mode == "mods":
-            for mod_aux in self:
+        if self.cmd.options.mode == "mods":
+            top_id = None
+            for mod_aux in self.cmd.all_manifests:
                 if not mod_aux.isfetched:
                     unfetched_modules = True
                 else:
@@ -79,39 +81,31 @@ class ActionTree(Action):
                         for file_aux in mod_aux.files:
                             hierarchy.add_edge(mod_aux.path,
                                                path.relpath(file_aux.path))
-        elif (self.options.mode == 'dfs' or
-              self.options.mode == 'bfs'):
-
-
+        elif (self.cmd.options.mode == 'dfs' or
+              self.cmd.options.mode == 'bfs'):
             logging.warning("This is the solved tree")
             #self.top_entity = self.options.top
-            self.build_file_set()
-            self.solve_file_set()
+            self.cmd.build_file_set()
+            self.cmd.solve_file_set()
 
-            from ..sourcefiles.srcfile import SourceFileSet
+            from ..sourcefiles.sourcefileset import SourceFileSet
             from ..sourcefiles.dep_file import DepRelation
-            assert isinstance(self.parseable_fileset, SourceFileSet)
-            fset = self.parseable_fileset.filter(DepFile)
+            assert isinstance(self.cmd.parseable_fileset, SourceFileSet)
+            fset = self.cmd.parseable_fileset.filter(DepFile)
             # Find the file that provides the named top level entity
-            top_rel_vhdl = DepRelation(
-                "%s.%s" %
-                ("work", self.top_entity), DepRelation.PROVIDE, DepRelation.ENTITY)
-            top_rel_vlog = DepRelation(
-                "%s.%s" %
-                ("work", self.top_entity), DepRelation.PROVIDE, DepRelation.MODULE)
+            top_rel = DepRelation(self.cmd.top_entity, None, DepRelation.ENTITY)
             top_file = None
             for chk_file in fset:
                 hierarchy.add_node(path.relpath(chk_file.path))
                 for file_required in chk_file.depends_on:
                     hierarchy.add_edge(path.relpath(chk_file.path), path.relpath(file_required.path))
-                for rel in chk_file.rels:
-                    if (rel == top_rel_vhdl) or (rel == top_rel_vlog):
-                        top_file = chk_file
-                        top_id = path.relpath(chk_file.path)
+                for rel in chk_file.provides:
+                    top_file = chk_file
+                    top_id = path.relpath(chk_file.path)
             if top_file is None:
                 logging.critical('Could not find a top level file that provides the '
                                  'top_module="%s". Continuing with the full file set.',
-                                 top_level_entity)
+                                 self.cmd.top_entity)
 
         else:
             raise Exception('Unknown tree mode: %s', self.options.mode)
