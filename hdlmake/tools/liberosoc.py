@@ -182,10 +182,8 @@ class ToolLiberoSoC(MakefileSyn):
         syn_family = self.manifest_dict["syn_family"]
         syn_grade = self.manifest_dict["syn_grade"]
         syn_package = self.manifest_dict["syn_package"]
-        syn_lang = self.manifest_dict.get("language")
-        # Default language is VHDL, so might not be defined by the user
-        if syn_lang == None:
-            syn_lang = "VHDL"
+        syn_lang = self.manifest_dict.get("language", "VHDL")
+        syn_extra_tcl_files = self.manifest_dict.get('syn_project_extra_files', [])
 
         create_tmp = self._tcl_controls["create"]
 
@@ -245,6 +243,10 @@ class ToolLiberoSoC(MakefileSyn):
             line = line + \
                 '-module {$(TOP_MODULE)::' + library_for_top_module + '} -input_type {constraint} '
             ret.append(line)
+
+        # Source extra tcl files
+        for f in syn_extra_tcl_files:
+            ret.append('source {}'.format(f))
 
         self._tcl_controls['project'] = project_tmp.format('\n'.join(ret))
         super(ToolLiberoSoC, self)._makefile_syn_tcl()
