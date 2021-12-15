@@ -6,7 +6,7 @@
 TOP_MODULE := gate3
 
 GHDL := ghdl
-GHDL_OPT := 
+GHDL_OPT := -Wall
 
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
