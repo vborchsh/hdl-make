@@ -3,7 +3,7 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-TOP_MODULE := repinned_top
+TOP_MODULE := gate
 PROJECT := demo
 PROJECT_FILE := $(PROJECT).prjx
 TOOL_PATH := 
@@ -17,7 +17,7 @@ SYN_DEVICE := M2GL025
 SYN_PACKAGE := 484 FBGA
 SYN_GRADE := -1
 
-TCL_CREATE := new_project -location {./demo} -name {demo} -hdl {VHDL} -family {IGLOO2} -die {M2GL025} -package {484 FBGA} -speed {-1}
+TCL_CREATE := new_project -location {./demo} -name {demo} -hdl {VHDL} -family {IGLOO2} -die {M2GL025} -package {484 FBGA} -speed {-1} -adv_options {RESTRICTPROBEPINS:0}
 TCL_OPEN := open_project -file {$(PROJECT)/$(PROJECT_FILE)}
 TCL_SAVE := save_project
 TCL_CLOSE := close_project
@@ -29,25 +29,7 @@ endif
 all: bitstream
 
 files.tcl:
-		@echo add_library -library lib_a >> $@
-		@echo add_library -library lib_b >> $@
-		@echo add_library -library lib_c >> $@
-		echo 'create_links -hdl_source rtl/lib_a/axi_regs_a.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_a/register_access_fns_pkg.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_a/register_types_pkg.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_b/axi_regs_b.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_b/register_access_fns_pkg.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_b/register_types_pkg.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_c/merged_top.vhd' >> $@
-		echo 'create_links -hdl_source rtl/lib_c/repinned_top.vhd' >> $@
-		echo 'add_file_to_library -library lib_a -file rtl/lib_a/axi_regs_a.vhd' >> $@
-		echo 'add_file_to_library -library lib_a -file rtl/lib_a/register_access_fns_pkg.vhd' >> $@
-		echo 'add_file_to_library -library lib_a -file rtl/lib_a/register_types_pkg.vhd' >> $@
-		echo 'add_file_to_library -library lib_b -file rtl/lib_b/axi_regs_b.vhd' >> $@
-		echo 'add_file_to_library -library lib_b -file rtl/lib_b/register_access_fns_pkg.vhd' >> $@
-		echo 'add_file_to_library -library lib_b -file rtl/lib_b/register_types_pkg.vhd' >> $@
-		echo 'add_file_to_library -library lib_c -file rtl/lib_c/merged_top.vhd' >> $@
-		echo 'add_file_to_library -library lib_c -file rtl/lib_c/repinned_top.vhd' >> $@
+		echo 'create_links -hdl_source ../files/gate.vhdl' >> $@
 
 SYN_PRE_PROJECT_CMD := 
 SYN_POST_PROJECT_CMD := 
@@ -59,7 +41,7 @@ project.tcl:
 		echo $(TCL_CREATE) >> $@
 		echo source files.tcl >> $@
 		echo refresh >> $@
-		echo set_root -module {$(TOP_MODULE)::lib_c} >> $@
+		echo set_root -module {$(TOP_MODULE)} >> $@
 		echo $(TCL_SAVE) >> $@
 		echo $(TCL_CLOSE) >> $@
 
