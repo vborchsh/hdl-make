@@ -73,7 +73,11 @@ class ManifestParser(ConfigParser):
             {'name': 'modules',
              'default': {},
              'help': "List of local modules",
-             'type': {}}]
+             'type': {}},
+            {'name': 'project_opt',
+             'default': None,
+             'help': 'Extra options used to create a project',
+             'type': ''}]
         self.add_option_list(general_options)
         self.add_delimiter()
         self.add_type('include_dirs', type_new="")

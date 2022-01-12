@@ -74,7 +74,7 @@ class ToolLiberoSoC(MakefileSyn):
         'create': 'new_project -location {{./{0}}} '
                   '-name {{{0}}} -hdl {{{1}}} '
                   '-family {{{2}}} -die {{{3}}} '
-                  '-package {{{4}}} -speed {{{5}}} ',
+                  '-package {{{4}}} -speed {{{5}}}',
         'open': 'open_project -file {$(PROJECT)/$(PROJECT_FILE)}',
         'save': 'save_project',
         'close': 'close_project',
@@ -184,15 +184,21 @@ class ToolLiberoSoC(MakefileSyn):
         syn_package = self.manifest_dict["syn_package"]
         syn_lang = self.manifest_dict.get("language", "VHDL")
         syn_extra_tcl_files = self.manifest_dict.get('syn_project_extra_files', [])
+        project_opt = self.manifest_dict.get('project_opt', None)
 
+        # Expand create command
         create_tmp = self._tcl_controls["create"]
+        create_tmp = create_tmp.format(syn_project,
+                                       syn_lang.upper(),
+                                       syn_family,
+                                       syn_device.upper(),
+                                       syn_package.upper(),
+                                       syn_grade)
+        if project_opt is not None:
+            create_tmp += ' ' + project_opt
+        self._tcl_controls["create"] = create_tmp
 
-        self._tcl_controls["create"] = create_tmp.format(syn_project,
-                                                         syn_lang.upper(),
-                                                         syn_family,
-                                                         syn_device.upper(),
-                                                         syn_package.upper(),
-                                                         syn_grade)
+        # Expand project command
         project_tmp = self._tcl_controls["project"]
         synthesis_constraints   = []
         compilation_constraints = []
