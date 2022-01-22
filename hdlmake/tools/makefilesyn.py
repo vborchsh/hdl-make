@@ -33,7 +33,7 @@ class MakefileSyn(ToolMakefile):
 {0}.tcl:
 {3}
 
-{0}: {1} {0}.tcl
+{0}: {1} {0}.tcl{deps}
 \t\t$(SYN_PRE_{2}_CMD)
 \t\t$(TCL_INTERPRETER) $@.tcl
 \t\t$(SYN_POST_{2}_CMD)
@@ -145,6 +145,7 @@ endif""")
             command = fileset_dict.get(type(srcfile))
             # Put the file in files.tcl only if it is supported.
             if command is not None:
+                self._all_sources.append(srcfile.rel_path())
                 # Libraries are defined only for hdl files.
                 if isinstance(srcfile, SourceFile):
                     library = srcfile.library
@@ -175,9 +176,11 @@ endif""")
                 for command in self._tcl_controls[stage].split('\n'):
                     tcl_command.append(echo_command.format(command))
                 command_string = "\n".join(tcl_command)
+                deps = " " + " ".join(self._all_sources) if stage == "synthesize" else ""
                 self.writeln(self.MAKEFILE_SYN_BUILD_CMD.format(
                     stage, stage_previous, stage.upper(),
-                    command_string, shell.touch_command()))
+                    command_string, shell.touch_command(),
+                    deps=deps))
                 stage_previous = stage
 
     def _makefile_syn_command(self):
