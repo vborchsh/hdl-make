@@ -45,8 +45,12 @@ reset_run {0}
 launch_runs {0}
 wait_on_run {0}
 set result [get_property STATUS [get_runs {0}]]
-set keyword [lindex [split '$$'result " "] end]
-if {{ '$$'keyword != \\"Complete!\\" }} {{
+set complete [string match \\"*Complete*\\" '$$'result]
+set timing [string match \\"*Failed Timing*\\" '$$'result]
+if {{ ! '$$'complete }} {{
+    exit 1
+}}
+if {{ '$$'timing '&&' {fail_on_timing} }} {{
     exit 1
 }}
 $(TCL_CLOSE)'''
@@ -130,6 +134,7 @@ $(TCL_CLOSE)'''
                     project_new.append(tmp.format(prop[0], prop[1], prop[2]))
                 else:
                     logging.error('Unknown project property: %s', prop[0])
+        fail_on_timing = int(self.manifest_dict.get("syn_fail_on_timing", True))
         tmp_dict = {}
         tmp_dict["project"] = self._tcl_controls["project"]
         tmp_dict["synthesize"] = self._tcl_controls["synthesize"]
@@ -138,8 +143,10 @@ $(TCL_CLOSE)'''
             "\n".join(project_new))
         self._tcl_controls["synthesize"] = tmp_dict["synthesize"].format(
             "synth_1",
-            "\n".join(synthesize_new))
+            "\n".join(synthesize_new),
+            fail_on_timing=fail_on_timing)
         self._tcl_controls["par"] = tmp_dict["par"].format(
             "impl_1",
-            "\n".join(par_new))
+            "\n".join(par_new),
+            fail_on_timing=fail_on_timing)
         super(ToolXilinx, self)._makefile_syn_tcl()
