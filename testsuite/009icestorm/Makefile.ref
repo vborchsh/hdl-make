@@ -40,7 +40,7 @@ synthesize.tcl:
 		echo source files.tcl >> $@
 		echo synth_ice40 -top $(TOP_MODULE) -blif $(PROJECT).blif >> $@
 
-synthesize: files.tcl synthesize.tcl
+synthesize: files.tcl synthesize.tcl ../files/gate2.v
 		$(SYN_PRE_SYNTHESIZE_CMD)
 		$(TCL_INTERPRETER) $@.tcl
 		$(SYN_POST_SYNTHESIZE_CMD)

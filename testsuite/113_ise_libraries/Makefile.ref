@@ -89,7 +89,7 @@ synthesize.tcl:
 		echo $(TCL_SAVE) >> $@
 		echo $(TCL_CLOSE) >> $@
 
-synthesize: project synthesize.tcl
+synthesize: project synthesize.tcl rtl/lib_a/axi_regs.vhd rtl/lib_a/register_access_fns_pkg.vhd rtl/lib_a/register_types_pkg.vhd rtl/lib_b/axi_regs.vhd rtl/lib_b/register_access_fns_pkg.vhd rtl/lib_b/register_types_pkg.vhd rtl/lib_c/merged_top.vhd rtl/lib_c/repinned_top.vhd
 		$(SYN_PRE_SYNTHESIZE_CMD)
 		$(TCL_INTERPRETER) $@.tcl
 		$(SYN_POST_SYNTHESIZE_CMD)
