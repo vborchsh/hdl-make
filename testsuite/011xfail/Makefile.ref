@@ -81,7 +81,7 @@ synthesize.tcl:
 		echo $(TCL_SAVE) >> $@
 		echo $(TCL_CLOSE) >> $@
 
-synthesize: project synthesize.tcl
+synthesize: project synthesize.tcl ../files/gate.vhdl
 		$(SYN_PRE_SYNTHESIZE_CMD)
 		$(TCL_INTERPRETER) $@.tcl
 		$(SYN_POST_SYNTHESIZE_CMD)

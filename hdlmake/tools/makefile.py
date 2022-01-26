@@ -49,6 +49,7 @@ class ToolMakefile(object):
         self.fileset = None
         self.manifest_dict = {}
         self._filename = "Makefile"
+        self._all_sources = []
 
     def __del__(self):
         if self._file:

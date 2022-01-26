@@ -70,6 +70,7 @@ class ToolXilinxProject:
             command = fileset_dict.get(type(srcfile))
             # Put the file in files.tcl only if it is supported.
             if command is not None:
+                self._all_sources.append(srcfile.rel_path())
                 # Libraries are defined only for hdl files.
                 if isinstance(srcfile, SourceFile):
                     library = srcfile.library
