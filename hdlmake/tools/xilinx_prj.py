@@ -38,8 +38,7 @@ class ToolXilinxProject:
     _XILINX_VHDL_PROPERTY = (
         lambda srcfile: "set_property LIBRARY {library} [get_files {srcfile}]" if srcfile.library is not None else "")
 
-    _XILINX_VERILOG_PROPERTY = (
-        "set_property IS_GLOBAL_INCLUDE 1 [get_files {srcfile}]; ")
+    _XILINX_VERILOG_PROPERTY = ""
 
     # Dictionnary of commands per file type.
     HDL_FILES = {
