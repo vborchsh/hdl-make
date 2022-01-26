@@ -69,8 +69,12 @@ synthesize.tcl:
 		echo launch_runs synth_1 >> $@
 		echo wait_on_run synth_1 >> $@
 		echo set result [get_property STATUS [get_runs synth_1]] >> $@
-		echo set keyword [lindex [split '$$'result " "] end] >> $@
-		echo if { '$$'keyword != \"Complete!\" } { >> $@
+		echo set complete [string match \"*Complete*\" '$$'result] >> $@
+		echo set timing [string match \"*Failed Timing*\" '$$'result] >> $@
+		echo if { ! '$$'complete } { >> $@
+		echo     exit 1 >> $@
+		echo } >> $@
+		echo if { '$$'timing '&&' 1 } { >> $@
 		echo     exit 1 >> $@
 		echo } >> $@
 		echo $(TCL_CLOSE) >> $@
@@ -88,8 +92,12 @@ par.tcl:
 		echo launch_runs impl_1 >> $@
 		echo wait_on_run impl_1 >> $@
 		echo set result [get_property STATUS [get_runs impl_1]] >> $@
-		echo set keyword [lindex [split '$$'result " "] end] >> $@
-		echo if { '$$'keyword != \"Complete!\" } { >> $@
+		echo set complete [string match \"*Complete*\" '$$'result] >> $@
+		echo set timing [string match \"*Failed Timing*\" '$$'result] >> $@
+		echo if { ! '$$'complete } { >> $@
+		echo     exit 1 >> $@
+		echo } >> $@
+		echo if { '$$'timing '&&' 1 } { >> $@
 		echo     exit 1 >> $@
 		echo } >> $@
 		echo $(TCL_CLOSE) >> $@
