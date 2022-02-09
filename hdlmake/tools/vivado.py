@@ -72,7 +72,8 @@ class ToolVivado(ToolXilinx):
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",
                                "$(PROJECT).runs", "$(PROJECT).hw", "$(PROJECT).sim",
-                               "$(PROJECT).ip_user_files", "$(PROJECT_FILE)"]}
+                               "$(PROJECT).ip_user_files", "$(PROJECT).srcs",
+                               "$(PROJECT_FILE)"]}
     CLEAN_TARGETS.update(ToolXilinx.CLEAN_TARGETS)
 
     TCL_CONTROLS = {'bitstream': '$(TCL_OPEN)\n'
