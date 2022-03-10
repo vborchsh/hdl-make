@@ -37,14 +37,18 @@ class Config(object):
 
 def compare_makefile():
     # shutil.copy('Makefile', 'Makefile.ref')  # To regenerate
-    ref = open('Makefile.ref', 'r').read()
-    out = open('Makefile', 'r').read()
+    with open('Makefile.ref', 'r') as f:
+        ref = f.read()
+    with open('Makefile', 'r') as f:
+        out = f.read()
     assert out == ref
     os.remove('Makefile')
 
 def compare_makefile_filter(start):
-    ref = open('Makefile.ref', 'r').readlines()
-    out = open('Makefile', 'r').readlines()
+    with open('Makefile.ref', 'r') as f:
+        ref = f.readlines()
+    with open('Makefile', 'r') as f:
+        out = f.readlines()
     out = [l for l in out if not l.startswith(start)]
     # open('Makefile.ref', 'w').writelines(out) # To regenerate
     assert out == ref
