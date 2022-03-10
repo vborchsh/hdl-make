@@ -87,7 +87,7 @@ class ToolDiamond(MakefileSyn):
                             '$(TCL_SAVE)\n'
                             '$(TCL_CLOSE)',
                     'install_source': '$(PROJECT)/$(PROJECT)_$(PROJECT).jed',
-                    'files': 'prj_src remove -all'}
+                    'files': _LATTICE_PURGE_SOURCE}
 
     def __init__(self):
         super(ToolDiamond, self).__init__()
