@@ -26,6 +26,7 @@
 from __future__ import absolute_import
 from .makefilesim import MakefileSim
 from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile
+from ..util import shell
 
 
 class ToolActiveHDL(MakefileSim):
@@ -64,9 +65,9 @@ class ToolActiveHDL(MakefileSim):
             "\t\techo # Compiling HDL source files >> run.command")
         for vl_file in fileset.filter(VerilogFile).sort():
             self.writeln("\t\techo alog \"{}\" >> run.command".format(
-                vl_file.rel_path()))
+                shell.command_path(vl_file.rel_path())))
         for vhdl_file in fileset.filter(VHDLFile):
             self.writeln("\t\techo acom \"{}\" >> run.command".format(
-                vhdl_file.rel_path()))
+                shell.command_path(vhdl_file.rel_path())))
         self.writeln()
         self.writeln("\t\tvsimsa -do run.command")

@@ -176,7 +176,7 @@ endif""")
                 for command in self._tcl_controls[stage].split('\n'):
                     tcl_command.append(echo_command.format(command))
                 command_string = "\n".join(tcl_command)
-                deps = " " + " ".join(self._all_sources) if stage == "synthesize" else ""
+                deps = " " + " ".join(shell.makefile_path(f) for f in self._all_sources) if stage == "synthesize" else ""
                 self.writeln(self.MAKEFILE_SYN_BUILD_CMD.format(
                     stage, stage_previous, stage.upper(),
                     command_string, shell.touch_command(),

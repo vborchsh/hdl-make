@@ -97,7 +97,8 @@ class MakefileSim(ToolMakefile):
     def _makefile_sim_file_rule(self, file_aux):
         """Generate target and prerequisites for :param file_aux:"""
         cwd = os.getcwd()
-        self.write("{}: {}".format(self.get_stamp_file(file_aux), file_aux.rel_path()))
+        self.write("{}: {}".format(self.get_stamp_file(file_aux),
+            shell.makefile_path(file_aux.rel_path())))
         # list dependencies, do not include the target file
         for dep_file in sorted(file_aux.depends_on, key=(lambda x: x.path)):
             if dep_file is file_aux:

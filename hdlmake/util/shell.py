@@ -67,15 +67,19 @@ def run(command):
 
 def tclpath(path):
     """TCL always wants '/', convert '\' to '/' on windows"""
-    if check_windows_tools():
+    if is_windows_python():
         return path.replace('\\', "/")
     else:
         return path
 
 
+def command_path(path):
+    return path
+
+
 def makefile_path(path):
     """Convert :param path: to the shell path (for the makefile)"""
-    if platform.system() == 'Windows' and not check_windows_commands():
+    if is_windows_python() and not check_windows_commands():
         # The python is windows, but the make is cygwin.  So windows paths
         # must be converted to cygwin paths
         return path.replace('\\', '/')
@@ -83,9 +87,13 @@ def makefile_path(path):
     return path
 
 
+def is_windows_python():
+    """Check if we are using windows version of tools"""
+    return platform.system() == 'Windows' or sys.platform == 'cygwin'
+
 def check_windows_tools():
     """Check if we are using windows version of synthesis/simulation tools"""
-    return platform.system() == 'Windows' or sys.platform == 'cygwin'
+    return is_windows_python()
 
 
 def check_windows_commands():
