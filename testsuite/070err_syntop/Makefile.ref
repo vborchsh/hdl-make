@@ -157,8 +157,8 @@ CLEAN_TARGETS := $(LIBS) xst xlnx_auto_0_xdb iseconfig _xmsgs _ngo *.b *_summary
 
 clean:
 		rm -rf $(CLEAN_TARGETS)
-		rm -rf project synthesize translate map par bitstream
-		rm -rf project.tcl synthesize.tcl translate.tcl map.tcl par.tcl bitstream.tcl files.tcl
+		rm -rf project synthesize translate map par bitstream prom
+		rm -rf project.tcl synthesize.tcl translate.tcl map.tcl par.tcl bitstream.tcl prom.tcl files.tcl
 
 mrproper: clean
 		rm -rf *.bit *.bin *.mcs
