@@ -151,6 +151,13 @@ class MIFFile(File):
 
 class RAMFile(File):
     """Xilinx RAM  File"""
+
+    pass
+
+
+class HEXFile(SourceFile):
+    """Memory initialization binary file in .hex format"""
+
     pass
 
 
@@ -284,6 +291,11 @@ class QSYSFile(File):
     pass
 
 
+class IPFile(File):
+    """Qsys/Platform Designer IP - Intel Platform Designer Tool IP configuration file"""
+    pass
+
+
 class DPFFile(File):
     """This is the class providing Altera Quartus Design Protocol File"""
     pass
@@ -323,6 +335,7 @@ ALTERA_FILE_DICT = {
     'stp': SignalTapFile,
     'qip': QIPFile,
     'qsys': QSYSFile,
+    'ip': IPFile,
     'dpf': DPFFile,
     'qsf': QSFFile,
     'bsf': BSFFile,
