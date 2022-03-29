@@ -170,9 +170,8 @@ class ToolMakefile(object):
         self.writeln(tmp)
 
     def makefile_open_write_close(self):
-        self._file = open(self._filename, "w")
-        self._file.write(self._filestring)
-        self._file.close()
+        with open(self._filename, "w") as mf:
+            mf.write(self._filestring)
         self._file = None
 
     def write(self, line=None):
