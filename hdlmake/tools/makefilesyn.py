@@ -207,6 +207,7 @@ SYN_POST_{0}_CMD := {2}
             if stage in self._tcl_controls:
                 _stage_clean_targets += f" {stage}"
                 _stage_tcl_clean_targets += f" {stage}.tcl"
+        _stage_tcl_clean_targets+=" files.tcl"
         self.writeln("\t\t" + shell.del_command() + _stage_clean_targets)
         self.writeln("\t\t" + shell.del_command() + _stage_tcl_clean_targets)
         self.writeln()
