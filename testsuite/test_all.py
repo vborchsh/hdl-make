@@ -166,22 +166,18 @@ def test_quartus035():
     with pytest.raises(SystemExit) as _:
         run([], path="035quartus_err")
     print(os.getcwd())
-    os.remove('035quartus_err/Makefile')
 
 def test_quartus036():
     with pytest.raises(SystemExit) as _:
         run([], path="036quartus_err")
-    os.remove('036quartus_err/Makefile')
 
 def test_quartus037():
     with pytest.raises(SystemExit) as _:
         run([], path="037quartus_err")
-    os.remove('037quartus_err/Makefile')
 
 def test_quartus038():
     with pytest.raises(SystemExit) as _:
         run([], path="038quartus_err")
-    os.remove('038quartus_err/Makefile')
 
 def test_quartus039():
     with pytest.raises(SystemExit) as _:
