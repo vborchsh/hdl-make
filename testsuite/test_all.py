@@ -125,7 +125,7 @@ def test_ghdl():
     run_compare(path="008ghdl")
 
 def test_icestorm():
-    run_compare_filter(filter="TOOL_PATH", path="009icestorm")
+    run_compare(path="009icestorm")
 
 def test_isim010():
     run_compare_xilinx(path="010isim")
