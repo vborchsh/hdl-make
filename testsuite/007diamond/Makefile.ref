@@ -96,8 +96,8 @@ CLEAN_TARGETS := $(LIBS) *.sty *.ldf $(PROJECT)
 
 clean:
 		rm -rf $(CLEAN_TARGETS)
-		rm -rf project synthesize translate map par bitstream prom
-		rm -rf project.tcl synthesize.tcl translate.tcl map.tcl par.tcl bitstream.tcl prom.tcl files.tcl
+		rm -rf project par bitstream prom
+		rm -rf project.tcl par.tcl bitstream.tcl prom.tcl files.tcl
 
 mrproper: clean
 		rm -rf *.jed
