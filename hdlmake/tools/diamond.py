@@ -26,7 +26,7 @@
 
 from __future__ import absolute_import
 from .makefilesyn import MakefileSyn
-from ..sourcefiles.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile
+from ..sourcefiles.srcfile import EDFFile, LPFFile, VHDLFile, VerilogFile, IPXFile, LPCFile, RVLFile, RVAFile
 
 
 class ToolDiamond(MakefileSyn):
@@ -40,20 +40,26 @@ class ToolDiamond(MakefileSyn):
         'linux_bin': 'diamondc',
         'project_ext': 'ldf'}
 
-    STANDARD_LIBS = ['ieee', 'std']
+    STANDARD_LIBS = ['ieee', 'std', 'machxo2', 'machxo3']
 
     _LATTICE_SOURCE = 'prj_src {0} {{srcfile}}'
+    _LATTICE_SETTINGS_DUMMY = '#prj_src {0} {{srcfile}}'
+    _LATTICE_PURGE_SOURCE = 'prj_src remove -all'
 
     SUPPORTED_FILES = {
         EDFFile: _LATTICE_SOURCE.format('add'),
-        LPFFile: _LATTICE_SOURCE.format('add -exclude') + '; ' +
-                 _LATTICE_SOURCE.format('enable')}
+        LPFFile: _LATTICE_SETTINGS_DUMMY.format('add -exclude') + '; ' +
+                 _LATTICE_SOURCE.format('enable'),
+        IPXFile: _LATTICE_SOURCE.format('add'),
+        LPCFile: _LATTICE_SOURCE.format('add'),
+        RVLFile: _LATTICE_SOURCE.format('add'),
+        RVAFile: _LATTICE_SOURCE.format('add')}
 
     HDL_FILES = {
         VHDLFile: _LATTICE_SOURCE.format('add'),
         VerilogFile: _LATTICE_SOURCE.format('add')}
 
-    CLEAN_TARGETS = {'clean': ["*.sty", "$(PROJECT)"],
+    CLEAN_TARGETS = {'clean': ["*.sty", "*.ldf", "$(PROJECT)"],
                      'mrproper': ["*.jed"]}
 
     TCL_CONTROLS = {'create': 'prj_project new -name $(PROJECT)'
@@ -75,7 +81,13 @@ class ToolDiamond(MakefileSyn):
                                  ' -impl $(PROJECT) -task Bitgen\n'
                                  '$(TCL_SAVE)\n'
                                  '$(TCL_CLOSE)',
-                    'install_source': '$(PROJECT)/$(PROJECT)_$(PROJECT).jed'}
+                    'prom': '$(TCL_OPEN)\n'
+                            'prj_run Export'
+                            ' -impl $(PROJECT) -task Jedecgen\n'
+                            '$(TCL_SAVE)\n'
+                            '$(TCL_CLOSE)',
+                    'install_source': '$(PROJECT)/$(PROJECT)_$(PROJECT).jed',
+                    'files': _LATTICE_PURGE_SOURCE}
 
     def __init__(self):
         super(ToolDiamond, self).__init__()

@@ -168,7 +168,7 @@ endif""")
         """Generate the synthesis Makefile targets for handling design build"""
         stage_previous = "files.tcl"
         stage_list = ["project", "synthesize", "translate",
-                      "map", "par", "bitstream"]
+                      "map", "par", "bitstream", "prom"]
         for stage in stage_list:
             if stage in self._tcl_controls:
                 echo_command = '\t\techo {0} >> $@'
@@ -186,7 +186,7 @@ endif""")
     def _makefile_syn_command(self):
         """Create the Makefile targets for user defined commands"""
         stage_list = ["project", "synthesize", "translate",
-                      "map", "par", "bitstream"]
+                      "map", "par", "bitstream", "prom"]
         for stage in stage_list:
             if stage in self._tcl_controls:
                 self.writeln("""\
@@ -199,11 +199,17 @@ SYN_POST_{0}_CMD := {2}
     def _makefile_syn_clean(self):
         """Print the Makefile clean target for synthesis"""
         self.makefile_clean()
-        self.writeln("\t\t" + shell.del_command() +
-                     " project synthesize translate map par bitstream")
-        self.writeln("\t\t" + shell.del_command() +
-                     " project.tcl synthesize.tcl translate.tcl" +
-                     " map.tcl par.tcl bitstream.tcl files.tcl")
+        _stage_clean_targets=""
+        _stage_tcl_clean_targets=""
+        stage_list = ["project", "synthesize", "translate",
+                      "map", "par", "bitstream", "prom"]
+        for stage in stage_list:
+            if stage in self._tcl_controls:
+                _stage_clean_targets += f" {stage}"
+                _stage_tcl_clean_targets += f" {stage}.tcl"
+        _stage_tcl_clean_targets+=" files.tcl"
+        self.writeln("\t\t" + shell.del_command() + _stage_clean_targets)
+        self.writeln("\t\t" + shell.del_command() + _stage_tcl_clean_targets)
         self.writeln()
         self.makefile_mrproper()
 

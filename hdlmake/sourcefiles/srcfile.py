@@ -242,6 +242,25 @@ class EDFFile(File):
     """EDIF Netlist Files"""
     pass
 
+class IPXFile(File):
+    """This is the class providing the Lattice Diamond IP Express Manifest file"""
+    pass
+
+class LPCFile(File):
+    """This is the class providing the Lattice Diamond IP Express module parameter Customization file"""
+    pass
+
+class RVLFile(File):
+    """This is the class providing the Lattice Diamond Reveal Inserter Project/Debug file"""
+    pass
+
+class RVAFile(File):
+    """This is the class providing the Lattice Diamond Reveal Analyzer RVA file"""
+    pass
+
+#class SVFFile(File):
+#    """This is the class providing the Lattice Diamond Reveal Analyzer SVF file"""
+#    pass
 
 LATTICE_FILE_DICT = {
     'ldf': LDFFile,
@@ -250,7 +269,11 @@ LATTICE_FILE_DICT = {
     'edif': EDFFile,
     'edi': EDFFile,
     'edn': EDFFile,
-    'pcf': PCFFile}
+    'pcf': PCFFile,
+    'ipx': IPXFile,
+    'lpc': LPCFile,
+    'rvl': RVLFile,
+    'rva': RVAFile}
 
 
 # MICROSEMI/ACTEL FILES
