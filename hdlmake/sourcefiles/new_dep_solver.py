@@ -228,6 +228,6 @@ def make_dependency_set(graph, fileset, top_library, top_entity, extra_modules=N
     hierarchy_drivers = [top_entity]
     if extra_modules is not None:
         hierarchy_drivers += extra_modules
-    logging.info("Found %d files as dependancies of %s.",
+    logging.info("Found %d files as dependencies of %s.",
                  len(dep_file_set), ", ".join(hierarchy_drivers))
     return dep_file_set
