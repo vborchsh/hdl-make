@@ -35,6 +35,41 @@ from .action.commands import Commands
 from ._version import __version__
 
 
+def get_design_files():
+    """ returns python list of all design files.  """
+    # Options
+    parser = _get_parser()
+    options = parser.parse_args(["list-files", ])
+
+    try:
+        set_logging_level(options)
+
+        # Handle the --cygwin/--windows options
+        # Must be done early because functions in shell are called early.
+        # Need to use __dict__ as the 'makefile' subparser may not
+        # have been selected.
+        make_value = options.__dict__.get('make')
+        if make_value:
+            shell.set_commands_os(make_value)
+
+        # Create a ModulePool object, this will become our workspace
+        action = Commands(options)
+
+        # Load all manifests, starting from the top-one (the one in the
+        # current directory)
+        action.load_all_manifests()
+
+        # Extract tool and top entity.
+        action.setup()
+
+        # Execute the appropriated action for the freshly created
+        # modules pool
+        return action.get_files()
+
+    except Exception:
+        return None
+
+
 def hdlmake(args):
     """This is the main function, where HDLMake starts.
     Here, we make the next processes:

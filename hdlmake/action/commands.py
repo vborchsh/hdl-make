@@ -176,8 +176,10 @@ class Commands(Action):
         print(' ]')
         print('}')
 
-    def list_files(self):
-        """List the files added to the design across the pool hierarchy"""
+    def get_files(self, reverse = False):
+        """ Returns pythonic list of all the files parsed through the
+        manifest. If reverse is set True, the list of files is
+        reversed pointing to top-level as first file """
         unfetched_modules = [mod_aux for mod_aux in self.all_manifests
                              if not mod_aux.isfetched]
         for mod_aux in unfetched_modules:
@@ -190,8 +192,14 @@ class Commands(Action):
         file_list = dep_solver.make_dependency_sorted_list(
             self.parseable_fileset)
         files_str = [file_aux.path for file_aux in file_list]
-        if self.options.reverse is True:
+        if reverse is True:
             files_str.reverse()
+        return files_str
+
+    def list_files(self):
+        """List the files added to the design across the pool
+        hierarchy"""
+        files_str = self.get_files(self.options.reverse)
         if self.options.delimiter is None:
             delimiter = "\n"
         else:
