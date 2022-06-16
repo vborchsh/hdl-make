@@ -39,7 +39,8 @@ def get_design_files():
     """ returns python list of all design files.  """
     # Options
     parser = _get_parser()
-    options = parser.parse_args(["list-files", ])
+    # config to return _all files_ from manifest
+    options = parser.parse_args(["-a", "list-files", ])
 
     try:
         set_logging_level(options)
