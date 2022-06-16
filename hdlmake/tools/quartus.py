@@ -75,8 +75,10 @@ class ToolQuartus(MakefileSyn):
 
     CLEAN_TARGETS = {'clean': ["*.rpt", "*.smsg", "*.summary",
                                "*.done", "*.jdi", "*.pin", "*.qws",
-                               "db", "incremental_db", "$(PROJECT).qsf",
-                               "*.qpf"],
+                               "db", "incremental_db",
+                               "a5_pin_model_dump.txt",
+                               "$(PROJECT).qsf",
+                               "*.sld", "*.qpf"],
                      'mrproper': ["*.sof", "*.pof", "*.jam", "*.jbc",
                                   "*.ekp", "*.jic"]}
 
