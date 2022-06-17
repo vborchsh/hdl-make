@@ -36,13 +36,21 @@ from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
 
 def _check_simulation_manifest(top_manifest):
     """Check if the simulation keys are provided by the top manifest"""
-    if top_manifest.manifest_dict.get("vunit_language") is None:
-        raise Exception("vunit_language variable must be set in the \
- top manifest, Use verilog or vhdl..")
-
     if top_manifest.manifest_dict.get("vunit_script") is None:
         raise Exception("vunit_script variable must be set in the \
  top manifest, Use name of VUnit simulation script.")
+
+    if top_manifest.manifest_dict.get("tool") is None:
+        raise Exception("tool variable must be set in the \
+ top manifest to reflect which simulator VUnit uses.")
+
+    if top_manifest.manifest_dict.get("sim_target") is None:
+        raise Exception("sim_target variable must be set in the \
+ top manifest. Set to altera, xilinx")
+
+    if top_manifest.manifest_dict.get("sim_family") is None:
+        raise Exception("sim_family variable must be set in the \
+ top manifest. Set to Arria V, Cyclone V ...")
 
 
 class ToolVunitSim(MakefileSim):
@@ -61,6 +69,7 @@ class ToolVunitSim(MakefileSim):
                  VHDLFile: '',
                  SVFile: ''}
 
+
     def __init__(self):
         super(ToolVunitSim, self).__init__()
 
@@ -68,6 +77,22 @@ class ToolVunitSim(MakefileSim):
         # all the testbenches in the given verification
         # directories. Following will dismiss warnings
         self.requires_top_level = False
+        # following is dictionary of command functions which write
+        # portions of makefile responsible for generation of standard
+        # simulation libraries into ./sim_libs
+        self.STD_LIBS_COMPILER_COMMAND =\
+            {"altera": self.get_altera_compilation_script}
+
+    def get_altera_compilation_script(self, top_manifest):
+        """ produces makefile lines reponsible to generate sim_libs """
+        self.writeln("""compile_libs:
+\t@rm -rf ${STD_LIBS}
+\t@mkdir ${STD_LIBS}
+\t@quartus_sh --simlib_comp -tool %s -language %s -family %s -directory ${STD_LIBS}
+""" % (top_manifest.manifest_dict.get('tool'),
+       top_manifest.manifest_dict.get('sim_langugage'),
+       top_manifest.manifest_dict.get('sim_family')))
+        self.writeln()
 
     def write_makefile(self, top_manifest, fileset, filename=None):
         """ Writes makefile exploiting VUnit simulation target"""
@@ -75,7 +100,58 @@ class ToolVunitSim(MakefileSim):
         self.makefile_setup(top_manifest,
                             fileset,
                             filename=filename)
+        # we don't check VUnit here, we know it exists as it is
+        # installed with this package and already loaded -> no issue.
+        self._makefile_sim_vunit(top_manifest)
+        self._makefile_compile_libs_vunit(top_manifest)
+        self._mafile_sim_clean_vunit()
         self.makefile_open_write_close()
+
+    def _makefile_compile_libs_vunit(self, top_manifest):
+        """Inserts into makefile line to compile the altera/xilinx
+        libraries"""
+
+        try:
+            self.STD_LIBS_COMPILER_COMMAND[top_manifest.manifest_dict.
+                                           get('sim_target')](top_manifest)
+
+        except KeyError:
+            self.writeln("""$(STD_LIBS):
+\t@echo 'Libraries compilation as set per top-level Manifest.py not supported'
+\t@echo 'Consider writing another front-end into vunit.py of hdlmake'
+""")
+        self.writeln()
+
+    def _makefile_sim_vunit(self, top_manifest):
+        """Writes down the core part of the makefile"""
+        self.writeln("SIM_SCRIPT := {}".format(
+            join(".", top_manifest.manifest_dict["vunit_script"])))
+        self.writeln("STD_LIBS := ./sim_libs")
+        self.writeln("""
+
+all: | $(STD_LIBS)
+\t@${SIM_SCRIPT}
+
+compile: compile_libs
+\t@${SIM_SCRIPT} --clean --compile
+
+$(STD_LIBS): compile_libs
+
+""")
+        self.writeln()
+
+    def _mafile_sim_clean_vunit(self):
+        """ Cleaning """
+        self.writeln("""
+clean:
+\t@rm -rf ./vunit_out
+\t@rm -rf ./work
+\t@rm -rf ./modelsim.ini
+
+mrproper: clean
+\t@rm -rf ./sim_libs
+""");
+        self.writeln()
 
     def is_verilog_testbench(self, fl):
         """Returns True if given file has pattern of verilog or

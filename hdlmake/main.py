@@ -89,35 +89,35 @@ def hdlmake(args):
     parser = _get_parser()
     options = parser.parse_args(args)
 
-    #try:
-    set_logging_level(options)
+    try:
+        set_logging_level(options)
 
-    # Handle the --cygwin/--windows options
-    # Must be done early because functions in shell are called early.
-    # Need to use __dict__ as the 'makefile' subparser may not have been selected.
-    make_value = options.__dict__.get('make')
-    if make_value:
-        shell.set_commands_os(make_value)
+        # Handle the --cygwin/--windows options
+        # Must be done early because functions in shell are called early.
+        # Need to use __dict__ as the 'makefile' subparser may not have been selected.
+        make_value = options.__dict__.get('make')
+        if make_value:
+            shell.set_commands_os(make_value)
 
-    # Create a ModulePool object, this will become our workspace
-    action = Commands(options)
+            # Create a ModulePool object, this will become our workspace
+            action = Commands(options)
 
-    # Load all manifests, starting from the top-one (the one in the
-    # current directory)
-    action.load_all_manifests()
+            # Load all manifests, starting from the top-one (the one in the
+            # current directory)
+            action.load_all_manifests()
 
-    # Extract tool and top entity.
-    action.setup()
+            # Extract tool and top entity.
+            action.setup()
 
-    # Execute the appropriated action for the freshly created modules pool
-    _action_runner(action)
-    # except Exception as e:
-    #     import traceback
-    #     logging.critical(e)
-    #     if options.full_error:
-    #         logging.error("Trace:")
-    #         traceback.print_exc()
-    #     quit(2)
+            # Execute the appropriated action for the freshly created modules pool
+            _action_runner(action)
+    except Exception as e:
+        import traceback
+        logging.critical(e)
+        if options.full_error:
+            logging.error("Trace:")
+            traceback.print_exc()
+        quit(2)
 
 
 def _action_runner(action):
