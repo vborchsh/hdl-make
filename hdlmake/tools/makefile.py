@@ -56,6 +56,13 @@ class ToolMakefile(object):
         if self._file:
             self._file.close()
 
+    def pre_build_file_set_hook(self, file_set):
+        """Called before the file set for any action is
+        assembled. This hook gives a possibility to modify the file
+        sources read from manifests before they are further processed
+        in desired actions."""
+        return file_set
+
     def get_standard_libs(self):
         """Get the standard vhdl libraries supported by the tool.  Any package
         from these libraries are considered as satisfied"""

@@ -123,7 +123,19 @@ class Action(object):
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
         for manifest in self.all_manifests:
-            all_manifested_files.add(manifest.files)
+            if self.tool:
+                # we provide to tool a possibility to manipulate the
+                # files options before we add them to the processing
+                # list. This is important as some tools - like VUnit -
+                # require adding a system path into the include_dirs
+                # of the source files. At this point the tool can add
+                # system-wide libraries into the path as well
+                updated_files =\
+                    self.tool.pre_build_file_set_hook(manifest.files)
+                all_manifested_files.add(updated_files)
+            else:
+                # adding original files as from manifest
+                all_manifested_files.add(manifest.files)
         logging.debug("End build complete file set")
         return all_manifested_files
 
