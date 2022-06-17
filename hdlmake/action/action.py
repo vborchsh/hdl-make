@@ -183,8 +183,12 @@ class Action(object):
                 system_libs.add(l)
         graph = dep_solver.AllRelations()
         dep_solver.parse_source_files(graph, self.parseable_fileset)
-        if self.options.all_files:
-            # If option -all is used, no need to compute dependencies.
+        if (self.options.all_files or
+            (self.tool is not None and
+             not self.tool.requires_top_level)):
+            # If option -all is used, no need to compute dependencies,
+            # we don't compute dependencies as well for targets not
+            # requiring it.
             pass
         elif self.top_entity is None:
             logging.critical(

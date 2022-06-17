@@ -29,7 +29,7 @@ class MakefileVunit(ToolMakefile):
     def write_makefile(self, top_manifest, fileset, filename=None):
         """Execute the simulation action"""
         _check_simulation_manifest(top_manifest)
-        # self.makefile_setup(top_manifest, fileset, filename=filename)
+        self.makefile_setup(top_manifest, fileset, filename=filename)
         # self.makefile_check_tool('sim_path')
         # self.makefile_includes()
         # self._makefile_sim_top()
@@ -40,7 +40,7 @@ class MakefileVunit(ToolMakefile):
         # self._makefile_sim_command()
         # self._makefile_sim_clean()
         # self._makefile_sim_phony()
-        # self.makefile_open_write_close()
+        self.makefile_open_write_close()
 
     def _makefile_sim_top(self):
         """Generic method to write the simulation Makefile top section"""

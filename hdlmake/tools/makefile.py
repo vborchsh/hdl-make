@@ -51,6 +51,7 @@ class ToolMakefile(object):
         self.manifest_dict = {}
         self._filename = "Makefile"
         self._all_sources = []
+        self.requires_top_level = True
 
     def __del__(self):
         if self._file:

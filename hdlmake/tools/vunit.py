@@ -64,6 +64,11 @@ class ToolVunitSim(MakefileSim):
     def __init__(self):
         super(ToolVunitSim, self).__init__()
 
+        # VUnit does not require top-level testbench because it parses
+        # all the testbenches in the given verification
+        # directories. Following will dismiss warnings
+        self.requires_top_level = False
+
     def write_makefile(self, top_manifest, fileset, filename=None):
         """ Writes makefile exploiting VUnit simulation target"""
         _check_simulation_manifest(top_manifest)
