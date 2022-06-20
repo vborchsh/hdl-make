@@ -99,18 +99,18 @@ def hdlmake(args):
         if make_value:
             shell.set_commands_os(make_value)
 
-            # Create a ModulePool object, this will become our workspace
-            action = Commands(options)
+        # Create a ModulePool object, this will become our workspace
+        action = Commands(options)
 
-            # Load all manifests, starting from the top-one (the one in the
-            # current directory)
-            action.load_all_manifests()
+        # Load all manifests, starting from the top-one (the one in the
+        # current directory)
+        action.load_all_manifests()
 
-            # Extract tool and top entity.
-            action.setup()
+        # Extract tool and top entity.
+        action.setup()
 
-            # Execute the appropriated action for the freshly created modules pool
-            _action_runner(action)
+        # Execute the appropriated action for the freshly created modules pool
+        _action_runner(action)
     except Exception as e:
         import traceback
         logging.critical(e)
