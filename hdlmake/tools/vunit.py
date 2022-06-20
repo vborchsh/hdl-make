@@ -84,13 +84,20 @@ class ToolVunitSim(MakefileSim):
             {"altera": self.get_altera_compilation_script}
 
     def get_altera_compilation_script(self, top_manifest):
-        """ produces makefile lines reponsible to generate sim_libs """
+        """ produces makefile lines reponsible to generate
+        sim_libs. sim_libs are generated for both VHDL and
+        Verilog. Reason being that whem mixed designs are involved
+        they both have to be compiled in altera because basic
+        libraries have different way of configuration when VHDL and
+        verilog is used """
         self.writeln("""$(STD_LIBS):
 \t@rm -rf ${STD_LIBS}
 \t@mkdir ${STD_LIBS}
-\t@quartus_sh --simlib_comp -tool %s -language %s -family %s -directory ${STD_LIBS}
+\t@quartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${STD_LIBS}
+\t@quartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${STD_LIBS}
 """ % (top_manifest.manifest_dict.get('tool'),
-       top_manifest.manifest_dict.get('sim_langugage'),
+       top_manifest.manifest_dict.get('sim_family'),
+       top_manifest.manifest_dict.get('tool'),
        top_manifest.manifest_dict.get('sim_family')))
         self.writeln()
 
