@@ -85,7 +85,7 @@ class ToolVunitSim(MakefileSim):
 
     def get_altera_compilation_script(self, top_manifest):
         """ produces makefile lines reponsible to generate sim_libs """
-        self.writeln("""compile_libs:
+        self.writeln("""$(STD_LIBS):
 \t@rm -rf ${STD_LIBS}
 \t@mkdir ${STD_LIBS}
 \t@quartus_sh --simlib_comp -tool %s -language %s -family %s -directory ${STD_LIBS}
@@ -104,7 +104,7 @@ class ToolVunitSim(MakefileSim):
         # installed with this package and already loaded -> no issue.
         self._makefile_sim_vunit(top_manifest)
         self._makefile_compile_libs_vunit(top_manifest)
-        self._mafile_sim_clean_vunit()
+        self._makefile_sim_clean_vunit()
         self.makefile_open_write_close()
 
     def _makefile_compile_libs_vunit(self, top_manifest):
@@ -132,15 +132,13 @@ class ToolVunitSim(MakefileSim):
 all: | $(STD_LIBS)
 \t@${SIM_SCRIPT}
 
-compile: compile_libs
+compile: mrproper $(STD_LIBS)
 \t@${SIM_SCRIPT} --clean --compile
-
-$(STD_LIBS): compile_libs
 
 """)
         self.writeln()
 
-    def _mafile_sim_clean_vunit(self):
+    def _makefile_sim_clean_vunit(self):
         """ Cleaning """
         self.writeln("""
 clean:
