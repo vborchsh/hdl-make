@@ -69,7 +69,11 @@ def build_altera():
               'arria2_pcie_reconf', 'arria5_pcie_reconf',
               'arria2_pcie_hip', 'arria5_pcie_hip',
               'arria5_phy8', 'arria5_phy16', 'arria5_phy_reconf',
-              'scfifo', 'dcfifo',
+              'scfifo', 'dcfifo', 'altera_pll', 'arriav_clkselect',
+              'arriav_clkena', 'lpm_counter', 'lpm_compare',
+              'arriav_io_obuf', 'arriav_termination_logic',
+              'arriav_termination', 'lpm_shiftreg', 'lpm_add_sub',
+              'arriav_rublock', 'altserial_flash_loader', 'lpm_divide',
               'sld_virtual_jtag']:
         add_entity(res, n)
     return res
@@ -88,7 +92,7 @@ def build_vhdl():
     # TODO: dependency for any package of a library.
     for p in ['textio', 'env']:
         add_package(res, "std", p)
-    for p in ['std_logic_1164', 'numeric_std', 
+    for p in ['std_logic_1164', 'numeric_std',
               'math_real',
               'std_logic_arith', 'std_logic_misc']:
         add_package(res, "ieee", p)
