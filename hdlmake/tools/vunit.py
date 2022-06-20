@@ -44,13 +44,13 @@ def _check_simulation_manifest(top_manifest):
         raise Exception("tool variable must be set in the \
  top manifest to reflect which simulator VUnit uses.")
 
-    if top_manifest.manifest_dict.get("sim_target") is None:
-        raise Exception("sim_target variable must be set in the \
+    if top_manifest.manifest_dict.get("target") is None:
+        raise Exception("target variable must be set in the \
  top manifest. Set to altera, xilinx")
 
-    if top_manifest.manifest_dict.get("sim_family") is None:
-        raise Exception("sim_family variable must be set in the \
- top manifest. Set to Arria V, Cyclone V ...")
+    if top_manifest.manifest_dict.get("syn_device") is None:
+        raise Exception("syn_device variable must be set in the \
+ top manifest. Set to arriav, cyclonev ...")
 
 
 class ToolVunitSim(MakefileSim):
@@ -96,9 +96,9 @@ class ToolVunitSim(MakefileSim):
 \t@quartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${STD_LIBS}
 \t@quartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${STD_LIBS}
 """ % (top_manifest.manifest_dict.get('tool'),
-       top_manifest.manifest_dict.get('sim_family'),
+       top_manifest.manifest_dict.get('syn_device'),
        top_manifest.manifest_dict.get('tool'),
-       top_manifest.manifest_dict.get('sim_family')))
+       top_manifest.manifest_dict.get('syn_device')))
         self.writeln()
 
     def write_makefile(self, top_manifest, fileset, filename=None):
@@ -120,7 +120,7 @@ class ToolVunitSim(MakefileSim):
 
         try:
             self.STD_LIBS_COMPILER_COMMAND[top_manifest.manifest_dict.
-                                           get('sim_target')](top_manifest)
+                                           get('target')](top_manifest)
 
         except KeyError:
             self.writeln("""$(STD_LIBS):
