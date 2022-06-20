@@ -51,7 +51,7 @@ class Commands(Action):
         if any([not m.isfetched for m in self.all_manifests]):
             raise Exception(
                 "Fetching should be done before continuing.\n"
-                "The following modules remains unfetched:\n"
+                "The following modules remain unfetched:\n"
                 " {}".format(
                     "\n ".join([str(m) for m in self.all_manifests
                                 if not m.isfetched])))
