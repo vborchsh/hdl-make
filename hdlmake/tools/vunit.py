@@ -151,14 +151,11 @@ mrproper: clean
 """);
         self.writeln()
 
-    def is_verilog_testbench(self, fl):
+    def is_verilog(self, fl):
         """Returns True if given file has pattern of verilog or
-        systemverilog testbench file. Testbench must start or end by
-        _tb and has to be SV/V file"""
+        systemverilog file."""
         if any((isinstance(fl, VerilogFile),
-                isinstance(fl, SVFile))) and\
-                (fl.purename.lower().startswith("tb_") or
-                 fl.purename.lower().endswith("_tb")):
+                isinstance(fl, SVFile))):
             return True
         return False
 
@@ -169,11 +166,12 @@ mrproper: clean
         include_path = join(dirname(vunit.__file__), "verilog")
         vunit_include = join(include_path, "include")
 
-        for fl in file_set:
-            if self.is_verilog_testbench(fl):
-                logging.debug("Modifying to include dirs of %s to include VUnit" % fl.purename)
-                fl.include_dirs.append(vunit_include)
-                logging.debug("INCLUDE_DIRS: %s" %
-                              repr(fl.include_dirs))
+        if file_set is not None:
+            for fl in file_set:
+                if self.is_verilog(fl):
+                    logging.debug("Modifying to include dirs of %s to include VUnit" % fl.purename)
+                    fl.include_dirs.append(vunit_include)
+                    logging.debug("INCLUDE_DIRS: %s" %
+                                  repr(fl.include_dirs))
 
         return file_set
