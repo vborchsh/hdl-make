@@ -18,6 +18,7 @@
 # along with Hdlmake.  If not, see <http://www.gnu.org/licenses/>.
 
 from .dep_file import DepRelation
+from .altera_libs import altera_system_libraries
 
 def add_entity(res, name):
     res.append(DepRelation(name, None, DepRelation.ENTITY))
@@ -61,20 +62,8 @@ def build_xilinx():
 
 def build_altera():
     res = []
-    for n in ['altsyncram',
-              'cyclone_asmiblock', 'cycloneii_asmiblock', 'cyclonev_asmiblock',
-              'stratixii_asmiblock', 'stratixiii_asmiblock', 'stratixiv_asmiblock',
-              'stratixv_asmiblock',
-              'arriav_asmiblock',
-              'arria2_pcie_reconf', 'arria5_pcie_reconf',
-              'arria2_pcie_hip', 'arria5_pcie_hip',
-              'arria5_phy8', 'arria5_phy16', 'arria5_phy_reconf',
-              'scfifo', 'dcfifo', 'altera_pll', 'arriav_clkselect',
-              'arriav_clkena', 'lpm_counter', 'lpm_compare',
-              'arriav_io_obuf', 'arriav_termination_logic',
-              'arriav_termination', 'lpm_shiftreg', 'lpm_add_sub',
-              'arriav_rublock', 'altserial_flash_loader', 'lpm_divide',
-              'sld_virtual_jtag']:
+
+    for n in altera_system_libraries:
         add_entity(res, n)
     return res
 
