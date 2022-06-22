@@ -6,7 +6,6 @@
 TOP_MODULE := gate2
 PROJECT := gate2
 PROJECT_FILE := $(PROJECT).
-TOOL_PATH := 
 TCL_INTERPRETER := yosys -c
 ifneq ($(strip $(TOOL_PATH)),)
 TCL_INTERPRETER := $(TOOL_PATH)/$(TCL_INTERPRETER)
