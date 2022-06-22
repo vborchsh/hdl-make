@@ -31,6 +31,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 import logging
+from glob import glob
 
 from ..util import path as path_mod
 from ..util import shell
@@ -152,31 +153,33 @@ class Module(object):
 
     def _check_filepath(self, filepath):
         """Check the provided filepath against several conditions"""
-        if filepath:
-            if path_mod.is_abs_path(filepath):
-                logging.warning(
-                    "Specified path seems to be an absolute path: " +
-                    filepath + "\nOmitting.")
-                return False
-            filepath = os.path.join(self.path, filepath)
-            if not os.path.exists(filepath):
-                raise Exception(
-                    "Path specified in manifest {} doesn't exist: {}".format(
-                    self.path, filepath))
-
-            filepath = path_mod.rel2abs(filepath, self.path)
-            if os.path.isdir(filepath):
+        if not filepath:
+            return []
+        if path_mod.is_abs_path(filepath):
+            logging.warning(
+                "Specified path seems to be an absolute path: " +
+                filepath + "\nOmitting.")
+            return []
+        filepath = path_mod.rel2abs(filepath, self.path)
+        files = glob(filepath)
+        if not files:
+            raise Exception(
+                "Path specified in manifest {} doesn't exist: {}".format(
+                self.path, filepath))
+        for f in files:
+            if os.path.isdir(f):
                 logging.warning(
                     "Path specified in manifest %s is a directory: %s",
                     self.path, filepath)
-        return True
+        return files
 
     def _make_list_of_paths(self, list_of_paths):
         """Get a list with only the valid absolute paths from the provided"""
         paths = []
         for filepath in list_of_paths:
-            if self._check_filepath(filepath):
-                paths.append(path_mod.rel2abs(filepath, self.path))
+            files = self._check_filepath(filepath)
+            for f in files:
+                paths.append(f)
         return paths
 
     def _create_file_list_from_paths(self, paths):
