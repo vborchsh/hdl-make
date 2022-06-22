@@ -155,6 +155,7 @@ class ToolQuartus(MakefileSyn):
             'from': None,
             'to': None,
             'section_id': None,
+            'edge': None,
             'tag': None}
         property_dict.update(new_property)
         words = []
@@ -178,6 +179,8 @@ class ToolQuartus(MakefileSyn):
         if property_dict['section_id'] is not None:
             words.append("-section_id")
             words.append(property_dict['section_id'])
+        if property_dict['edge'] is not None:
+            words.append("-" + property_dict['edge'])
         return ' '.join(words)
 
     def _makefile_syn_tcl(self):
