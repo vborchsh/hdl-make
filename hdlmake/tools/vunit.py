@@ -42,15 +42,17 @@ def _check_simulation_manifest(top_manifest):
 
     if top_manifest.manifest_dict.get("tool") is None:
         raise Exception("tool variable must be set in the \
- top manifest to reflect which simulator VUnit uses.")
+ top manifest to reflect which simulator VUnit uses. Supported values:\
+ modelsim, mentor_vhdl_only, questasim, vcs, vcsmx, ncsim,\
+ activehdl, rivierapro")
 
     if top_manifest.manifest_dict.get("target") is None:
         raise Exception("target variable must be set in the \
  top manifest. Set to altera, xilinx")
 
-    if top_manifest.manifest_dict.get("syn_device") is None:
-        raise Exception("syn_device variable must be set in the \
- top manifest. Set to arriav, cyclonev ...")
+    if top_manifest.manifest_dict.get("syn_family") is None:
+        raise Exception("syn_family variable must be set in the \
+ top manifest. Set to Arria V, Cyclone V ...")
 
 
 class ToolVunitSim(MakefileSim):
@@ -90,15 +92,21 @@ class ToolVunitSim(MakefileSim):
         they both have to be compiled in altera because basic
         libraries have different way of configuration when VHDL and
         verilog is used """
+
+        # according to quartus_sh the family name is all lowercase
+        # stripped of spaces
+        converted_name = top_manifest.manifest_dict.get('syn_family').\
+            lower().replace(' ', '').strip()
+
         self.writeln("""$(STD_LIBS):
 \t@rm -rf ${STD_LIBS}
 \t@mkdir ${STD_LIBS}
 \t@quartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${STD_LIBS}
 \t@quartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${STD_LIBS}
 """ % (top_manifest.manifest_dict.get('tool'),
-       top_manifest.manifest_dict.get('syn_device'),
+       converted_name,
        top_manifest.manifest_dict.get('tool'),
-       top_manifest.manifest_dict.get('syn_device')))
+       converted_name))
         self.writeln()
 
     def write_makefile(self, top_manifest, fileset, filename=None):

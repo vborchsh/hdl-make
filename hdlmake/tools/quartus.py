@@ -103,6 +103,11 @@ class ToolQuartus(MakefileSyn):
                  "set_location_assignment": SET_LOCATION_ASSIGNMENT,
                  "set_global_assignment": SET_GLOBAL_ASSIGNMENT}
 
+    # mapping of manifest properties to QSF commands
+    PROP_DECLARATION = {"syn_properties": SET_GLOBAL_ASSIGNMENT,
+                        "syn_instances": SET_GLOBAL_INSTANCE,
+                        "syn_location_assignments": SET_LOCATION_ASSIGNMENT,
+                        "syn_instance_assignments": SET_INSTANCE_ASSIGNMENT}
     def __init__(self):
         super(ToolQuartus, self).__init__()
         self._tcl_controls.update(ToolQuartus.TCL_CONTROLS)
@@ -146,8 +151,23 @@ class ToolQuartus(MakefileSyn):
         self.manifest_dict["syn_device"] = device_string
         super(ToolQuartus, self)._makefile_syn_top()
 
+    def _manipulate_path(self, path):
+        """Takes manifest string and manipulates it to be digested by
+        Makefile to generate proper string. Path starting with ~ will
+        automatically be enclosed into quotes, any | character will be
+        replaced by \| so that path is correctly interpreted by
+        makefile"""
+
+        repla = path.replace("|", "\|")
+        if repla.startswith("~"):
+            return '\\"%s\\"' % (repla[1:])
+
+        return repla
+
+
     def _emit_property(self, command, new_property):
-        """Emit a formated property for Altera Quartus TCL"""
+        """Emit a formated property for Altera Quartus TCL. All
+        properties starting with ~ will be enclosed into quotes"""
         property_dict = {
             'what': None,
             'name': None,
@@ -175,10 +195,10 @@ class ToolQuartus(MakefileSyn):
             words.append(property_dict['tag'])
         if property_dict['to'] is not None:
             words.append("-to")
-            words.append(property_dict['to'])
+            words.append(self._manipulate_path(property_dict['to']))
         if property_dict['section_id'] is not None:
             words.append("-section_id")
-            words.append(property_dict['section_id'])
+            words.append(self._manipulate_path(property_dict['section_id']))
         if property_dict['edge'] is not None:
             words.append("-" + property_dict['edge'])
         return ' '.join(words)
@@ -199,16 +219,20 @@ class ToolQuartus(MakefileSyn):
             self.SET_GLOBAL_ASSIGNMENT,
             {'name': 'TOP_LEVEL_ENTITY',
             'value': '$(TOP_MODULE)'}))
-        for user_property in self.manifest_dict.get("syn_properties", []):
-            if not isinstance(user_property, dict):
-                raise Exception("Quartus property should be defined as dict: "
-                                + str(user_property))
-            command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
-                                user_property))
+        # traverse through QSF assignments stored in top-level manifest
+        for propkey, command in self.PROP_DECLARATION.items():
+            for user_property in self.manifest_dict.get(propkey, []):
+                if not isinstance(user_property, dict):
+                    raise Exception("Quartus property should be defined as dict: "
+                                    + str(user_property))
+                command_list.append(self._emit_property(command, user_property))
+
         for inc in self.manifest_dict.get("include_dirs", []):
             command_list.append(self._emit_property(self.SET_GLOBAL_ASSIGNMENT,
                                 {'name': 'SEARCH_PATH',
                                 'value': inc}))
+
+        # process
         self._tcl_controls["project"] = '\n'.join(command_list)
         super(ToolQuartus, self)._makefile_syn_tcl()
 
