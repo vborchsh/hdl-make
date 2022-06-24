@@ -24,8 +24,9 @@ class MakefileSim(ToolMakefile):
 
     def __init__(self):
         super(MakefileSim, self).__init__()
-        
-    def write_makefile(self, top_manifest, fileset, filename=None):
+
+    def write_makefile(self, top_manifest, fileset, filename=None,
+                       system_libs=None):
         """Execute the simulation action"""
         _check_simulation_manifest(top_manifest)
         self.makefile_setup(top_manifest, fileset, filename=filename)

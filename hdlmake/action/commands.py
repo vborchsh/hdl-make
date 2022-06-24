@@ -65,9 +65,14 @@ class Commands(Action):
         self.solve_file_set()
         combined_fileset = self.parseable_fileset
         combined_fileset.add(self.privative_fileset)
+        if len(self.system_libs) != 0:
+            logging.info("Following system libraries were\
+ detected: %s" % (', '.join(self.system_libs)))
+
         self.tool.write_makefile(self.top_manifest,
                                  combined_fileset,
-                                 filename=filename)
+                                 filename=filename,
+                                 system_libs=self.system_libs)
 
     def write_edalize(self):
         filename = "run.py"

@@ -40,7 +40,8 @@ class GhdlSyn(ToolMakefile):
         self._tcl_controls = {}
         self.default_library = "work"
 
-    def write_makefile(self, top_manifest, fileset, filename=None):
+    def write_makefile(self, top_manifest, fileset, filename=None,
+                       system_libs = None):
         """Generate a Makefile for the specific synthesis tool"""
         _check_synthesis_manifest(top_manifest)
         self.makefile_setup(top_manifest, fileset, filename=filename)
