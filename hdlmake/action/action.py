@@ -122,7 +122,7 @@ class Action(object):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
-        for manifest in self.all_manifests:
+        for manifest in reversed(self.all_manifests):
             if self.tool:
                 # we provide to tool a possibility to manipulate the
                 # files options before we add them to the processing

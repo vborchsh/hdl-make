@@ -124,8 +124,8 @@ def test_diamond():
 def test_ghdl():
     run_compare(path="008ghdl")
 
-def test_icestorm():
-    run_compare(path="009icestorm")
+def test_icestorm_009():
+    run_compare_filter(filter="TOOL_PATH", path="009icestorm")
 
 def test_isim010():
     run_compare_xilinx(path="010isim")
@@ -558,6 +558,12 @@ def test_vhdl_parser_116():
 
 def test_linerosoc_project_opt_117():
     run_compare(path="117libero_project")
+
+def test_wildcards_118():
+    run_compare(path="118wildcards")
+
+def test_order_119():
+    run_compare(path="119order")
 
 @pytest.mark.xfail
 def test_xfail():
