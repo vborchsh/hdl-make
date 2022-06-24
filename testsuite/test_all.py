@@ -562,6 +562,9 @@ def test_linerosoc_project_opt_117():
 def test_wildcards_118():
     run_compare(path="118wildcards")
 
+def test_order_119():
+    run_compare(path="119order")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""
