@@ -122,7 +122,8 @@ class Action(object):
         """Build file set with all the files listed in the complete pool"""
         logging.debug("Begin build complete file set")
         all_manifested_files = SourceFileSet()
-        for manifest in self.all_manifests:
+        # Use reversed order so keep order: dependencies first, local manifest last.
+        for manifest in reversed(self.all_manifests):
             all_manifested_files.add(manifest.files)
         logging.debug("End build complete file set")
         return all_manifested_files
