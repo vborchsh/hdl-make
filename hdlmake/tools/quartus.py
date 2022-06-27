@@ -155,10 +155,10 @@ class ToolQuartus(MakefileSyn):
         """Takes manifest string and manipulates it to be digested by
         Makefile to generate proper string. Path starting with ~ will
         automatically be enclosed into quotes, any | character will be
-        replaced by \| so that path is correctly interpreted by
+        replaced by \\| so that path is correctly interpreted by
         makefile"""
 
-        repla = path.replace("|", "\|")
+        repla = path.replace("|", "\\|")
         if repla.startswith("~"):
             return '\\"%s\\"' % (repla[1:])
 
