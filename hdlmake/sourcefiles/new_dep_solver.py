@@ -91,7 +91,7 @@ def parse_source_files(graph, fileset):
     for investigated_file in fileset:
         assert isinstance(investigated_file, DepFile)
         logging.debug("PARSING SOURCE FILE: %s", investigated_file)
-        investigated_file.parser.parse(investigated_file, graph)
+        investigated_file.parse(graph)
         if logging.root.level >= logging.DEBUG:
             for r in investigated_file.provides:
                 logging.debug("PROVIDE %s", r)

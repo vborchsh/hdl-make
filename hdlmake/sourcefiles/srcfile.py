@@ -29,7 +29,7 @@ import os
 import logging
 
 from ..util import path as path_mod
-from .dep_file import DepFile, File, ParamFile
+from .dep_file import DepFile, File, ParamFile, ManualFile
 import six
 
 
@@ -38,9 +38,9 @@ class SourceFile(DepFile):
     """This is a class acting as a base for the different
     HDL sources files, i.e. those that can be parsed"""
 
-    def __init__(self, path, module, library):
+    def __init__(self, path, module):
         assert isinstance(path, six.string_types)
-        self.library = library
+        self.library = module.library
         DepFile.__init__(self, path=path, module=module)
 
     def __hash__(self):
@@ -49,6 +49,9 @@ class SourceFile(DepFile):
             s += self.library
         return hash(s)
 
+    def parse(self, graph):
+        assert False, "to be implemented"
+
 
 # SOURCE FILES
 
@@ -56,22 +59,28 @@ class VHDLFile(SourceFile):
 
     """This is the class providing the generic VHDL file"""
 
-    def __init__(self, path, module, library=None):
-        SourceFile.__init__(self, path=path, module=module, library=library)
+    def __init__(self, path, module):
+        SourceFile.__init__(self, path=path, module=module)
+        
+    def parse(self, graph):
         from .vhdl_parser import VHDLParser
         self.parser = VHDLParser()
+        self.parser.parse(self, graph)
 
 
 class VerilogFile(SourceFile):
 
     """This is the class providing the generic Verilog file"""
 
-    def __init__(self, path, module, library=None, include_dirs=None):
-        SourceFile.__init__(self, path=path, module=module, library=library)
-        from .vlog_parser import VerilogParser
+    def __init__(self, path, module, include_dirs=None):
+        SourceFile.__init__(self, path=path, module=module)
         self.include_dirs = include_dirs[:] if include_dirs else []
         self.include_dirs.append(path_mod.relpath(self.dirname))
+
+    def parse(self, graph):
+        from .vlog_parser import VerilogParser
         self.parser = VerilogParser()
+        self.parser.parse(self, graph)
 
 
 class SVFile(VerilogFile):
@@ -124,7 +133,7 @@ class XCOFile(File):
     pass
 
 
-class NGCFile(File):
+class NGCFile(ManualFile):
     """Xilinx Generated Netlist File"""
     pass
 
@@ -151,13 +160,11 @@ class MIFFile(File):
 
 class RAMFile(File):
     """Xilinx RAM  File"""
-
     pass
 
 
 class HEXFile(SourceFile):
     """Memory initialization binary file in .hex format"""
-
     pass
 
 
@@ -179,19 +186,19 @@ class VEOFile(File):
 class XCIFile(SourceFile):
     """Xilinx Core IP File"""
 
-    def __init__(self, path, module, library=None):
-        SourceFile.__init__(self, path=path, module=module, library=library)
+    def parse(self, graph):
         from .xci_parser import XCIParser
         self.parser = XCIParser()
+        self.parser.parse(self, graph)
 
 
 class BDFile(SourceFile):
     """Xilinx Block Design"""
 
-    def __init__(self, path, module, library=None):
-        SourceFile.__init__(self, path=path, module=module, library=library)
+    def parse(self, graph):
         from .bd_parser import BDParser
         self.parser = BDParser()
+        self.parser.parse(self, graph)
 
 
 XILINX_FILE_DICT = {
@@ -384,7 +391,7 @@ SV_EXTENSIONS = (
     'svh')
 
 
-def create_source_file(path, module, library=None, include_dirs=None):
+def create_source_file(path, module, include_dirs=None):
     """Function that analyzes the given arguments and returns a new HDL source
     file of the appropriated type"""
     assert path
@@ -395,19 +402,20 @@ def create_source_file(path, module, library=None, include_dirs=None):
     extension = extension[1:]
     logging.debug("add file " + path)
 
-    if extension in VHDL_EXTENSIONS:
+    if extension in ("ngc", ):
+        logging.warning("file %s in %s has no explicit provided units, rewrite as '(filename, unit)'",
+            path, module)
+        new_file = File(path=path, module=module)
+    elif extension in VHDL_EXTENSIONS:
         new_file = VHDLFile(path=path,
-                            module=module,
-                            library=library)
+                            module=module)
     elif extension in VERILOG_EXTENSIONS:
         new_file = VerilogFile(path=path,
                                module=module,
-                               library=library,
                                include_dirs=include_dirs)
     elif extension in SV_EXTENSIONS:
         new_file = SVFile(path=path,
                           module=module,
-                          library=library,
                           include_dirs=include_dirs)
     elif extension == 'wb':
         new_file = WBGenFile(path=path, module=module)
@@ -416,9 +424,9 @@ def create_source_file(path, module, library=None, include_dirs=None):
     elif extension == 'sdc':
         new_file = SDCFile(path=path, module=module)
     elif extension == 'xci':
-        new_file = XCIFile(path=path, module=module, library=library)
+        new_file = XCIFile(path=path, module=module)
     elif extension == 'cxf':
-        new_file = CXFFile(path=path, module=module, library=library)
+        new_file = CXFFile(path=path, module=module)
     elif extension in XILINX_FILE_DICT:
         new_file = XILINX_FILE_DICT[extension](path=path, module=module)
     elif extension in ALTERA_FILE_DICT:
@@ -430,3 +438,19 @@ def create_source_file(path, module, library=None, include_dirs=None):
     else:
         raise Exception("Unknown extension '{}' for file {}".format(extension, path))
     return new_file
+
+def create_source_file_with_deps(path, module, provide, depends):
+    """Function that analyzes the given arguments and returns a new HDL source
+    file of the appropriated type"""
+    assert path
+    assert os.path.isabs(path)
+    _, extension = os.path.splitext(path)
+    assert extension[0] == '.'
+    # Remove '.'
+    extension = extension[1:]
+    logging.debug("add file with deps) " + path)
+
+    if extension == 'ngc':
+        return NGCFile(path, module, provide, depends)
+    raise Exception("Unknown extension '{}' for file {} (with deps)".format(extension, path))
+

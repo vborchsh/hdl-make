@@ -31,7 +31,7 @@ import sys
 from ..tools.load_tool import load_syn_tool, load_sim_tool
 from ..util import shell
 from ..sourcefiles import new_dep_solver as dep_solver
-from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, ParamFile
+from ..sourcefiles.srcfile import ParamFile, SourceFile, ManualFile
 from ..sourcefiles.sourcefileset import SourceFileSet
 from ..module.module import Module, ModuleArgs
 from ..sourcefiles import systemlibs
@@ -133,19 +133,16 @@ class Action(object):
         all_files = self._build_complete_file_set()
         for file_aux in all_files:
             if self.tool:
-                if any(isinstance(file_aux, file_type)
-                       for file_type in self.tool.get_parseable_files()):
+                if isinstance(file_aux, tuple(self.tool.get_parseable_files())):
                     self.parseable_fileset.add(file_aux)
-                elif any(isinstance(file_aux, file_type)
-                       for file_type in self.tool.get_privative_files()):
+                elif isinstance(file_aux, tuple(self.tool.get_privative_files())):
                     self.privative_fileset.add(file_aux)
                 else:
                     logging.debug("File not supported by the tool: %s",
                                   file_aux.path)
             else:
                 # Not usual case: tool is not known
-                if any(isinstance(file_aux, file_type)
-                       for file_type in [VHDLFile, VerilogFile, SVFile]):
+                if isinstance(file_aux, (SourceFile, ManualFile)):
                     self.parseable_fileset.add(file_aux)
                 else:
                     self.privative_fileset.add(file_aux)

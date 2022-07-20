@@ -78,7 +78,8 @@ class ToolISE(MakefileSyn):
     HDL_FILES = {
         VHDLFile:    'HDL_FILES[VHDLFile] - NEEDS SETTING!!!',
         VerilogFile: _ISE_ADD_SRCFILE,
-        SVFile:      _ISE_ADD_SRCFILE}
+        SVFile:      _ISE_ADD_SRCFILE,
+        NGCFile:     None}
 
 
 

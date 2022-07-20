@@ -205,3 +205,22 @@ class DepFile(File):
                 return True
             stack.pop()
         return False
+
+
+class ManualFile(DepFile):
+    """Class that serves as base to binary HDL files with 
+    dependencies and provided units manually added by the user"""
+
+    def __init__(self, path, module, provide=None, depends=[]):
+        DepFile.__init__(self, path=path, module=module)
+        self.provide_units = provide
+        self.depends_units = depends
+
+    def parse(self, graph):
+        for unit in self.provide_units:
+            graph.add_provide(self, DepRelation(unit, self.library, DepRelation.ENTITY))
+        for unit in self.depends_units:
+            graph.add_require(self, DepRelation(unit, self.library, DepRelation.ENTITY))
+
+
+

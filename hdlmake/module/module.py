@@ -177,9 +177,17 @@ class Module(object):
         """Get a list with only the valid absolute paths from the provided"""
         paths = []
         for filepath in list_of_paths:
-            files = self._check_filepath(filepath)
-            for f in files:
-                paths.append(f)
+            if isinstance(filepath, tuple):
+                # A tuple of the form (filename, provide [, dependencies])
+                files = self._check_filepath(filepath[0])
+                assert len(files) == 1
+                files.append(path_mod.flatten_list(filepath[1]))
+                files.extend(list(filepath[2:]))
+                paths.append(tuple(files))
+            else:
+                files = self._check_filepath(filepath)
+                for f in files:
+                    paths.append(f)
         return paths
 
     def _create_file_list_from_paths(self, paths):
@@ -187,7 +195,7 @@ class Module(object):
         Build a Source File Set containing the files indicated by the
         provided list of paths
         """
-        from ..sourcefiles.srcfile import create_source_file
+        from ..sourcefiles.srcfile import create_source_file, create_source_file_with_deps
         from ..sourcefiles.sourcefileset import SourceFileSet
         srcs = SourceFileSet()
         # Check if this is the top module and grab the include_dirs
@@ -196,21 +204,28 @@ class Module(object):
         else:
             include_dirs = self.top_manifest.manifest_dict.get(
                 'include_dirs', [])
-        for path_aux in paths:
-            if os.path.isdir(path_aux):
+        for path in paths:
+            if isinstance(path, tuple):
+                assert 1 < len(path) < 4
+                pathname=path[0]
+                provide=path[1]
+                depends=path[2] if len(path) > 2 else []
+                srcs.add(create_source_file_with_deps(path=pathname,
+                                                      module=self,
+                                                      provide=provide,
+                                                      depends=depends))
+            elif os.path.isdir(path):
                 # If a path is a dir, add all the files of that dir.
-                dir_ = os.listdir(path_aux)
+                dir_ = os.listdir(path)
                 for f_dir in dir_:
-                    f_dir = os.path.join(self.path, path_aux, f_dir)
+                    f_dir = os.path.join(self.path, path, f_dir)
                     if not os.path.isdir(f_dir):
                         srcs.add(create_source_file(path=f_dir,
                                                     module=self,
-                                                    library=self.library,
                                                     include_dirs=include_dirs))
             else:
-                srcs.add(create_source_file(path=path_aux,
+                srcs.add(create_source_file(path=path,
                                             module=self,
-                                            library=self.library,
                                             include_dirs=include_dirs))
         return srcs
 
