@@ -1,0 +1,2 @@
+# This is a fake ngc file
+# Any, as it's a binary file, it is not parsed by hdlmake

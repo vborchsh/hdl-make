@@ -565,6 +565,12 @@ def test_wildcards_118():
 def test_order_119():
     run_compare(path="119order")
 
+def test_explicit_dep_120():
+    run_compare(path="120explicit_dep")
+
+def test_explicit_err_121():
+    run_compare(path="121explicit_err")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

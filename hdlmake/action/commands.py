@@ -161,7 +161,15 @@ class Commands(Action):
             self.parseable_fileset)
         cwd = os.getcwd()
         first=True
-        print ('{')
+        print('{')
+        opts = self.top_manifest.manifest_dict.get('ghdl_opt', None)
+        if opts:
+            print('  "options": {')
+            print('    "ghdl_analysis": [', end='')
+            opts = ('"{}"'.format(o) for o in opts.split(' '))
+            print(', '.join(opts), end='')
+            print(']')
+            print('  },')
         print ('  "files": [')
         for f in file_list:
             if not first:
@@ -176,9 +184,10 @@ class Commands(Action):
                 lang='verilog'
             else:
                 lang='unknown'
-            print ('  {{ "file": "{file}", "language": "{lang}"}}'.format(
+            print ('    {{ "file": "{file}", "language": "{lang}"}}'.format(
                 file=f.rel_path(cwd), lang=lang), end='')
-        print(' ]')
+        print()
+        print('  ]')
         print('}')
 
     def get_files(self, reverse = False):
