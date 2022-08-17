@@ -61,7 +61,7 @@ class VHDLFile(SourceFile):
 
     def __init__(self, path, module):
         SourceFile.__init__(self, path=path, module=module)
-        
+
     def parse(self, graph):
         from .vhdl_parser import VHDLParser
         self.parser = VHDLParser()
@@ -311,8 +311,11 @@ class WBGenFile(File):
 
 # INTEL/ALTERA FILES
 
-class QIPFile(File):
-    """This is the class providing the Altera Quartus IP file"""
+class QIPFile(ManualFile):
+    """This is the class providing the Altera Quartus IP file. It is
+    expected that the declaration of QIP file is of type tuple, where
+    user specifies in the manifest the provided top-level module of
+    qip file."""
     pass
 
 
@@ -402,7 +405,7 @@ def create_source_file(path, module, include_dirs=None):
     extension = extension[1:]
     logging.debug("add file " + path)
 
-    if extension in ("ngc", ):
+    if extension in ("ngc", "qip"):
         logging.warning("file %s in %s has no explicit provided units, rewrite as '(filename, unit)'",
             path, module)
         new_file = File(path=path, module=module)
@@ -450,7 +453,8 @@ def create_source_file_with_deps(path, module, provide, depends):
     extension = extension[1:]
     logging.debug("add file with deps) " + path)
 
-    if extension == 'ngc':
+    if extension in ['ngc', ]:
         return NGCFile(path, module, provide, depends)
+    elif extension in ['qip', ]:
+        return QIPFile(path, module, provide, depends)
     raise Exception("Unknown extension '{}' for file {} (with deps)".format(extension, path))
-
