@@ -59,7 +59,7 @@ class DepRelation(object):
 
     def satisfies(self, rel_b):
         """Check if the current dependency relation matches the provided one"""
-        return (rel_b.rel_type == self.rel_type 
+        return (rel_b.rel_type == self.rel_type
                 and rel_b.obj_name == self.obj_name
                 and (self.lib_name is None or rel_b.lib_name == self.lib_name))
 
@@ -208,7 +208,7 @@ class DepFile(File):
 
 
 class ManualFile(DepFile):
-    """Class that serves as base to binary HDL files with 
+    """Class that serves as base to binary HDL files with
     dependencies and provided units manually added by the user"""
 
     def __init__(self, path, module, provide=None, depends=[]):
@@ -221,6 +221,3 @@ class ManualFile(DepFile):
             graph.add_provide(self, DepRelation(unit, self.library, DepRelation.ENTITY))
         for unit in self.depends_units:
             graph.add_require(self, DepRelation(unit, self.library, DepRelation.ENTITY))
-
-
-
