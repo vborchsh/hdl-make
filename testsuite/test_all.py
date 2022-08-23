@@ -571,6 +571,9 @@ def test_explicit_dep_120():
 def test_explicit_err_121():
     run_compare(path="121explicit_err")
 
+def test_quartus_qip_122():
+    run_compare(path="122quartus_qip")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""
