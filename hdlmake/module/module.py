@@ -214,7 +214,6 @@ class Module(object):
                 pathname=path[0]
                 provide=path[1]
                 depends=path[2]
-                print(path)
                 srcs.add(create_source_file_with_deps(path=pathname,
                                                       module=self,
                                                       provide=provide,
@@ -246,7 +245,6 @@ class Module(object):
             return
         # Be sure it is a list.
         files = path_mod.flatten_list(files)
-        print(files)
         # Remove duplicates
         files_set = set()
         nfiles = []
