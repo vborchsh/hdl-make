@@ -63,6 +63,10 @@ def build_xilinx():
 def build_altera():
     res = []
 
+    add_package(res, 'altera_mf', 'altera_mf_components')
+    add_package(res, 'altera', 'altera_primitives_components')
+    add_package(res, 'lpm', 'lpm_components')
+
     for n in altera_system_libraries:
         add_entity(res, n)
     return res
