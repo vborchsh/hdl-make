@@ -179,11 +179,15 @@ class Module(object):
         for filepath in list_of_paths:
             if isinstance(filepath, tuple):
                 # A tuple of the form (filename, provide [, dependencies])
+                # Filename is a string, but provide and dependencies are string or list.
                 files = self._check_filepath(filepath[0])
                 assert len(files) == 1
-                files.append(path_mod.flatten_list(filepath[1]))
-                files.extend(list(filepath[2:]))
-                paths.append(tuple(files))
+                prov = path_mod.flatten_list(filepath[1])
+                if len(filepath) == 2:
+                    req = []
+                else:
+                    req = path_mod.flatten_list(filepath[2])
+                paths.append((files[0], prov, req))
             else:
                 files = self._check_filepath(filepath)
                 for f in files:
@@ -209,7 +213,8 @@ class Module(object):
                 assert 1 < len(path) < 4
                 pathname=path[0]
                 provide=path[1]
-                depends=path[2] if len(path) > 2 else []
+                depends=path[2]
+                print(path)
                 srcs.add(create_source_file_with_deps(path=pathname,
                                                       module=self,
                                                       provide=provide,
@@ -241,14 +246,16 @@ class Module(object):
             return
         # Be sure it is a list.
         files = path_mod.flatten_list(files)
+        print(files)
         # Remove duplicates
         files_set = set()
         nfiles = []
         for f in files:
-            if f in files_set:
-                logging.warning("file %s appear twice in Manifest %s", f, self.path)
+            fname = f[0] if isinstance(f, tuple) else f
+            if fname in files_set:
+                logging.warning("file %s appear twice in Manifest %s", fname, self.path)
             else:
-                files_set.add(f)
+                files_set.add(fname)
                 nfiles.append(f)
         # Convert to paths
         self.manifest_dict["files"] = nfiles

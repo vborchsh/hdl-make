@@ -216,8 +216,21 @@ class ManualFile(DepFile):
         self.provide_units = provide
         self.depends_units = depends
 
+    def extract(self, unit):
+        u = unit.split('.')
+        if len(u) == 1:
+            ent = u[0]
+            lib = self.library
+        else:
+            assert(len(u) == 2)
+            lib = u[0]
+            ent = u[1]
+        return (ent, lib)
+
     def parse(self, graph):
         for unit in self.provide_units:
-            graph.add_provide(self, DepRelation(unit, self.library, DepRelation.ENTITY))
+            (ent, lib) = self.extract(unit)
+            graph.add_provide(self, DepRelation(ent, lib, DepRelation.ENTITY))
         for unit in self.depends_units:
+            (ent, lib) = self.extract(unit)
             graph.add_require(self, DepRelation(unit, self.library, DepRelation.ENTITY))
