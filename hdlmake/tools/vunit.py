@@ -100,11 +100,12 @@ class ToolVunitSim(MakefileSim):
         converted_name = top_manifest.manifest_dict.get('syn_family').\
             lower().replace(' ', '').strip()
 
-        self.writeln("""$(ALTERA_STD_LIBS):
+        self.writeln("""$(ALTERA_LIBS_COMPILED):
 \t@rm -rf ${ALTERA_STD_LIBS}
 \t@mkdir ${ALTERA_STD_LIBS}
 \t@quartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${ALTERA_STD_LIBS}
 \t@quartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${ALTERA_STD_LIBS}
+\t@touch $(ALTERA_LIBS_COMPILED)
 """ % (top_manifest.manifest_dict.get('tool'),
        converted_name,
        top_manifest.manifest_dict.get('tool'),
@@ -176,10 +177,12 @@ class ToolVunitSim(MakefileSim):
         for slib in self.compile_targets:
             sname = slib.upper().strip()
             self.writeln("%s_STD_LIBS := ./%s_sim_libs" %
-                         (sname.upper(),
+                         (sname,
                           sname.lower()))
-            comp_target += " $(%s_STD_LIBS)" % sname.upper()
-            all_target += " $(%s_STD_LIBS)" % sname.upper()
+            self.writeln("%s_LIBS_COMPILED := $(%s_STD_LIBS)/.compiled" %
+                         (sname, sname))
+            comp_target += " $(%s_LIBS_COMPILED)" % sname
+            all_target += " $(%s_LIBS_COMPILED)" % sname
 
         # if no lib, clear targets:
         if comp_target == '':
@@ -187,7 +190,6 @@ class ToolVunitSim(MakefileSim):
 
         # makefile includes-or-not compilable targets
         self.writeln("""
-
 all: %s
 \t@${SIM_SCRIPT}
 
