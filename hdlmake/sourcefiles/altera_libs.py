@@ -60,6 +60,7 @@ altera_system_libraries =\
      "oper_latch", "lcell", "altpll", "altlvds_rx",
      "altsyncram",
      "altlvds_tx", "dcfifo", "altaccumulate", "altmult_accum",
+     "dcfifo_mixed_widths",
      "altmult_add", "altfp_mult", "altsqrt", "altclklock",
      "altddio_bidir", "altdpram", "alt3pram", "parallel_add",
      "scfifo", "altshift_taps", "a_graycounter", "altsquare",
