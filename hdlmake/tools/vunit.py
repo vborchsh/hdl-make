@@ -100,12 +100,14 @@ class ToolVunitSim(MakefileSim):
         converted_name = top_manifest.manifest_dict.get('syn_family').\
             lower().replace(' ', '').strip()
 
-        self.writeln("""$(ALTERA_LIBS_COMPILED):
-\t@rm -rf ${ALTERA_STD_LIBS}
-\t@mkdir ${ALTERA_STD_LIBS}
-\t@quartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${ALTERA_STD_LIBS}
-\t@quartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${ALTERA_STD_LIBS}
-\t@touch $(ALTERA_LIBS_COMPILED)
+        self.writeln("""$(ALTERA_LIBS_COMPILED): sim_pre_cmd
+\t@if [ ! -f $(ALTERA_LIBS_COMPILED) ]; then\\
+\t\trm -rf ${ALTERA_STD_LIBS};\\
+\t\tmkdir ${ALTERA_STD_LIBS};\\
+\t\tquartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${ALTERA_STD_LIBS};\\
+\t\tquartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${ALTERA_STD_LIBS};\\
+\t\ttouch $(ALTERA_LIBS_COMPILED);\\
+	fi
 """ % (top_manifest.manifest_dict.get('tool'),
        converted_name,
        top_manifest.manifest_dict.get('tool'),
@@ -149,6 +151,7 @@ class ToolVunitSim(MakefileSim):
         # installed with this package and already loaded -> no issue.
         self._makefile_sim_vunit(top_manifest)
         self._makefile_compile_libs_vunit(top_manifest)
+        self._makefile_sim_command()
         self._makefile_sim_clean_vunit()
         self.makefile_open_write_close()
 
@@ -190,7 +193,9 @@ class ToolVunitSim(MakefileSim):
 
         # makefile includes-or-not compilable targets
         self.writeln("""
-all: %s
+all: %s simulate sim_post_cmd
+
+simulate:
 \t@${SIM_SCRIPT}
 
 compile: mrproper %s
@@ -206,6 +211,7 @@ clean:
 \t@rm -rf ./vunit_out
 \t@rm -rf ./work
 \t@rm -rf ./modelsim.ini
+\t@rm -rf ./libraries
 
 mrproper: clean
 """)
