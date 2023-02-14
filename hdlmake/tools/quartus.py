@@ -172,6 +172,7 @@ class ToolQuartus(MakefileSyn):
         property_dict = {
             'what': None,
             'name': None,
+            'location': None,
             'type': None,
             'from': None,
             'to': None,
@@ -188,6 +189,8 @@ class ToolQuartus(MakefileSyn):
             words.append("-name")
             words.append(property_dict['name'])
             words.append('\\"%s\\"' % property_dict['value'])
+        if property_dict['location'] is not None:
+            words.append(property_dict['location'])
         if property_dict['from'] is not None:
             words.append("-from")
             words.append(property_dict['from'])
