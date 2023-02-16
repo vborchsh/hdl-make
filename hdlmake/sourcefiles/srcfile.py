@@ -319,7 +319,7 @@ class QIPFile(ManualFile):
     pass
 
 
-class QSYSFile(File):
+class QSYSFile(ManualFile):
     """Qsys - Altera's System Integration Tool"""
     pass
 
@@ -405,7 +405,7 @@ def create_source_file(path, module, include_dirs=None):
     extension = extension[1:]
     logging.debug("add file " + path)
 
-    if extension in ("ngc", "qip"):
+    if extension in ("ngc", "qip", "qsys"):
         logging.warning("file %s in %s has no explicit provided units, rewrite as '(filename, unit)'",
             path, module)
         new_file = File(path=path, module=module)
@@ -457,4 +457,6 @@ def create_source_file_with_deps(path, module, provide, depends):
         return NGCFile(path, module, provide, depends)
     elif extension in ['qip', ]:
         return QIPFile(path, module, provide, depends)
+    elif extension in ['qsys', ]:
+        return QSYSFile(path, module, provide, depends)
     raise Exception("Unknown extension '{}' for file {} (with deps)".format(extension, path))

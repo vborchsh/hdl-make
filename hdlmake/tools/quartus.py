@@ -72,6 +72,7 @@ class ToolQuartus(MakefileSyn):
         VHDLFile: _QUARTUS_SOURCE.format('VHDL_FILE') + _QUARTUS_LIBRARY,
         VerilogFile: _QUARTUS_SOURCE.format('VERILOG_FILE') + _QUARTUS_LIBRARY,
         SVFile: _QUARTUS_SOURCE.format('SYSTEMVERILOG_FILE') + _QUARTUS_LIBRARY,
+        QSYSFile: _QUARTUS_SOURCE.format('QSYS_FILE') + _QUARTUS_LIBRARY,
         QIPFile: _QUARTUS_SOURCE.format("QIP_FILE") + _QUARTUS_LIBRARY}
 
     CLEAN_TARGETS = {'clean': ["*.rpt", "*.smsg", "*.summary",
