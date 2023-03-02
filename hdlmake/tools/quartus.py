@@ -99,17 +99,20 @@ class ToolQuartus(MakefileSyn):
     SET_INSTANCE_ASSIGNMENT = 1
     SET_LOCATION_ASSIGNMENT = 2
     SET_GLOBAL_ASSIGNMENT = 3
+    SET_PARAMETER_ASSIGNMENT = 4
 
     PROP_TYPE = {"set_global_instance": SET_GLOBAL_INSTANCE,
                  "set_instance_assignment": SET_INSTANCE_ASSIGNMENT,
                  "set_location_assignment": SET_LOCATION_ASSIGNMENT,
-                 "set_global_assignment": SET_GLOBAL_ASSIGNMENT}
+                 "set_global_assignment": SET_GLOBAL_ASSIGNMENT,
+                 "set_parameter": SET_PARAMETER_ASSIGNMENT}
 
     # mapping of manifest properties to QSF commands
     PROP_DECLARATION = {"syn_properties": SET_GLOBAL_ASSIGNMENT,
                         "syn_instances": SET_GLOBAL_INSTANCE,
                         "syn_location_assignments": SET_LOCATION_ASSIGNMENT,
-                        "syn_instance_assignments": SET_INSTANCE_ASSIGNMENT}
+                        "syn_instance_assignments": SET_INSTANCE_ASSIGNMENT,
+                        "syn_parameters": SET_PARAMETER_ASSIGNMENT}
     def __init__(self):
         super(ToolQuartus, self).__init__()
         self._tcl_controls.update(ToolQuartus.TCL_CONTROLS)
