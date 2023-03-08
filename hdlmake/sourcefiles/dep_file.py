@@ -213,6 +213,7 @@ class ManualFile(DepFile):
 
     def __init__(self, path, module, provide=None, depends=[]):
         DepFile.__init__(self, path=path, module=module)
+        self.library = module.library
         self.provide_units = provide
         self.depends_units = depends
 
