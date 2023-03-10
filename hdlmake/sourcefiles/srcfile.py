@@ -179,6 +179,14 @@ class XCIFile(SourceFile):
         from .xci_parser import XCIParser
         self.parser = XCIParser(self)
 
+class XCIXFile(SourceFile):
+    """Xilinx Core Container IP File"""
+
+    def __init__(self, path, module, library=None):
+        SourceFile.__init__(self, path=path, module=module, library=library)
+        from .xci_parser import XCIXParser
+        self.parser = XCIXParser(self)
+
 XILINX_FILE_DICT = {
     'xise': XISEFile,
     'ise': XISEFile,
@@ -198,7 +206,8 @@ XILINX_FILE_DICT = {
     'vho': VHOFile,
     'veo': VEOFile,
     'bmm': BMMFile,
-    'xci': XCIFile}
+    'xci': XCIFile,
+    'xcix': XCIXFile}
 
 
 # SYNOPSYS FILES

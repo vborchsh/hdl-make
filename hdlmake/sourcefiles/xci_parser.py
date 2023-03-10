@@ -23,6 +23,9 @@
 from __future__ import absolute_import
 import re
 import logging
+import json
+import zipfile
+import io
 
 from xml.etree import ElementTree as ET
 
@@ -30,28 +33,112 @@ from .new_dep_solver import DepParser
 from .dep_file import DepRelation
 from ..sourcefiles.srcfile import create_source_file
 
-class XCIParser(DepParser):
-    """Class providing the Xilinx XCI parser"""
+
+class XCIParserBase(DepParser):
+    """Base class for the Xilinx XCI(X) parser"""
 
     def __init__(self, dep_file):
         DepParser.__init__(self, dep_file)
 
+    def _parse_xml_xci(self, f):
+        """Parse a Xilinx XCI IP description file in XML format"""
+
+        # extract namespaces with a regex -- not really ideal, but without pulling in
+        # an external xml lib I can't think of a better way.
+        xmlnsre = re.compile(r'''\bxmlns:(\w+)\s*=\s*"(\w+://[^"]*)"''', re.MULTILINE)
+        xml = f.read()
+        nsmap = dict(xmlnsre.findall(xml))
+        value = ET.fromstring(xml).find('spirit:componentInstances/spirit:componentInstance/spirit:instanceName', nsmap)
+        if not value is None:
+            return value.text
+
+    def _parse_json_xci(self, f):
+        """Parse a Xilinx XCI IP description file in JSON format"""
+
+        data = json.load(f)
+        ip_inst = data.get('ip_inst')
+        if ip_inst is not None:
+            return ip_inst.get('xci_name')
+
+    def _parse_xci(self, dep_file, f):
+        """Parse a Xilinx XCI IP description file to determine the provided module(s)
+
+        This file can either be in XML or JSON file format depending on the
+        Vivado version used to create it, see Xilinx UG994:
+
+        > Note: Starting in Vivado Design Suite version 2018.3, the block design
+        > file format has changed from XML to JSON. When you open a block design
+        > that uses the older XML schema in Vivado 2018.3 or later, click Save
+        > to convert the format from XML to JSON. The following INFO message
+        > notifies you of the schema change.
+        """
+
+        # Hacky file format detection, just check the first character of the
+        # file which should be "<" for XML and "{" for JSON
+        c = f.readline().strip()[0]
+        f.seek(0)
+
+        if c == "<":
+            logging.debug("Parsing xci as xml format")
+            module_name = self._parse_xml_xci(f)
+        elif c == "{":
+            logging.debug("Parsing xci as json format")
+            module_name = self._parse_json_xci(f)
+        else:
+            logging.debug("Unknown xci format, skipping")
+            module_name = None
+
+        if module_name is not None:
+            logging.debug("Found module %s.%s", dep_file.library, module_name)
+            dep_file.add_provide(
+                DepRelation(module_name, dep_file.library, DepRelation.MODULE))
+
+
+class XCIParser(XCIParserBase):
+    """Class providing the Xilinx XCI parser"""
+
+    def __init__(self, dep_file):
+        XCIParserBase.__init__(self, dep_file)
+
     def parse(self, dep_file):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
+
         assert not dep_file.is_parsed
         logging.debug("Parsing %s", dep_file.path)
 
         with open(dep_file.path) as f:
-            # extract namespaces with a regex -- not really ideal, but without pulling in
-            # an external xml lib I can't think of a better way.
-            xmlnsre = re.compile(r'''\bxmlns:(\w+)\s*=\s*"(\w+://[^"]*)"''', re.MULTILINE)
-            xml = f.read()
-            nsmap = dict(xmlnsre.findall(xml))
-            value = ET.fromstring(xml).find('spirit:componentInstances/spirit:componentInstance/spirit:instanceName', nsmap)
-            if not value is None:
-                module_name = value.text
-                logging.debug("found module %s.%s", dep_file.library, module_name)
-                dep_file.add_provide(
-                    DepRelation(module_name, dep_file.library, DepRelation.MODULE))
+            self._parse_xci(dep_file, f)
+
+        dep_file.is_parsed = True
+
+
+class XCIXParser(XCIParserBase):
+    """Class providing the Xilinx XCIX parser"""
+
+    def __init__(self, dep_file):
+        XCIParserBase.__init__(self, dep_file)
+
+    def _parse_cc(self, f):
+        """Parse the cc.xml file to find the XCI file path"""
+
+        xml = f.read()
+        value = ET.fromstring(xml).find("CoreFile")
+        if value is not None:
+            return value.text
+
+    def parse(self, dep_file):
+        """Parse a Xilinx XCIX IP description file to determine the provided module(s)"""
+
+        assert not dep_file.is_parsed
+        logging.debug("Parsing %s", dep_file.path)
+
+        with zipfile.ZipFile(dep_file.path) as zf:
+            with zf.open('cc.xml') as cc:
+                logging.debug("Parsing cc.xml")
+                xci_path = self._parse_cc(cc)
+                if xci_path is not None:
+                    logging.debug("Parsing %s", xci_path)
+                    with io.TextIOWrapper(zf.open(xci_path)) as f:
+                        self._parse_xci(dep_file, f)
 
         dep_file.is_parsed = True
