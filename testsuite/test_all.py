@@ -274,6 +274,12 @@ def test_xci023():
 def test_xci104():
     run_compare(path="104xci")
 
+def test_xci_json105():
+    run_compare(path="105xci_json")
+
+def test_xcix106():
+    run_compare(path="106xcix")
+
 def test_vlog_parser024():
     run_compare(path="024vlog_parser")
 
