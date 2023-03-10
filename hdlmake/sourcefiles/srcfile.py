@@ -201,6 +201,15 @@ class BDFile(SourceFile):
         self.parser.parse(self, graph)
 
 
+class XCIXFile(SourceFile):
+    """Xilinx Core Container IP File"""
+
+    def parse(self, graph):
+        from .xci_parser import XCIXParser
+        self.parser = XCIXParser()
+        self.parser.parse(self, graph)
+
+
 XILINX_FILE_DICT = {
     'xise': XISEFile,
     'ise': XISEFile,
@@ -220,7 +229,8 @@ XILINX_FILE_DICT = {
     'vho': VHOFile,
     'veo': VEOFile,
     'bmm': BMMFile,
-    'xci': XCIFile}
+    'xci': XCIFile,
+    'xcix': XCIXFile}
 
 
 # SYNOPSYS FILES
