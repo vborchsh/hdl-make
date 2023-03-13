@@ -37,28 +37,28 @@ from ..sourcefiles.srcfile import create_source_file
 class XCIParserBase(DepParser):
     """Base class for the Xilinx XCI(X) parser"""
 
-    def _parse_xml_xci(self, f):
+    def _parse_xml_xci(self, xml_str):
         """Parse a Xilinx XCI IP description file in XML format"""
 
         # extract namespaces with a regex -- not really ideal, but without pulling in
         # an external xml lib I can't think of a better way.
         xmlnsre = re.compile(r'''\bxmlns:(\w+)\s*=\s*"(\w+://[^"]*)"''', re.MULTILINE)
-        nsmap = dict(xmlnsre.findall(f))
-        value = ET.fromstring(f).find('spirit:componentInstances/spirit:componentInstance/spirit:instanceName', nsmap)
+        nsmap = dict(xmlnsre.findall(xml_str))
+        value = ET.fromstring(xml_str).find('spirit:componentInstances/spirit:componentInstance/spirit:instanceName', nsmap)
         if not value is None:
             return value.text
         return None
 
-    def _parse_json_xci(self, f):
+    def _parse_json_xci(self, json_str):
         """Parse a Xilinx XCI IP description file in JSON format"""
 
-        data = json.loads(f)
+        data = json.loads(json_str)
         ip_inst = data.get('ip_inst')
         if ip_inst is not None:
             return ip_inst.get('xci_name')
         return None
 
-    def _parse_xci(self, dep_file, graph, f):
+    def _parse_xci(self, dep_file, graph, file):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)
 
         This file can either be in XML or JSON file format depending on the
@@ -73,8 +73,8 @@ class XCIParserBase(DepParser):
 
         # Hacky file format detection, just check the first character of the
         # file which should be "<" for XML and "{" for JSON
-        content = f.read()
-        c = content[0]
+        content = file.read()
+        c = content.splitlines()[0].strip()[0]
 
         if c == "<":
             logging.debug("Parsing xci as xml format")
