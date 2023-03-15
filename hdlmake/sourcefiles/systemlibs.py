@@ -76,7 +76,8 @@ def build_smartfusion2():
     for n in ['xtlosc', 'xtlosc_fab', 'ccc', 'sysreset',
               'clkint',
               'inbuf', 'outbuf', 'tribuff',
-              'gnd', 'vcc']:
+              'gnd', 'vcc',
+              'mss_075']:
         add_entity(res, n)
     return res
 
