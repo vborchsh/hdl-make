@@ -63,12 +63,12 @@ class ToolVivado(ToolXilinx):
     SUPPORTED_FILES.update(ToolXilinx.SUPPORTED_FILES)
 
     HDL_FILES = {
-        VHDLFile:    ToolXilinx._XILINX_SOURCE,
-        VerilogFile: ToolXilinx._XILINX_SOURCE,
-        SVFile:      ToolXilinx._XILINX_SOURCE,
-        XCIFile:     ToolXilinx._XILINX_SOURCE,
+        VHDLFile:    ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        VerilogFile: ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        SVFile:      ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
+        XCIFile:     ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
         BDFile:      ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
-        XCIXFile:    ToolXilinx._XILINX_SOURCE}
+        XCIXFile:    ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
 
     CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",
