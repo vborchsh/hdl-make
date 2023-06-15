@@ -57,7 +57,7 @@ project.tcl:
 
 project: files.tcl project.tcl
 		$(SYN_PRE_PROJECT_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_PROJECT_CMD)
 		touch $@
 
@@ -80,7 +80,7 @@ synthesize.tcl:
 
 synthesize: project synthesize.tcl ../files/gate.vhdl
 		$(SYN_PRE_SYNTHESIZE_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_SYNTHESIZE_CMD)
 		touch $@
 
@@ -103,7 +103,7 @@ par.tcl:
 
 par: synthesize par.tcl
 		$(SYN_PRE_PAR_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_PAR_CMD)
 		touch $@
 
@@ -115,7 +115,7 @@ bitstream.tcl:
 
 bitstream: par bitstream.tcl
 		$(SYN_PRE_BITSTREAM_CMD)
-		$(TCL_INTERPRETER) $@.tcl
+		$(TCL_INTERPRETER)$@.tcl
 		$(SYN_POST_BITSTREAM_CMD)
 		touch $@
 
