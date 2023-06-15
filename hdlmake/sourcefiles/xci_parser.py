@@ -37,9 +37,6 @@ from ..sourcefiles.srcfile import create_source_file
 class XCIParserBase(DepParser):
     """Base class for the Xilinx XCI(X) parser"""
 
-    def __init__(self, dep_file):
-        DepParser.__init__(self, dep_file)
-
     def _parse_xml_xci(self, xml_str):
         """Parse a Xilinx XCI IP description file in XML format"""
 
@@ -50,6 +47,7 @@ class XCIParserBase(DepParser):
         value = ET.fromstring(xml_str).find('spirit:componentInstances/spirit:componentInstance/spirit:instanceName', nsmap)
         if not value is None:
             return value.text
+        return None
 
     def _parse_json_xci(self, json_str):
         """Parse a Xilinx XCI IP description file in JSON format"""
@@ -58,8 +56,9 @@ class XCIParserBase(DepParser):
         ip_inst = data.get('ip_inst')
         if ip_inst is not None:
             return ip_inst.get('xci_name')
+        return None
 
-    def _parse_xci(self, dep_file, file):
+    def _parse_xci(self, dep_file, graph, file):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)
 
         This file can either be in XML or JSON file format depending on the
@@ -74,49 +73,40 @@ class XCIParserBase(DepParser):
 
         # Hacky file format detection, just check the first character of the
         # file which should be "<" for XML and "{" for JSON
-
-        f = file.read()
-        c = f.splitlines()[0].strip()[0]
+        content = file.read()
+        c = content.splitlines()[0].strip()[0]
 
         if c == "<":
             logging.debug("Parsing xci as xml format")
-            module_name = self._parse_xml_xci(f)
+            module_name = self._parse_xml_xci(content)
         elif c == "{":
             logging.debug("Parsing xci as json format")
-            module_name = self._parse_json_xci(f)
+            module_name = self._parse_json_xci(content)
         else:
-            logging.debug("Unknown xci format, skipping")
-            module_name = None
+            logging.warning("Unknown xci format {}, skipping".format(dep_file.path))
+            return
 
-        if module_name is not None:
-            logging.debug("Found module %s.%s", dep_file.library, module_name)
-            dep_file.add_provide(
-                DepRelation(module_name, dep_file.library, DepRelation.MODULE))
+        if module_name is None:
+            return
+        logging.debug("Found module %s.%s", dep_file.library, module_name)
+        graph.add_provide(
+            dep_file,
+            DepRelation(module_name, dep_file.library, DepRelation.MODULE))
 
 
 class XCIParser(XCIParserBase):
     """Class providing the Xilinx XCI parser"""
 
-    def __init__(self, dep_file):
-        XCIParserBase.__init__(self, dep_file)
-
-    def parse(self, dep_file):
+    def parse(self, dep_file, graph):
         """Parse a Xilinx XCI IP description file to determine the provided module(s)"""
 
-        assert not dep_file.is_parsed
         logging.debug("Parsing %s", dep_file.path)
-
         with open(dep_file.path) as f:
-            self._parse_xci(dep_file, f)
-
-        dep_file.is_parsed = True
+            self._parse_xci(dep_file, graph, f)
 
 
 class XCIXParser(XCIParserBase):
     """Class providing the Xilinx XCIX parser"""
-
-    def __init__(self, dep_file):
-        XCIParserBase.__init__(self, dep_file)
 
     def _parse_cc(self, f):
         """Parse the cc.xml file to find the XCI file path"""
@@ -125,11 +115,11 @@ class XCIXParser(XCIParserBase):
         value = ET.fromstring(xml).find("CoreFile")
         if value is not None:
             return value.text
+        return None
 
-    def parse(self, dep_file):
+    def parse(self, dep_file, graph):
         """Parse a Xilinx XCIX IP description file to determine the provided module(s)"""
 
-        assert not dep_file.is_parsed
         logging.debug("Parsing %s", dep_file.path)
 
         with zipfile.ZipFile(dep_file.path) as zf:
@@ -139,4 +129,4 @@ class XCIXParser(XCIParserBase):
                 if xci_path is not None:
                     logging.debug("Parsing %s", xci_path)
                     with io.TextIOWrapper(zf.open(xci_path)) as f:
-                        self._parse_xci(dep_file, f)
+                        self._parse_xci(dep_file, graph, f)

@@ -50,7 +50,7 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
                      'mrproper': ["*.wdb", "*.vcd"]}
 
     SIMULATOR_CONTROLS = {'vlog': 'xvlog $<',
-                          'vhdl': 'xvhdl $<',
+                          'vhdl': 'xvhdl --work {work} $<',
                           'compiler': 'xelab -debug all $(TOP_MODULE) '
                                       '-s $(TOP_MODULE)'}
 
@@ -71,6 +71,8 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
 
     def _makefile_sim_compilation(self):
         """Generate compile simulation Makefile target for Vivado Simulator"""
+        libs = self.get_all_libs()
+        self._makefile_sim_libs_variables(libs)
         self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln()

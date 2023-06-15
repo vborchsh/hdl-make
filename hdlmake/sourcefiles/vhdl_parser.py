@@ -73,6 +73,30 @@ class VHDLParser(DepParser):
             return "<hdlmake use_pattern %s.%s>" % (lib_name, pkg_name)
         buf = re.sub(use_pattern, do_use, buf)
 
+        package_new_pattern = re.compile(
+            r"^\s*package\s+(\w+)\s+is\s+(new)?\s+(\w+)\.(\w+)",
+            re.DOTALL | re.MULTILINE | re.IGNORECASE)
+
+        def do_package_new(text):
+            """Function to be applied by re.sub to every match of the
+            package_new_pattern in the VHDL code -- group() returns positive matches
+            as indexed plain strings. It adds the found PACKAGE_NEW relations to the
+            file"""
+            new_pkg_name = text.group(1).lower()
+            lib_name = text.group(3).lower()
+            pkg_name = text.group(4).lower()
+            if pkg_name == "all":
+                # Forget 'package x is new work.all'
+                return "";
+            if lib_name == "work":
+                # Work is an alias for the current library
+                lib_name = dep_file.library
+            logging.debug("package %s is new %s.%s", new_pkg_name, lib_name, pkg_name)
+            graph.add_require(
+                dep_file, DepRelation(pkg_name, lib_name, DepRelation.PACKAGE))
+            return "<hdlmake package_new_pattern %s.%s>" % (lib_name, pkg_name)
+        buf = re.sub(package_new_pattern, do_package_new, buf)
+
         use_context_pattern = re.compile(
             r"^\s*context\s+(\w+)\s*\.\s*(\w+)\s*;",
             re.DOTALL | re.MULTILINE | re.IGNORECASE)

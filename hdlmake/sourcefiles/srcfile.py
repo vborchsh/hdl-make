@@ -204,10 +204,11 @@ class BDFile(SourceFile):
 class XCIXFile(SourceFile):
     """Xilinx Core Container IP File"""
 
-    def __init__(self, path, module, library=None):
-        SourceFile.__init__(self, path=path, module=module, library=library)
+    def parse(self, graph):
         from .xci_parser import XCIXParser
-        self.parser = XCIXParser(self)
+        self.parser = XCIXParser()
+        self.parser.parse(self, graph)
+
 
 XILINX_FILE_DICT = {
     'xise': XISEFile,
@@ -460,7 +461,7 @@ def create_source_file_with_deps(path, module, provide, depends):
     assert extension[0] == '.'
     # Remove '.'
     extension = extension[1:]
-    logging.debug("add file with deps) " + path)
+    logging.debug("add file (with deps) " + path)
 
     if extension in ['ngc', ]:
         return NGCFile(path, module, provide, depends)

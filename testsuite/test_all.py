@@ -190,10 +190,10 @@ def test_riviera017():
 def test_vivado018():
     run_compare(path="018vivado")
 
-def test_vivado_props():
+def test_vivado_props054():
     run_compare(path="054vivado_props")
 
-def test_vivado_sim():
+def test_vivado_sim019():
     run_compare(path="019vsim")
 
 def test_git_fetch():
@@ -273,6 +273,12 @@ def test_xci023():
 
 def test_xci104():
     run_compare(path="104xci")
+
+def test_xci_json105():
+    run_compare(path="105xci_json")
+
+def test_xcix106():
+    run_compare(path="106xcix")
 
 def test_vlog_parser024():
     run_compare(path="024vlog_parser")

@@ -3,8 +3,8 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-TOP_MODULE := gate
-PROJECT := gate
+TOP_MODULE := xci_test
+PROJECT := xci_test
 PROJECT_FILE := $(PROJECT).xpr
 TOOL_PATH := 
 TCL_INTERPRETER := vivado -mode tcl -source
@@ -13,8 +13,8 @@ TCL_INTERPRETER := $(TOOL_PATH)/$(TCL_INTERPRETER)
 endif
 
 SYN_FAMILY := 
-SYN_DEVICE := xc7z030
-SYN_PACKAGE := ffg676
+SYN_DEVICE := xc7a200t
+SYN_PACKAGE := ffg1156
 SYN_GRADE := -2
 
 TCL_CREATE := create_project $(PROJECT) ./
@@ -29,7 +29,8 @@ all: bitstream
 
 files.tcl:
 	@echo add_files -norecurse '{' >> $@
-	@echo '../files/gate.vhdl' >> $@
+	@echo 'adc_memory.xci' >> $@
+	@echo 'xci_test.vhd' >> $@
 	@echo '}' >> $@
 
 SYN_PRE_PROJECT_CMD := 
@@ -78,7 +79,7 @@ synthesize.tcl:
 		echo } >> $@
 		echo $(TCL_CLOSE) >> $@
 
-synthesize: project synthesize.tcl ../files/gate.vhdl
+synthesize: project synthesize.tcl xci_test.vhd
 		$(SYN_PRE_SYNTHESIZE_CMD)
 		$(TCL_INTERPRETER) $@.tcl
 		$(SYN_POST_SYNTHESIZE_CMD)
