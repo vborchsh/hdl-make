@@ -38,23 +38,23 @@ def _check_simulation_manifest(top_manifest):
     """Check if the simulation keys are provided by the top manifest"""
     if top_manifest.manifest_dict.get("vunit_script") is None:
         raise Exception("vunit_script variable must be set in the \
- top manifest, Use name of VUnit simulation script.")
+                top manifest, Use name of VUnit simulation script.")
 
 
 def _check_system_libs_manifest(top_manifest):
     if top_manifest.manifest_dict.get("target") is None:
         raise Exception("target variable must be set in the \
- top manifest. Set to altera, xilinx")
+                top manifest. Set to altera, xilinx")
 
     if top_manifest.manifest_dict.get("syn_family") is None:
         raise Exception("syn_family variable must be set in the \
- top manifest. Set to Arria V, Cyclone V ...")
+                top manifest. Set to Arria V, Cyclone V ...")
 
     if top_manifest.manifest_dict.get("tool") is None:
         raise Exception("tool variable must be set in the \
- top manifest to reflect which simulator VUnit uses. Supported values:\
- modelsim, mentor_vhdl_only, questasim, vcs, vcsmx, ncsim,\
- activehdl, rivierapro")
+                top manifest to reflect which simulator VUnit uses. Supported values:\
+                modelsim, mentor_vhdl_only, questasim, vcs, vcsmx, ncsim,\
+                activehdl, rivierapro")
 
 
 class ToolVunitSim(MakefileSim):
@@ -84,8 +84,16 @@ class ToolVunitSim(MakefileSim):
         # following is dictionary of command functions which write
         # portions of makefile responsible for generation of standard
         # simulation libraries into ./sim_libs
-        self.STD_LIBS_COMPILER_COMMAND =\
-            {"altera": self.get_altera_compilation_script}
+        self.STD_LIBS_COMPILER_COMMAND = {
+                "altera": self.get_altera_compilation_script,
+                "xilinx": self.get_xilinx_compilation_script}
+
+    def get_xilinx_compilation_script(self, top_manifest):
+        # according to quartus_sh the family name is all lowercase
+        # stripped of spaces
+        # self.writeln()
+        # self.writeln()
+        pass
 
     def get_altera_compilation_script(self, top_manifest):
         """ produces makefile lines reponsible to generate
@@ -98,30 +106,31 @@ class ToolVunitSim(MakefileSim):
         # according to quartus_sh the family name is all lowercase
         # stripped of spaces
         converted_name = top_manifest.manifest_dict.get('syn_family').\
-            lower().replace(' ', '').strip()
+                lower().replace(' ', '').strip()
+        simulator = top_manifest.manifest_dict.get('tool')
 
-        self.writeln("""$(ALTERA_LIBS_COMPILED): sim_pre_cmd
-\t@if [ ! -f $(ALTERA_LIBS_COMPILED) ]; then\\
-\t\trm -rf ${ALTERA_STD_LIBS};\\
-\t\tmkdir ${ALTERA_STD_LIBS};\\
-\t\tquartus_sh --simlib_comp -tool %s -language verilog -family %s -directory ${ALTERA_STD_LIBS};\\
-\t\tquartus_sh --simlib_comp -tool %s -language vhdl -family %s -directory ${ALTERA_STD_LIBS};\\
-\t\ttouch $(ALTERA_LIBS_COMPILED);\\
-	fi
-""" % (top_manifest.manifest_dict.get('tool'),
-       converted_name,
-       top_manifest.manifest_dict.get('tool'),
-       converted_name))
+        self.writeln("$(ALTERA_LIBS_COMPILED): sim_pre_cmd\n"
+                     "\t@if [ ! -f $(ALTERA_LIBS_COMPILED) ]; then\\\n"
+                     "\t\trm -rf ${ALTERA_STD_LIBS};\\\n"
+                     "\t\tmkdir ${ALTERA_STD_LIBS};\\\n"
+                     "\t\tquartus_sh --simlib_comp -tool "
+                     f"{simulator} -language verilog " 
+                     f"-family {converted_name} "
+                     "-directory ${ALTERA_STD_LIBS};\\\n"
+                     f"\t\tquartus_sh --simlib_comp -tool {simulator} "
+                     f"-language vhdl -family {converted_name} "
+                     "-directory ${ALTERA_STD_LIBS};\\\n"
+                     "\t\ttouch $(ALTERA_LIBS_COMPILED);\\\n\tfi")
         self.writeln()
 
-    def write_makefile(self, top_manifest, fileset, filename=None,
+    def write_makefile(self, top_manifest, fileset, filename=None, 
                        system_libs=None):
-        """ Writes makefile exploiting VUnit simulation target. If
-                       system_libs list contain 'altera', 'xilinx'... ,
-                       makefile generates
-                       commands to compile platform-dependent
-                       libraries. For this syn_family and target have
-                       to be known"""
+        """ 
+        Writes makefile exploiting VUnit simulation target. If
+        system_libs list contain 'altera', 'xilinx'... , makefile 
+        generates commands to compile platform-dependent libraries. 
+        For this syn_family and target have to be known
+        """
         # vunit params are checked:
         self.system_libs = system_libs
         self.compile_targets = []
@@ -130,12 +139,12 @@ class ToolVunitSim(MakefileSim):
 
         # in addition if required system libs, other params needed as well:
         if system_libs:
-            # have to find if any of keywords corresponds to what we
-            # know
+            # have to find if any of keywords corresponds to what we know
             for lib in system_libs:
                 if lib in self.STD_LIBS_COMPILER_COMMAND.keys():
-                    logging.info("Inserting into makefile commands to compile\
- system libs for %s architecture" % lib)
+                    logging.info("Inserting into makefile commands"
+                                 f"to compile system libs for {lib}"
+                                 " architecture")
                     self.compile_targets.append(lib)
 
             # following dependencies in sim manifest are only needed
@@ -161,64 +170,50 @@ class ToolVunitSim(MakefileSim):
 
         try:
             for slib in self.compile_targets:
-
                 self.STD_LIBS_COMPILER_COMMAND[slib.lower()](top_manifest)
-
         except KeyError:
             self.writeln("""$(STD_LIBS):
-\t@echo 'Libraries compilation as set per top-level Manifest.py not supported'
-\t@echo 'Consider writing another front-end into vunit.py of hdlmake'
-""")
+                         \t@echo 'Libraries compilation as set per top-level Manifest.py not supported'
+                         \t@echo 'Consider writing another front-end into vunit.py of hdlmake'
+                         """)
         self.writeln()
 
     def _makefile_sim_vunit(self, top_manifest):
         """Writes down the core part of the makefile"""
-        self.writeln("SIM_SCRIPT := {}".format(
-            join(".", top_manifest.manifest_dict["vunit_script"])))
+        path = join(".", top_manifest.manifest_dict["vunit_script"])
+        self.writeln(f"SIM_SCRIPT := {path}")
         # for each eventual target we generate link to libdir:
+
         all_target, comp_target = '|', ''
         for slib in self.compile_targets:
             sname = slib.upper().strip()
-            self.writeln("%s_STD_LIBS := ./%s_sim_libs" %
-                         (sname,
-                          sname.lower()))
-            self.writeln("%s_LIBS_COMPILED := $(%s_STD_LIBS)/.compiled" %
-                         (sname, sname))
-            comp_target += " $(%s_LIBS_COMPILED)" % sname
-            all_target += " $(%s_LIBS_COMPILED)" % sname
+            self.writeln(f"{sname}_STD_LIBS := ./{sname.lower()}_sim_libs")
+            self.writeln(f"{sname}_LIBS_COMPILED := $({sname}_STD_LIBS)/.compiled")
+            comp_target += f" $({sname}_LIBS_COMPILED)"
+            all_target += f" $({sname}_LIBS_COMPILED)"
 
         # if no lib, clear targets:
         if comp_target == '':
             all_target = ''
 
         # makefile includes-or-not compilable targets
-        self.writeln("""
-all: %s simulate sim_post_cmd
-
-simulate:
-\t@${SIM_SCRIPT}
-
-compile: mrproper %s
-\t@${SIM_SCRIPT} --clean --compile
-
-""" % (all_target, comp_target))
+        self.writeln(f"all: {all_target} simulate sim_post_cmd\n\n"
+                     "simulate:\n"
+                     "\t@${SIM_SCRIPT}\n\n"
+                     f"compile: mrproper {comp_target}\n"
+                     "\t@${SIM_SCRIPT} --clean --compile")
         self.writeln()
 
     def _makefile_sim_clean_vunit(self):
         """ Cleaning """
-        self.writeln("""
-clean:
-\t@rm -rf ./vunit_out
-\t@rm -rf ./work
-\t@rm -rf ./modelsim.ini
-\t@rm -rf ./libraries
-
-mrproper: clean
-""")
+        self.writeln("clean:\n"
+                     "\t@rm -rf ./vunit_out\n"
+                     "\t@rm -rf ./work\n"
+                     "\t@rm -rf ./modelsim.ini\n"
+                     "\t@rm -rf ./libraries\n\n"
+                     "mrproper: clean")
         if self.compile_targets:
-            self.writeln("""\t@rm -rf ./*_sim_libs
-
-""");
+            self.writeln(f"\t@rm -rf ./*_sim_libs\n");
         self.writeln()
 
     def is_verilog(self, fl):
@@ -239,9 +234,9 @@ mrproper: clean
         if file_set is not None:
             for fl in file_set:
                 if self.is_verilog(fl):
-                    logging.debug("Modifying to include dirs of %s to include VUnit" % fl.purename)
+                    logging.debug(f"Modifying to include dirs of"
+                                  f" {fl.purename} to include VUnit")
                     fl.include_dirs.append(vunit_include)
-                    logging.debug("INCLUDE_DIRS: %s" %
-                                  repr(fl.include_dirs))
+                    logging.debug(f"INCLUDE_DIRS: {repr(fl.include_dirs)}")
 
         return file_set
