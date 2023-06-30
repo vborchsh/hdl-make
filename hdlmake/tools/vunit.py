@@ -153,9 +153,7 @@ class ToolVunitSim(MakefileSim):
             if len(self.compile_targets) > 0:
                 _check_system_libs_manifest(top_manifest)
 
-        self.makefile_setup(top_manifest,
-                            fileset,
-                            filename=filename)
+        self.makefile_setup(top_manifest, fileset, filename=filename)
         # we don't check VUnit here, we know it exists as it is
         # installed with this package and already loaded -> no issue.
         self._makefile_sim_vunit(top_manifest)
