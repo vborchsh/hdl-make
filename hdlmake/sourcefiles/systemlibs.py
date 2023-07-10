@@ -33,8 +33,8 @@ def build_xilinx():
     res = []
     add_package(res, 'unisim', 'vcomponents')
     add_package(res, 'unimacro', 'vcomponents')
-    for n in ['ibuf', 'ibufds', 'ibufgds', 'ibufds_diff_out',
-              'ibufds_gte2',
+    for n in ['ibuf', 'ibufds', 'ibufgds', 'ibufds_diff_out', 'ibufdse3', 
+              'ibufe3', 'ibufds_gte2','ibufds_gte3', 'ibufds_gte4', 'ibufds_dphy',
               'obuf', 'obufds', 'obuft', 'obuftds', 'oddr',
               'oserdes2', 'oserdese2', 'iserdese2', 'iserdes2',
               'oserdese3',
@@ -43,18 +43,22 @@ def build_xilinx():
               'iobuf', 'iobufds',
               'pullup', 'pulldown',
               'bufio', 'bufio2', 'bufio2fb',
-              'bufgmux_ctrl', 'bufgmux', 'bufg', 'bufgce', 'bufr', 'bufpll', 'bufmr',
+              'bufgmux_ctrl', 'bufgmux', 'bufg', 'bufg_gt', 'bufgt_sync', 
+              'bufgce', 'bufr', 'bufpll', 'bufmr',
               'startupe2',
               'mmcme2_adv', 'mmcme2_base', 'pll_base', 'pll_adv', 'dcm_base', 'dcm_adv', 'dcm_sp',
+              'mmcme3_adv', 'mmcme3_base', 'mmcme4_adv', 'mmcme4_base',
               'plle2_adv', 'plle2_base',
               'bufpll_mcb', 'mcb', 'iodrp2', 'iodrp2_mcb',
               'mmcme3_adv',
               'icap_spartan6', 'bscan_spartan6',
               'gtxe2_channel', 'gtxe2_common', 'gtpa1_dual',
-              'dsp48a1',
-              'lut1', 'lut2', 'lut3', 'lut4', 'lut5', 'lut6',
-              'fdre',
-              'muxf7', 'carry4',
+              'gthe3_channel', 'gthe3_common', 'gthe4_channel', 'gthe4_common',
+              'gtye3_channel', 'gtye3_common', 'gtye4_channel', 'gtye4_common',
+              'dsp48a1', 'dsp48e2',
+              'lut1', 'lut2', 'lut3', 'lut4', 'lut5', 'lut6', 'lut6_2',
+              'fdre', 'fdce', 'fdpe', 'fdse',
+              'muxf7', 'muxf8', 'muxf9', 'carry4',
               'vcc', 'gnd',
               'srlc32e']:
         add_entity(res, n)
