@@ -35,7 +35,6 @@ class DepRelation(object):
     """Class used to create instances representing HDL dependency relations"""
 
     # rel_type
-    # Architecture is never required.
     ENTITY = 1
     PACKAGE = 2
     ARCHITECTURE = 3

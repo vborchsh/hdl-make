@@ -153,6 +153,9 @@ class VHDLParser(DepParser):
             graph.add_provide(
                 dep_file,
                 DepRelation(ent_name, dep_file.library, DepRelation.ENTITY))
+            graph.add_require(
+                dep_file,
+                DepRelation(ent_name, dep_file.library, DepRelation.ARCHITECTURE))
             return "<hdlmake entity_pattern %s.%s>" % (dep_file.library, ent_name)
 
         buf = re.sub(entity_pattern, do_entity, buf)
