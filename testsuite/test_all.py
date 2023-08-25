@@ -586,6 +586,9 @@ def test_explicit_dependency_lib_123():
 def test_explicit_required_lib_124():
     run_compare(path="124expl_req_lib")
 
+def test_arch_in_separate_file_125():
+    run_compare(path="125arch_in_separate_file")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""
