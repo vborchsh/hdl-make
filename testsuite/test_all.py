@@ -161,6 +161,7 @@ def test_quartus_windows102():
 
 def test_quartus034():
     run([], path="034quartus_prop")
+    os.remove("034quartus_prop/Makefile")
 
 def test_quartus035():
     with pytest.raises(SystemExit) as _:
@@ -203,6 +204,7 @@ def test_git_fetch():
         hdlmake.main.hdlmake(['list-mods'])
         shutil.rmtree('ipcores.old', ignore_errors=True)
         shutil.move('ipcores', 'ipcores.old')
+        shutil.rmtree('ipcores.old', ignore_errors=True)
 
 def test_git_fetch_branch():
     with Config(path="055git_fetch_branch") as _:
@@ -343,6 +345,7 @@ def test_no_syn_tool():
 
 def test_no_files():
     run([], path="042nofiles")
+    os.remove("042nofiles/Makefile")
 
 def test_no_bin_061():
     run_compare_xilinx(path="061err_nobin", fakebin="no_fakebin")
@@ -373,6 +376,7 @@ def test_two_manifest():
     shutil.copy(d + "/Manifest.py", d + "/manifest.py")
     with pytest.raises(SystemExit) as _:
         run([], path=d)
+    os.remove(d + "/manifest.py")
 
 def test_no_manifest():
     with pytest.raises(SystemExit) as _:
@@ -469,9 +473,11 @@ def test_err_loglevel():
 
 def test_err_noaction():
     run(['--log', 'warning'], path="002msim")
+    os.remove("002msim/Makefile")
 
 def test_all_files():
     run(['-a', 'makefile'], path="002msim")
+    os.remove("002msim/Makefile")
 
 def test_err_sim_top():
     with pytest.raises(SystemExit) as _:
@@ -596,3 +602,7 @@ def test_package_body_in_separate_file_126():
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""
     run_compare(path="011xfail")
+
+def test_xfail_cleanup():
+    """Cleanup after test_xfail"""
+    os.remove("011xfail/Makefile")
