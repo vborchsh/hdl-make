@@ -39,12 +39,14 @@ class DepRelation(object):
     PACKAGE = 2
     ARCHITECTURE = 3
     CONTEXT = 4
+    PACKAGE_BODY = 5
     MODULE = ENTITY
 
     def __init__(self, obj_name, lib_name, rel_type):
         assert rel_type in [
             DepRelation.ENTITY,
             DepRelation.PACKAGE,
+            DepRelation.PACKAGE_BODY,
             DepRelation.ARCHITECTURE,
             DepRelation.CONTEXT,
             DepRelation.MODULE]
@@ -66,6 +68,7 @@ class DepRelation(object):
         ostr = {
             self.ENTITY: "entity",
             self.PACKAGE: "package",
+            self.PACKAGE_BODY: "package body",
             self.ARCHITECTURE: "architecture",
             self.CONTEXT: "context",
             self.MODULE: "module"}

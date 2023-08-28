@@ -157,6 +157,8 @@ def check_graph(graph, fileset, syslibs, standard_libs=None):
                               "standard libs.",
                               str(rel), investigated_file.name)
                 continue
+            if rel.rel_type == DepRelation.PACKAGE_BODY:
+                continue
             logging.warning("File '%s' depends on undeclared (not found) %s",
                             investigated_file.name, str(rel))
             not_satisfied += 1
