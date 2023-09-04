@@ -202,9 +202,11 @@ def test_git_fetch():
         hdlmake.main.hdlmake(['list-files'])
         hdlmake.main.hdlmake(['fetch'])
         hdlmake.main.hdlmake(['list-mods'])
-        shutil.rmtree('ipcores.old', ignore_errors=True)
-        shutil.move('ipcores', 'ipcores.old')
-        shutil.rmtree('ipcores.old', ignore_errors=True)
+        # Full clean
+        shutil.rmtree('ipcores', ignore_errors=True)
+        # To debug (keep old):
+        #  shutil.rmtree('ipcores.old', ignore_errors=True)
+        #  shutil.move('ipcores', 'ipcores.old')
 
 def test_git_fetch_branch():
     with Config(path="055git_fetch_branch") as _:
