@@ -158,7 +158,16 @@ class DepFile(File):
         # Relations provided/required by this file
         self.provides = set()
         self.requires = set()
-        self.depends_on = set()     # Set of files this file depends on.
+
+        # File dependences.  Both are set of files.
+        # depends_on is for file required dependency, like module if it is
+        #   instantiated, packages used...
+        # top_depends_on is for design dependency, like package body or
+        #   architecture.  The file doesn't depend on it, but they are needed
+        #   for the whole design
+        self.depends_on = set()
+        self.top_depends_on = set()
+
         self.included_files = set()
         self.dep_level = None
 
