@@ -48,8 +48,7 @@ work/hdlmake/gate4_e_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 
-work/hdlmake/gate4_e_vhdl: ../files/gate4_e.vhdl \
-work/hdlmake/gate4_a_vhdl
+work/hdlmake/gate4_e_vhdl: ../files/gate4_e.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 

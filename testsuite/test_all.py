@@ -600,6 +600,9 @@ def test_arch_in_separate_file_125():
 def test_package_body_in_separate_file_126():
     run_compare(path="126package_body_in_separate_file")
 
+def test_arch_in_separate_file_127():
+    run_compare(path="127arch_in_separate_file")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

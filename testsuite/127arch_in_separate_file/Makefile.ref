@@ -17,12 +17,12 @@ local: sim_pre_cmd simulation sim_post_cmd
 VERILOG_SRC := 
 VERILOG_OBJ := 
 VHDL_SRC := ../files/gate.vhdl \
-../files/gate4_x_a.vhdl \
 ../files/gate4_e.vhdl \
+../files/gate4_x_a.vhdl \
 
 VHDL_OBJ := work/hdlmake/gate_vhdl \
-work/hdlmake/gate4_x_a_vhdl \
 work/hdlmake/gate4_e_vhdl \
+work/hdlmake/gate4_x_a_vhdl \
 
 INCLUDE_DIRS :=
 LIBS := work
@@ -42,14 +42,13 @@ work/hdlmake/gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 
-work/hdlmake/gate4_x_a_vhdl: ../files/gate4_x_a.vhdl \
-work/hdlmake/gate_vhdl \
-work/hdlmake/gate4_e_vhdl
+work/hdlmake/gate4_e_vhdl: ../files/gate4_e.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 
-work/hdlmake/gate4_e_vhdl: ../files/gate4_e.vhdl \
-work/hdlmake/gate4_x_a_vhdl
+work/hdlmake/gate4_x_a_vhdl: ../files/gate4_x_a.vhdl \
+work/hdlmake/gate_vhdl \
+work/hdlmake/gate4_e_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 

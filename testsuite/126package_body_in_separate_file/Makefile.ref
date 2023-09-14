@@ -43,8 +43,7 @@ work/hdlmake/pkg5_vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 
-work/hdlmake/pkg5_vhdl: ../files/pkg5.vhdl \
-work/hdlmake/pkg5_body_vhdl
+work/hdlmake/pkg5_vhdl: ../files/pkg5.vhdl
 		vcom $(VCOM_FLAGS) -work work $< 
 		@touch $@
 
