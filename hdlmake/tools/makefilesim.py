@@ -147,9 +147,9 @@ class MakefileSim(ToolMakefile):
         """Generic method to write the simulation Makefile user commands"""
         self.writeln("# USER SIM COMMANDS")
         self.writeln("sim_pre_cmd:")
-        self.writeln("\t\t" + self.manifest_dict.get("sim_pre_cmd", ''))
+        self.writeln("\t" + self.manifest_dict.get("sim_pre_cmd", ''))
         self.writeln("sim_post_cmd:")
-        self.writeln("\t\t" + self.manifest_dict.get("sim_post_cmd", ''))
+        self.writeln("\t" + self.manifest_dict.get("sim_post_cmd", ''))
         self.writeln()
 
     def _makefile_sim_clean(self):
