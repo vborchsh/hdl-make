@@ -142,8 +142,8 @@ class ToolLiberoSoC11(MakefileSyn):
 
 
     def __init__(self):
-        super(ToolLiberoSoC, self).__init__()
-        self._tcl_controls.update(ToolLiberoSoC.TCL_CONTROLS)
+        super(ToolLiberoSoC11, self).__init__()
+        self._tcl_controls.update(ToolLiberoSoC11.TCL_CONTROLS)
 
 
     def _makefile_syn_files_predefinelibs(self):
@@ -274,4 +274,4 @@ class ToolLiberoSoC11(MakefileSyn):
             ret.append('source {}'.format(f))
 
         self._tcl_controls['project'] = project_tmp.format('\n'.join(ret))
-        super(ToolLiberoSoC, self)._makefile_syn_tcl()
+        super(ToolLiberoSoC11, self)._makefile_syn_tcl()
