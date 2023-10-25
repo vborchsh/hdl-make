@@ -86,6 +86,7 @@ class ToolLiberoSoC11(MakefileSyn):
                    '$(TCL_SAVE)\n'
                    '$(TCL_CLOSE)',
         'bitstream': ' Device not supported, so no bitstream for now!',
+        'prom': '',
         'install_source': '$(PROJECT)/designer/impl1/$(SYN_TOP).pdb'}
 
     # Override the build command, because no space is expected between TCL_INTERPRETER and the tcl file
@@ -130,15 +131,13 @@ class ToolLiberoSoC11(MakefileSyn):
     _BITSTREAM_PROASIC3 =      "$(TCL_OPEN)\n"\
                              + "run_tool -name {GENERATEPROGRAMMINGDATA}\n" \
                              + "file mkdir ./$(PROJECT)/bitstream\n" \
-                             + "export_bitstream_file "\
-                             + "-file_name {$(PROJECT)} "\
-                             + "-export_dir {$(PROJECT)/bitstream} "\
-                             + "-format {STP} -trusted_facility_file 1 "\
-                             + "-trusted_facility_file_components {FABRIC} "\
-                             + "-serialization_stapl_type {SINGLE} "\
-                             + "-serialization_target_solution {FLASHPRO_3_4_5}\n"\
                              + "$(TCL_SAVE)\n"\
                              + "$(TCL_CLOSE)"
+
+    _PROM_PROASIC3 =    "$(TCL_OPEN)\n" \
+                      + "run_tool -name {EXPORTPROGRAMMINGFILE}\n" \
+                      + "$(TCL_SAVE)\n"\
+                      + "$(TCL_CLOSE)"
 
 
     def __init__(self):
@@ -166,6 +165,7 @@ class ToolLiberoSoC11(MakefileSyn):
            #logging.info(self.TOOL_INFO['name'] + " set GENERATEPROGRAMMINGDATA for IGLOO2.")
         elif syn_family == "ProASIC3E" or syn_family == 'ProASIC3L':
            self._tcl_controls['bitstream'] = self._BITSTREAM_PROASIC3
+           self._tcl_controls['prom'] = self._PROM_PROASIC3
            #logging.info(self.TOOL_INFO['name'] + " set GENERATEPROGRAMMINGDATA for ProASIC3.")
         else:
            logging.info(self.TOOL_INFO['name'] + ":ERROR: UNSUPPORTED device! TODO: Only ProASIC3, PolarFireSoC and IGLOO2 are supported. Somebody needs to add device support for this family. Can you do it?")
