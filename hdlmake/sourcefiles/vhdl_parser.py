@@ -153,6 +153,9 @@ class VHDLParser(DepParser):
             graph.add_provide(
                 dep_file,
                 DepRelation(ent_name, dep_file.library, DepRelation.ENTITY))
+            graph.add_require(
+                dep_file,
+                DepRelation(ent_name, dep_file.library, DepRelation.ARCHITECTURE))
             return "<hdlmake entity_pattern %s.%s>" % (dep_file.library, ent_name)
 
         buf = re.sub(entity_pattern, do_entity, buf)
@@ -198,8 +201,34 @@ class VHDLParser(DepParser):
             graph.add_provide(
                 dep_file,
                 DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
+            graph.add_require(
+                dep_file,
+                DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE_BODY))
             return "<hdlmake package %s.%s>" % (dep_file.library, pkg_name)
         buf = re.sub(package_pattern, do_package, buf)
+
+        package_body_pattern = re.compile(
+            r"^\s*package\s+body\s+(?P<name>\w+)\s+is\s+"
+              r".*?"
+            r"end\s*(package\s+body\s*)?(?P=name)?\s*;",
+            re.DOTALL | re.MULTILINE | re.IGNORECASE)
+        def do_package_body(text):
+            """Function to be applied by re.sub to every match of the
+            package_body_pattern in the VHDL code -- group() returns positive matches
+            as indexed plain strings. It adds the found PROVIDE relations
+            to the file"""
+            pkg_name = text.group('name')
+            logging.debug("found package body %s.%s", dep_file.library, pkg_name)
+            pkg = '%s.%s' % (dep_file.library, pkg_name)
+            pkg = "package 'osvvm.osvvmscriptsettingspkg'"
+            graph.add_provide(
+                dep_file,
+                DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE_BODY))
+            graph.add_require(
+                dep_file,
+                DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
+            return "<hdlmake package_body_pattern %s.%s>" % (dep_file.library, pkg_name)
+        buf = re.sub(package_body_pattern, do_package_body, buf)
 
         # component declaration
         component_pattern = re.compile(

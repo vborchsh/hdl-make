@@ -27,7 +27,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 import logging
 
-from ..sourcefiles.dep_file import DepFile
+from ..sourcefiles.dep_file import DepFile, DepRelation
 from ..sourcefiles.srcfile import SVFile
 from .systemlibs import all_system_libs
 
@@ -105,8 +105,15 @@ def parse_source_files(graph, fileset):
         for rel in investigated_file.requires:
             if rel.provided_by is None:
                 continue
-            if rel.provided_by is not investigated_file:
+            if rel.provided_by is investigated_file:
                 # A file cannot depends on itself.
+                continue
+            if rel.rel_type in (DepRelation.ARCHITECTURE, DepRelation.PACKAGE_BODY):
+                # The investigate file does not depend on the erchitecture or package body.
+                # However, the architecture or package body needs to be added in the
+                # design.
+                investigated_file.top_depends_on.add(rel.provided_by)
+            else:
                 investigated_file.depends_on.add(rel.provided_by)
 
 
@@ -164,7 +171,8 @@ def check_graph(graph, fileset, syslibs, standard_libs=None):
                               "standard libs.",
                               str(rel), investigated_file.name)
                 continue
-
+            if rel.rel_type == DepRelation.PACKAGE_BODY:
+                continue
             logging.warning("File '%s' depends on undeclared (not found) %s",
                             investigated_file.name, str(rel))
             not_satisfied += 1
@@ -231,6 +239,8 @@ def make_dependency_set(graph, fileset, top_library, top_entity, extra_modules=N
         if chk_file not in dep_file_set:
             dep_file_set.add(chk_file)
             for f in chk_file.depends_on:
+                file_set.add(f)
+            for f in chk_file.top_depends_on:
                 file_set.add(f)
 
     hierarchy_drivers = [top_entity]

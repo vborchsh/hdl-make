@@ -35,17 +35,18 @@ class DepRelation(object):
     """Class used to create instances representing HDL dependency relations"""
 
     # rel_type
-    # Architecture is never required.
     ENTITY = 1
     PACKAGE = 2
     ARCHITECTURE = 3
     CONTEXT = 4
+    PACKAGE_BODY = 5
     MODULE = ENTITY
 
     def __init__(self, obj_name, lib_name, rel_type):
         assert rel_type in [
             DepRelation.ENTITY,
             DepRelation.PACKAGE,
+            DepRelation.PACKAGE_BODY,
             DepRelation.ARCHITECTURE,
             DepRelation.CONTEXT,
             DepRelation.MODULE]
@@ -67,6 +68,7 @@ class DepRelation(object):
         ostr = {
             self.ENTITY: "entity",
             self.PACKAGE: "package",
+            self.PACKAGE_BODY: "package body",
             self.ARCHITECTURE: "architecture",
             self.CONTEXT: "context",
             self.MODULE: "module"}
@@ -156,7 +158,16 @@ class DepFile(File):
         # Relations provided/required by this file
         self.provides = set()
         self.requires = set()
-        self.depends_on = set()     # Set of files this file depends on.
+
+        # File dependences.  Both are set of files.
+        # depends_on is for file required dependency, like module if it is
+        #   instantiated, packages used...
+        # top_depends_on is for design dependency, like package body or
+        #   architecture.  The file doesn't depend on it, but they are needed
+        #   for the whole design
+        self.depends_on = set()
+        self.top_depends_on = set()
+
         self.included_files = set()
         self.dep_level = None
 
