@@ -530,6 +530,7 @@ class VerilogParser(DepParser):
                 dep_file,
                 DepRelation(pkg_name, dep_file.library, DepRelation.PACKAGE))
         import_pattern.subn(do_imports, buf)
+
         # packages
         m_inside_package = re.compile(
             r"package\s+(\w+)\s*(?:\(.*?\))?\s*(.+?)endpackage",
@@ -549,10 +550,20 @@ class VerilogParser(DepParser):
 
         # modules and instantiations
         m_inside_module = re.compile(
-            #  start                 name    opt-parameters     opt-ports          stmts
-            r"(?:module|interface)\s+(\w+)\s*(?:#\s*\(.*?\)\s*)?(?:\(.*?\))?\s*;\s*(.*?)"
-            r"(?:endmodule|endinterface)",
+            r"(?:module|interface)"
+                r"\s+(?P<module_name>\w+)"
+                # opt-parameters
+                r"\s*(?:#\s*\(.*?\)\s*)?"
+                r"(?:\((?P<port_map>.*?)\))?"
+                r"\s*;\s*(?P<module_body>.*?)"
+                # stmts
+                r"(?:endmodule|endinterface)",
             re.DOTALL | re.MULTILINE)
+
+        get_interface = re.compile(
+            r"^\s*(?!input|output|inout)(\w+)(\.\w+)?\s+\w+",
+            re.DOTALL | re.MULTILINE)
+
         m_instantiation = re.compile(
             r"\s*\b(\w+)\s+(?:#\s*\(.*?\)\s*)?(\w+)\s*(?:\[.*?\]\s*)?\(.*?\)$",
             re.DOTALL | re.MULTILINE)
@@ -573,11 +584,23 @@ class VerilogParser(DepParser):
             m_inside_module in the Verilog code -- group() returns
             positive  matches as indexed plain strings. It adds the found
             PROVIDE relations to the file"""
-            module_name = text.group(1)
+            module_name = text.group("module_name")
+            portmap = text.group("port_map")
             logging.debug("found module %s.%s", dep_file.library, module_name)
             graph.add_provide(
                 dep_file,
                 DepRelation(module_name, dep_file.library, DepRelation.MODULE))
+
+            def do_interface(text):
+                for i in get_interface.finditer(text):
+                    logging.debug(f"found interface: {i.group(1)}")
+                    rel = DepRelation(i.group(1), dep_file.library, DepRelation.MODULE)
+                    graph.add_require(dep_file, rel)
+
+            # if we are parsing interface we just 
+            # skip the parsing of interfaces 
+            if portmap:
+                do_interface(portmap)
 
             def do_inst(text):
                 """Function to be applied by re.sub to every match of the
@@ -593,7 +616,7 @@ class VerilogParser(DepParser):
                 graph.add_require(
                     dep_file,
                     DepRelation(mod_name, dep_file.library, DepRelation.MODULE))
-            for stmt in [x for x in m_stmt.split(text.group(2)) if x and x[-1] == ")"]:
+            for stmt in [x for x in m_stmt.split(text.group("module_body")) if x and x[-1] == ")"]:
                 match = m_instantiation.match(stmt)
                 if match:
                     do_inst(match)
