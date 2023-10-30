@@ -68,7 +68,7 @@ class ToolLiberoSoC11(MakefileSyn):
 
 
     CLEAN_TARGETS = {'clean': ["$(PROJECT)", "*.log"],
-                     'mrproper': ["*.pdb", "*.stp"]}
+                     'mrproper': ["*.pdb", "*.stp", "*.dat"]}
 
 
     TCL_CONTROLS = {
