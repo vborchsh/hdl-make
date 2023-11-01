@@ -24,9 +24,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 import logging
-import os
 import os.path
 
+from subprocess import call
 from ..sourcefiles import new_dep_solver as dep_solver
 from ..util import path as path_mod
 from ..fetch.svn import Svn
@@ -128,12 +128,12 @@ class Commands(Action):
         for mod in self.all_manifests:
             if mod.isfetched and not mod.manifest_dict == None:
                 if 'fetch_pre_cmd' in mod.manifest_dict:
-                    os.system(mod.manifest_dict.get("fetch_pre_cmd", ''))
+                    call(mod.manifest_dict.get("fetch_pre_cmd", ''), shell=True)
         self._fetch_all()
         for mod in self.all_manifests:
             if mod.isfetched and not mod.manifest_dict == None:
                 if 'fetch_post_cmd' in mod.manifest_dict:
-                    os.system(mod.manifest_dict.get("fetch_post_cmd", ''))
+                    call(mod.manifest_dict.get("fetch_post_cmd", ''), shell=True)
         logging.info("All modules fetched.")
 
     def clean(self):

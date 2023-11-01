@@ -28,7 +28,7 @@ from ..util import shell
 from subprocess import PIPE, Popen
 import logging
 from .fetcher import Fetcher
-
+from subprocess import call
 
 class Git(Fetcher):
 
@@ -74,13 +74,13 @@ class Git(Fetcher):
             logging.info("Checking out version %s", checkout_id)
             cmd = "(cd {0} && git checkout {1})"
             cmd = cmd.format(mod_path, checkout_id)
-            if os.system(cmd) != 0:
+            if call(cmd, shell=True) != 0:
                 return False
         if self.submodule and not module.isfetched:
             cmd = ("(cd {0} && git submodule init &&"
                 "git submodule update --recursive)")
             cmd = cmd.format(mod_path)
-            if os.system(cmd) != 0:
+            if call(cmd, shell=True) != 0:
                 return False
         module.isfetched = True
         module.path = mod_path

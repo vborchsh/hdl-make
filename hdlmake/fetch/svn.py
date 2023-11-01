@@ -26,7 +26,7 @@ import os
 import logging
 from ..util import path as path_utils
 from .fetcher import Fetcher
-
+from subprocess import call
 
 class Svn(Fetcher):
 
@@ -51,7 +51,7 @@ class Svn(Fetcher):
         success = True
         logging.info("Checking out module %s", mod_path)
         logging.debug(cmd)
-        if os.system(cmd) != 0:
+        if call(cmd, shell=True) != 0:
             success = False
         module.isfetched = True
         module.path = mod_path
