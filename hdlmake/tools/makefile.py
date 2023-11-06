@@ -151,6 +151,17 @@ class ToolMakefile(object):
                     logging.warning("Included Makefile %s NOT found.", file_aux)
             self.writeln()
 
+    def makefile_post_includes(self):
+        """Add the included makefiles that need to be placed at the end of the main
+        Makefile, since they might rely on variables defined in the main Makefile"""
+        if self.manifest_dict.get("incl_post_makefiles") is not None:
+            for file_aux in self.manifest_dict["incl_post_makefiles"]:
+                if os.path.exists(file_aux):
+                    self.writeln("include %s" % file_aux)
+                else:
+                    logging.warning("Included Makefile %s NOT found.", file_aux)
+            self.writeln()
+
     def makefile_clean(self):
         """Print the Makefile target for cleaning intermediate files"""
         self.writeln("CLEAN_TARGETS := $(LIBS) " +
