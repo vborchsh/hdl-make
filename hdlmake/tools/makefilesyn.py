@@ -59,6 +59,7 @@ class MakefileSyn(ToolMakefile):
         self._makefile_syn_build()
         self._makefile_syn_clean()
         self._makefile_syn_phony()
+        self.makefile_post_includes()
         self.makefile_open_write_close()
         logging.info(self.TOOL_INFO['name'] + " synthesis makefile generated.")
 
