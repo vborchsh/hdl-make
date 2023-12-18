@@ -4,7 +4,7 @@ from __future__ import absolute_import
 import os, sys
 import logging
 
-from .makefile import ToolMakefile
+from .makefilesyn import MakefileSyn
 from ..util import shell
 
 from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile
@@ -18,7 +18,7 @@ def _check_synthesis_manifest(top_manifest):
                 "'{}' variable must be set in the top manifest.".format(v))
 
 
-class GhdlSyn(ToolMakefile):
+class GhdlSyn(MakefileSyn):
 
     """Class that provides the synthesis Makefile writing methods and status"""
 
@@ -38,7 +38,6 @@ class GhdlSyn(ToolMakefile):
     def __init__(self):
         super(GhdlSyn, self).__init__()
         self._tcl_controls = {}
-        self.default_library = "work"
 
     def write_makefile(self, top_manifest, fileset, filename=None):
         """Generate a Makefile for the specific synthesis tool"""
