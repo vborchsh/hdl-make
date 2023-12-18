@@ -65,6 +65,7 @@ class MakefileSyn(ToolMakefile):
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile"""
         top_parameter = """\
+TOP_LIBRARY := {top_library}
 TOP_MODULE := {top_module}
 PROJECT := {project_name}
 PROJECT_FILE := $(PROJECT).{project_ext}
@@ -89,7 +90,8 @@ SYN_GRADE := {syn_grade}
             syn_package=self.manifest_dict["syn_package"],
             syn_grade=self.manifest_dict["syn_grade"],
             tool_path=self.manifest_dict["syn_path"],
-            top_module=self.manifest_dict["syn_top"]))
+            top_library=self.get_top_library(),
+            top_module=self.get_top_module()))
 
     def _makefile_syn_prj_tcl_cmd(self):
         """Create the Makefile variables for the TCL project commands."""
@@ -205,8 +207,8 @@ SYN_POST_{0}_CMD := {2}
                       "map", "par", "bitstream", "prom"]
         for stage in stage_list:
             if stage in self._tcl_controls:
-                _stage_clean_targets += f" {stage}"
-                _stage_tcl_clean_targets += f" {stage}.tcl"
+                _stage_clean_targets += " %s" % (stage)
+                _stage_tcl_clean_targets += " %s.tcl" % (stage)
         _stage_tcl_clean_targets+=" files.tcl"
         self.writeln("\t\t" + shell.del_command() + _stage_clean_targets)
         self.writeln("\t\t" + shell.del_command() + _stage_tcl_clean_targets)
