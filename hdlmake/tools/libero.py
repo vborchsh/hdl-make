@@ -122,7 +122,7 @@ class ToolLibero(MakefileSyn):
             for file_aux in synthesis_constraints:
                 line = line + '-file {' + file_aux.rel_path() + '} '
             line = line + \
-                '-module {$(TOP_MODULE)::work} -input_type {constraint}'
+                '-module {$(TOP_MODULE)::$(TOP_LIBRARY)} -input_type {constraint}'
             ret.append(line)
         # Third stage: Organizing / activating compilation constraints (the top
         # module needs to be present!)
@@ -131,10 +131,10 @@ class ToolLibero(MakefileSyn):
             for file_aux in compilation_constraints:
                 line = line + '-file {' + file_aux.rel_path() + '} '
             line = line + \
-                '-module {$(TOP_MODULE)::work} -input_type {constraint}'
+                '-module {$(TOP_MODULE)::$(TOP_LIBRARY)} -input_type {constraint}'
             ret.append(line)
         # Fourth stage: set root/top module
-        line = 'set_root -module {$(TOP_MODULE)::work}'
+        line = 'set_root -module {$(TOP_MODULE)::$(TOP_LIBRARY)}'
         ret.append(line)
         self._tcl_controls['project'] = project_tmp.format('\n'.join(ret))
         super(ToolLibero, self)._makefile_syn_tcl()

@@ -603,6 +603,12 @@ def test_package_body_in_separate_file_126():
 def test_arch_in_separate_file_127():
     run_compare(path="127arch_in_separate_file")
 
+def test_specify_top_library_128():
+    run_compare(path="128specify_top_library")
+
+def test_specify_top_library_129():
+    run_compare(path="129specify_top_library_explicit")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

@@ -56,7 +56,8 @@ class GhdlSyn(MakefileSyn):
 
     def _makefile_syn_top(self):
         """Create the top part of the synthesis Makefile"""
-        self.writeln("TOP_MODULE := {}".format(self.manifest_dict["syn_top"]))
+        self.writeln("TOP_LIBRARY := {}".format(self.get_top_library()))
+        self.writeln("TOP_MODULE := {}".format(self.get_top_module()))
         self.writeln("TOOL_PATH := {}".format(self.manifest_dict["syn_path"]))
         self.writeln("GHDL := ghdl")
         self.writeln("GHDL_OPT := {}".format(self.manifest_dict.get("ghdl_opt", '')))
@@ -116,7 +117,7 @@ class GhdlSyn(MakefileSyn):
         # HOW to set a file to write the synthesis result into.... 
         self.writeln("""\
 synthesis: files.tcl
-\t$(GHDL) --synth $(GHDL_OPT) @files.tcl -e $(TOP_MODULE)
+\t$(GHDL) --synth $(GHDL_OPT) @files.tcl -e $(TOP_LIBRARY).$(TOP_MODULE)
 """)
 
     def _makefile_syn_clean(self):

@@ -44,7 +44,8 @@ class MakefileSim(ToolMakefile):
 
     def _makefile_sim_top(self):
         """Generic method to write the simulation Makefile top section"""
-        self.writeln("TOP_MODULE := {}".format(self.manifest_dict["sim_top"]))
+        self.writeln("TOP_LIBRARY := {}".format(self.get_top_library()))
+        self.writeln("TOP_MODULE := {}".format(self.get_top_module()))
         self.writeln()
 
     def _makefile_sim_options(self):

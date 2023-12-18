@@ -224,3 +224,18 @@ class ToolMakefile(object):
                     + self.default_library
                    )
        return self.default_library
+
+    def get_top_library(self):
+        ''' get_top_library
+        '''
+        top_library = self.manifest_dict.get(self.ACTION_SHORTNAME + "_top_library", None)
+        if top_library == '?':
+            top_library = self.get_library_for_top_module()
+        if not top_library:
+            top_library = self.default_library
+        return top_library
+
+    def get_top_module(self):
+        ''' get_top_module
+        '''
+        return self.manifest_dict.get(self.ACTION_SHORTNAME + "_top", None)
