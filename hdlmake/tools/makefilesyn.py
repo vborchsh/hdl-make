@@ -21,6 +21,7 @@ def _check_synthesis_manifest(top_manifest):
 class MakefileSyn(ToolMakefile):
 
     """Class that provides the synthesis Makefile writing methods and status"""
+    ACTION_SHORTNAME = "syn"
 
     """Makefile template to build and execute a command.
     Arguments:
@@ -43,7 +44,6 @@ class MakefileSyn(ToolMakefile):
     def __init__(self):
         super(MakefileSyn, self).__init__()
         self._tcl_controls = {}
-        self.default_library = "work"
 
     def write_makefile(self, top_manifest, fileset, filename=None):
         """Generate a Makefile for the specific synthesis tool"""
@@ -229,37 +229,3 @@ SYN_POST_{0}_CMD := {2}
             if isinstance(specific_file, filetype):
               sources_with_libs_list.append(specific_file)	
         return sorted(set(f.library for f in sources_with_libs_list))
-
-
-    def get_num_hdl_libs(self):
-       num_libs = len(self.get_all_libs());
-       return num_libs;
-
-
-    def get_library_for_top_module(self):
-       if self.get_num_hdl_libs() == 1:
-         # this may now be excessive, based on the "catch-all" return statement at the bottom.
-         return self.default_library
-       else:
-         #find and return the library name for the top HDL module...
-         fileset_dict = {}
-         fileset_dict.update(self.HDL_FILES)
-         top_file = self.manifest_dict["syn_top"]
-         for hdlfiletype in fileset_dict:
-           for specific_file in self.fileset:
-             if isinstance(specific_file, hdlfiletype):
-               if specific_file.purename == top_file:
-                 #logging.info(self.TOOL_INFO['name']
-                 #      + "libfinder_top_module, FOUND library_name: "
-                 #      + specific_file.library + " for module: " 
-                 #      + top_file )
-                 return str(specific_file.library)
-
-       #In case we dont find a library then post an info message before returning the default value
-       logging.info(  self.TOOL_INFO['name']
-                    + "function get_library_for_top_module, "
-                    + "failed to find a library for the top module: "
-                    + top_file + " Will use the default_library: "
-                    + self.default_library
-                   )
-       return self.default_library

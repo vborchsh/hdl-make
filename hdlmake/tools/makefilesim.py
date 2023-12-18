@@ -19,6 +19,7 @@ def _check_simulation_manifest(top_manifest):
 class MakefileSim(ToolMakefile):
 
     """Class that provides the Makefile writing methods and status"""
+    ACTION_SHORTNAME = "sim"
 
     SIMULATOR_CONTROLS = {}
 
