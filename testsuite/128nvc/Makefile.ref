@@ -8,6 +8,10 @@ TOP_MODULE := gate3
 NVC := nvc
 NVC_OPT := --std=2008
 
+NVC_ANALYSIS_OPT := --psl
+
+NVC_ELAB_OPT := --verbose
+
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
 
@@ -23,17 +27,17 @@ LIBS := work
 LIB_IND := work/.work
 
 simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
-		$(NVC) $(NVC_OPT) -e $(TOP_MODULE)
+		$(NVC) $(NVC_OPT) -e $(NVC_ELAB_OPT) $(TOP_MODULE)
 
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
-		$(NVC) --work=work $(NVC_OPT) -a  $<
+		$(NVC) --work=work $(NVC_OPT) -a $(NVC_ANALYSIS_OPT)  $<
 		@mkdir -p $(dir $@) && touch $@
 
 
 work/gate3/.gate3_vhd: ../files/gate3.vhd \
 work/gate/.gate_vhdl
-		$(NVC) --work=work $(NVC_OPT) -a  $<
+		$(NVC) --work=work $(NVC_OPT) -a $(NVC_ANALYSIS_OPT)  $<
 		@mkdir -p $(dir $@) && touch $@
 
 

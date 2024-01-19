@@ -48,8 +48,8 @@ class ToolNVC(MakefileSim):
                      'mrproper': ["*.vcd"]}
 
     SIMULATOR_CONTROLS = {'vlog': None,
-                          'vhdl': '$(NVC) --work={work} $(NVC_OPT) -a  $<',
-                          'compiler': '$(NVC) $(NVC_OPT) -e $(TOP_MODULE)'}
+                          'vhdl': '$(NVC) --work={work} $(NVC_OPT) -a $(NVC_ANALYSIS_OPT)  $<',
+                          'compiler': '$(NVC) $(NVC_OPT) -e $(NVC_ELAB_OPT) $(TOP_MODULE)'}
 
     def __init__(self):
         super(ToolNVC, self).__init__()
@@ -58,7 +58,11 @@ class ToolNVC(MakefileSim):
         """Print the NVC options to the Makefile"""
         self.writeln("NVC := nvc")
         nvc_opt = self.manifest_dict.get("nvc_opt", '')
+        nvc_analysis_opt = self.manifest_dict.get("nvc_analysis_opt", '')
+        nvc_elab_opt = self.manifest_dict.get("nvc_elab_opt", '')
         self.writeln("NVC_OPT := {nvc_opt}\n".format(nvc_opt=nvc_opt))
+        self.writeln("NVC_ANALYSIS_OPT := {nvc_analysis_opt}\n".format(nvc_analysis_opt=nvc_analysis_opt))
+        self.writeln("NVC_ELAB_OPT := {nvc_elab_opt}\n".format(nvc_elab_opt=nvc_elab_opt))
 
     def _makefile_sim_compilation(self):
         """Print the NVC simulation compilation target"""
