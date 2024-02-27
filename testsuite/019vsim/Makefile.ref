@@ -5,6 +5,10 @@
 
 TOP_MODULE := gate
 
+XVHDL_OPT := 
+
+XVLOG_OPT := 
+
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
 
@@ -21,7 +25,7 @@ simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
 		xelab -debug all $(TOP_MODULE) -s $(TOP_MODULE)
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
-		xvhdl --work work $<
+		xvhdl --work work $(XVHDL_OPT) $<
 		@mkdir -p $(dir $@) && touch $@
 
 
