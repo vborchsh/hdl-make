@@ -606,7 +606,7 @@ def test_arch_in_separate_file_127():
 def test_specify_top_library_129():
     run_compare(path="129specify_top_library")
 
-def test_specify_top_library_130():
+def test_specify_top_library_explict_130():
     run_compare(path="130specify_top_library_explicit")
 
 @pytest.mark.xfail
