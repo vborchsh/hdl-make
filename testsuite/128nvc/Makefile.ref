@@ -3,11 +3,14 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-TOP_MODULE := gate
+TOP_MODULE := gate3
 
-XVHDL_OPT := 
+NVC := nvc
+NVC_OPT := --std=2008
 
-XVLOG_OPT := 
+NVC_ANALYSIS_OPT := --psl
+
+NVC_ELAB_OPT := --verbose
 
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
@@ -15,29 +18,28 @@ local: sim_pre_cmd simulation sim_post_cmd
 VERILOG_SRC := 
 VERILOG_OBJ := 
 VHDL_SRC := ../files/gate.vhdl \
+../files/gate3.vhd \
 
 VHDL_OBJ := work/gate/.gate_vhdl \
+work/gate3/.gate3_vhd \
 
 LIBS := work
 LIB_IND := work/.work
 
 simulation: $(VERILOG_OBJ) $(VHDL_OBJ)
-		xelab -debug all $(TOP_MODULE) -s $(TOP_MODULE)
+		$(NVC) $(NVC_OPT) -e $(NVC_ELAB_OPT) $(TOP_MODULE)
+
 
 work/gate/.gate_vhdl: ../files/gate.vhdl
-		xvhdl --work work $(XVHDL_OPT) $<
+		$(NVC) --work=work $(NVC_OPT) -a $(NVC_ANALYSIS_OPT)  $<
 		@mkdir -p $(dir $@) && touch $@
 
 
-project.tcl: Makefile
-	@echo "create_project -force $(TOP_MODULE)_prj ./" > $@
-	@echo add_files -norecurse '{' >> $@
-	@echo '../files/gate.vhdl' >> $@
-	@echo '}' >> $@
-	@echo "exit" >> $@
+work/gate3/.gate3_vhd: ../files/gate3.vhd \
+work/gate/.gate_vhdl
+		$(NVC) --work=work $(NVC_OPT) -a $(NVC_ANALYSIS_OPT)  $<
+		@mkdir -p $(dir $@) && touch $@
 
-project: project.tcl
-	vivado -mode tcl -source $<
 
 # USER SIM COMMANDS
 sim_pre_cmd:
@@ -45,11 +47,11 @@ sim_pre_cmd:
 sim_post_cmd:
 		
 
-CLEAN_TARGETS := $(LIBS) .Xil *.jou *.log *.pb work xsim.dir
+CLEAN_TARGETS := $(LIBS) *.cf *.o $(TOP_MODULE) work
 
 clean:
 		rm -rf $(CLEAN_TARGETS)
 mrproper: clean
-		rm -rf *.wdb *.vcd
+		rm -rf *.vcd
 
 .PHONY: mrproper clean sim_pre_cmd sim_post_cmd simulation
