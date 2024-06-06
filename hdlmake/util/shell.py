@@ -42,6 +42,17 @@ def set_commands_os(name):
     commands_os = name
 
 
+def run_popen(command):
+    """Execute a command in the shell and return output, no error handling"""
+    logging.debug("run_popen: {}".format(command))
+    return Popen(command,
+        stdout=PIPE,
+        stdin=PIPE,
+        stderr=PIPE,
+        close_fds=not check_windows_tools(), # FIXME: comment
+        shell=True)
+
+
 def run(command):
     """Execute a command in the shell and print the output lines as a list"""
     try:
