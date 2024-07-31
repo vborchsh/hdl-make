@@ -293,6 +293,9 @@ def test_vlog_parser_025():
 def test_vlog_parser_099():
     run_compare(path="099vlog_parser")
 
+def test_vlog_attr131():
+    run_compare(path="131vlog_attr")
+
 def test_vlog_inc_103():
     run_compare(path="103vlog_inc")
 
