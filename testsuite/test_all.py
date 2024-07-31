@@ -293,11 +293,14 @@ def test_vlog_parser_025():
 def test_vlog_parser_099():
     run_compare(path="099vlog_parser")
 
+def test_vlog_inc_103():
+    run_compare(path="103vlog_inc")
+
 def test_vlog_attr131():
     run_compare(path="131vlog_attr")
 
-def test_vlog_inc_103():
-    run_compare(path="103vlog_inc")
+def test_vlog_comment132():
+    run_compare(path="132vlog_comment")
 
 def test_gitsm_fetch_026():
     with Config(path="026gitsm_fetch") as _:
