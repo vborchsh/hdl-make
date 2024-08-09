@@ -1636,6 +1636,26 @@ Altera Quartus II / Prime specific variables:
 
 
 
+.. _envvars:
+
+Environment variables
+=====================
+
+``OBJ``
+-------
+
+If environmentvariable ``OBJ`` is defined, then compilation obj-files are store in a subfolder hierarchy to ``OBJ``. The subfolder hierarchy is the root folder of the project.
+To let the path be valid modified, eg ``:`` is removed on Windows.
+
+Implantation status
+~~~~~~~~~~~~~~~~~~~
+
+  - Modelsim (compile and simulate)
+  - GHDL (analyse and elaborate)
+  - Vivado sim (Generate Makefile)
+  - Other simulation tools: Implemented but not tested
+
+
 .. _args:
 
 Optional arguments for ``hdlmake``

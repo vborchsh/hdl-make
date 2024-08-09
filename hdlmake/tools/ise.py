@@ -190,6 +190,7 @@ $(TCL_CLOSE)'''
             properties.extend(syn_properties)
         for prop in properties:
             project_new.append(tmpl.format(prop[0], prop[1]))
+        # Setting compile_directory to self.objdir, does not change anything, dir unused (even if created)
         project_new.append('set compile_directory .')
         self._tcl_controls["project"] = project_tcl.format(
             "\n".join(project_new))
