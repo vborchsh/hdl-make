@@ -1,6 +1,6 @@
 action = "simulation"
 
-sim_tool="modelsim"
+sim_tool="ghdl"
 
 library = "gatetop"
 

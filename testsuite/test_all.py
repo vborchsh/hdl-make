@@ -619,6 +619,14 @@ def test_specify_top_library_129():
 def test_specify_top_library_explict_130():
     run_compare(path="130specify_top_library_explicit")
 
+def test_vivado_sim_131():
+    # OBJdir is odd here, since "git rev-parse --show-toplevel" returns ..
+    run_compare(path="131objdir_specify_top_library_modelsim", extra_env={'OBJ': '/tmp/obj',})
+
+def test_vivado_sim_132():
+    # OBJdir is odd here, since "git rev-parse --show-toplevel" returns ..
+    run_compare(path="132objdir_specify_top_library_ghdl", extra_env={'OBJ': '/tmp/obj',})
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

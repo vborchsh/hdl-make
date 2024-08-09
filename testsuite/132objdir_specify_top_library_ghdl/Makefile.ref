@@ -3,51 +3,44 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
+PROJ_OBJ := /tmp/obj/../ghdl/
+
 TOP_LIBRARY := gatetop
 TOP_MODULE := gate6
 
-MODELSIM_INI_PATH := ../linux_fakebin/..
+GHDL := ghdl
+GHDL_OPT :=  -P$(PROJ_OBJ) --workdir=$(PROJ_OBJ)
 
-VCOM_FLAGS := -quiet -modelsimini modelsim.ini 
-VSIM_FLAGS := 
-VLOG_FLAGS := -quiet -modelsimini modelsim.ini 
-VMAP_FLAGS := -modelsimini modelsim.ini 
 #target for performing local simulation
 local: sim_pre_cmd simulation sim_post_cmd
 
+$(PROJ_OBJ) : 
+		mkdir -p $@
 VERILOG_SRC := 
 VERILOG_OBJ := 
 VHDL_SRC := ../files/gate.vhdl \
 ../files/gate6.vhdl \
 
-VHDL_OBJ := gatelib/hdlmake/gate_vhdl \
-gatetop/hdlmake/gate6_vhdl \
+VHDL_OBJ := $(PROJ_OBJ)gatelib/gate/.gate_vhdl \
+$(PROJ_OBJ)gatetop/gate6/.gate6_vhdl \
 
-INCLUDE_DIRS :=
 LIBS := gatelib gatetop
-LIB_IND := gatelib/hdlmake/gatelib-stamp gatetop/hdlmake/gatetop-stamp
+LIB_IND := $(PROJ_OBJ)gatelib/.gatelib $(PROJ_OBJ)gatetop/.gatetop
 
-simulation: modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
-$(VERILOG_OBJ): modelsim.ini
-$(VHDL_OBJ): $(LIB_IND) modelsim.ini
+simulation: $(PROJ_OBJ) $(VERILOG_OBJ) $(VHDL_OBJ)
+		$(GHDL) -e $(GHDL_OPT) $(TOP_LIBRARY).$(TOP_MODULE)
 
-modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
-		cp $< . 2>&1
 
-gatelib/hdlmake/gatelib-stamp:
-	(vlib gatelib && vmap $(VMAP_FLAGS) gatelib && mkdir -p gatelib/hdlmake && touch gatelib/hdlmake/gatelib-stamp) || rm -rf gatelib
+$(PROJ_OBJ)gatelib/gate/.gate_vhdl: ../files/gate.vhdl
+		$(GHDL) -a --work=gatelib $(GHDL_OPT) $<
+		@mkdir -p $(dir $@) && touch $@
 
-gatetop/hdlmake/gatetop-stamp:
-	(vlib gatetop && vmap $(VMAP_FLAGS) gatetop && mkdir -p gatetop/hdlmake && touch gatetop/hdlmake/gatetop-stamp) || rm -rf gatetop
 
-gatelib/hdlmake/gate_vhdl: ../files/gate.vhdl
-		vcom $(VCOM_FLAGS) -work gatelib $< 
-		@touch $@
+$(PROJ_OBJ)gatetop/gate6/.gate6_vhdl: ../files/gate6.vhdl \
+$(PROJ_OBJ)gatelib/gate/.gate_vhdl
+		$(GHDL) -a --work=gatetop $(GHDL_OPT) $<
+		@mkdir -p $(dir $@) && touch $@
 
-gatetop/hdlmake/gate6_vhdl: ../files/gate6.vhdl \
-gatelib/hdlmake/gate_vhdl
-		vcom $(VCOM_FLAGS) -work gatetop $< 
-		@touch $@
 
 # USER SIM COMMANDS
 sim_pre_cmd:
@@ -55,11 +48,11 @@ sim_pre_cmd:
 sim_post_cmd:
 		
 
-CLEAN_TARGETS := $(LIBS) modelsim.ini transcript
+CLEAN_TARGETS := $(addprefix $(PROJ_OBJ),$(LIBS)) *.cf *.o $(TOP_MODULE) work
 
 clean:
 		rm -rf $(CLEAN_TARGETS)
 mrproper: clean
-		rm -rf *.vcd *.wlf
+		rm -rf *.vcd
 
 .PHONY: mrproper clean sim_pre_cmd sim_post_cmd simulation
