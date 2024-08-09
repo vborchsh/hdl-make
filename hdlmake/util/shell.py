@@ -148,6 +148,14 @@ def mkdir_command():
         return "mkdir -p"
 
 
+def mkdir_command_no_fail_if_exists(directory):
+    """Get a string with the O.S. specific mkdir command including the dir"""
+    if check_windows_commands():
+        return "if not exist {directory} (mkdir {directory})".format(directory=directory)
+    else:
+        return "-mkdir -p {directory}".format(directory=directory)
+
+
 def touch_command():
     """Get a string with the O.S. specific mkdir command"""
     if check_windows_commands():
