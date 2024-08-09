@@ -9,7 +9,7 @@ import pytest
 import shutil
 
 class Config(object):
-    def __init__(self, path=None, my_os='unx', fakebin="linux_fakebin"):
+    def __init__(self, path=None, my_os='unx', fakebin="linux_fakebin", extra_env={}):
         self.path = path
         self.prev_env_path = os.environ['PATH']
         self.prev_check_windows_commands = hdlmake.util.shell.check_windows_commands
@@ -18,11 +18,16 @@ class Config(object):
         self.check_windows_commands = my_os == 'windows'
         self.check_windows_tools = my_os in ('windows', 'cygwin')
         self.fakebin = fakebin
+        self.extra_env = extra_env
+        self.prev_extra_env = {}
 
     def __enter__(self):
         os.environ['PATH'] = ("../" + self.fakebin + ":"
             + os.path.abspath(self.fakebin) + ':'
             + self.prev_env_path)
+        for k, v in self.extra_env.items():
+            self.prev_extra_env[k] = os.environ.get(k, '')
+            os.environ[k] = v
         if self.path is not None:
             os.chdir(self.path)
         hdlmake.util.shell.check_windows_tools = (lambda : self.check_windows_tools)
@@ -32,6 +37,8 @@ class Config(object):
         if self.path is not None:
             os.chdir("..")
         os.environ['PATH'] = self.prev_env_path
+        for k, v in self.prev_extra_env.items():
+            os.environ[k] = v
         hdlmake.util.shell.check_windows_tools = self.prev_check_windows_tools
         hdlmake.util.shell.check_windows_commands = self.prev_check_windows_commands
 
