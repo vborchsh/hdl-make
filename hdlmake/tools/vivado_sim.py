@@ -55,7 +55,7 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
         # Specify objdir via optional =dir: --work work[=dir]
         objdir_param = ''
         if self.objdir:
-            objdir_param = '={objdir}'.format(objdir=self.objdir)
+            objdir_param = '={objdir}'.format(objdir=self.objdir_mk)
         self.SIMULATOR_CONTROLS = {'vlog': 'xvlog $(XVLOG_OPT) $<',
                               'vhdl': 'xvhdl --work {work}%s $(XVHDL_OPT) $<' % objdir_param,
                               'compiler': 'xelab -debug all $(TOP_MODULE) '
@@ -86,7 +86,7 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
         self._makefile_sim_libs_variables(libs)
         self.writeln(
             "simulation: {objdir}$(VERILOG_OBJ) $(VHDL_OBJ)".format(
-                objdir = self.objdir + ' ' if self.objdir else '',
+                objdir = self.objdir_mk + ' ' if self.objdir else '',
             )
         )
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])

@@ -60,7 +60,7 @@ class ToolIVerilog(MakefileSim):
     def _makefile_sim_compilation(self):
         """Generate compile simulation Makefile target for IVerilog"""
         self.writeln("simulation: {objdir}include_dirs $(VERILOG_OBJ) $(VHDL_OBJ)".format(
-            objdir = self.objdir + ' ' if self.objdir else '',
+            objdir = self.objdir_mk + ' ' if self.objdir else '',
         ))
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln()

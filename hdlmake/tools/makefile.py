@@ -49,6 +49,10 @@ class ToolMakefile(object):
     def __init__(self):
         super(ToolMakefile, self).__init__()
         self.objdir = self.get_obj_dir()
+        # Makefile objdir
+        self.objdir_mk = ''
+        if self.objdir:
+            self.objdir_mk = '$(PROJ_OBJ)'
         self._filestring = ""
         self._file = None
         self.fileset = None
@@ -229,7 +233,7 @@ class ToolMakefile(object):
         """Print the Makefile target for cleaning intermediate files"""
         clean_targets_libs = '$(LIBS)'
         if self.objdir:
-            clean_targets_libs = '$(addprefix {objdir},$(LIBS))'.format(objdir=self.objdir)
+            clean_targets_libs = '$(addprefix {objdir},$(LIBS))'.format(objdir=self.objdir_mk)
         self.writeln("CLEAN_TARGETS := {clean_targets_libs} ".format(
             clean_targets_libs=clean_targets_libs) +
             ' '.join(self.CLEAN_TARGETS["clean"]) + "\n")

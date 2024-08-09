@@ -61,10 +61,10 @@ class MakefileSim(ToolMakefile):
         """Stamp file for source file :param file:"""
         name = dep_file.purename
         p = shell.makefile_slash_char()
-        return p.join([self.objdir + dep_file.library, name, ".{}_{}".format(name, dep_file.extension())])
+        return p.join([self.objdir_mk + dep_file.library, name, ".{}_{}".format(name, dep_file.extension())])
 
     def get_stamp_library(self, lib):
-        return self.objdir + lib + shell.makefile_slash_char() + "." + lib
+        return self.objdir_mk + lib + shell.makefile_slash_char() + "." + lib
 
     def _makefile_touch_stamp_file(self):
         self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
@@ -79,9 +79,9 @@ class MakefileSim(ToolMakefile):
         """Generic method to write the simulation Makefile objdir creation (mkdir objdir)"""
         if self.objdir:
             self.write("{objdir} : \n\t\t{mkdir_cmd} $@".format(
-                objdir=self.objdir,
+                objdir=self.objdir_mk,
                 mkdir_cmd=shell.mkdir_command(),
-                       ))
+            ))
             self.writeln()
 
     def _makefile_sim_sources_lang(self, name, klass):

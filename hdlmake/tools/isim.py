@@ -157,7 +157,7 @@ $(VERILOG_OBJ): $(LIB_IND) xilinxsim.ini
 $(VHDL_OBJ): $(LIB_IND) xilinxsim.ini
 
 """.format(
-    objdir = self.objdir + ' ' if self.objdir else '',
+    objdir = self.objdir_mk + ' ' if self.objdir else '',
 ))
         self.writeln("xilinxsim.ini: $(XILINX_INI_PATH)" +
             shell.makefile_slash_char() + "xilinxsim.ini")
