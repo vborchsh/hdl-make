@@ -86,7 +86,7 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
         self._makefile_sim_libs_variables(libs)
         self.writeln(
             "simulation: {objdir}$(VERILOG_OBJ) $(VHDL_OBJ)".format(
-                objdir = self.objdir_mk + ' ' if self.objdir else '',
+                objdir = self.objdir_mk_spc,
             )
         )
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])

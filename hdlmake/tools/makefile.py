@@ -49,10 +49,9 @@ class ToolMakefile(object):
     def __init__(self):
         super(ToolMakefile, self).__init__()
         self.objdir = self.get_obj_dir()
-        # Makefile objdir
-        self.objdir_mk = ''
-        if self.objdir:
-            self.objdir_mk = '$(PROJ_OBJ)'
+        # Makefile objdir variants
+        self.objdir_mk = '$(PROJ_OBJ)' if self.objdir else ''
+        self.objdir_mk_spc = self.objdir_mk + ' ' if self.objdir else ''
         self._filestring = ""
         self._file = None
         self.fileset = None
