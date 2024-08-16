@@ -629,7 +629,7 @@ def test_vivado_sim_132():
 
 def test_vivado_sim_133():
     # OBJdir is odd here, since "git rev-parse --show-toplevel" returns ..
-    run_compare(path="133objdir_with_spaces_specify_top_library_ghdl", extra_env={'OBJ': '/tmp/obj',})
+    run_compare(path="133objdir_with_spaces_specify_top_library_ghdl", extra_env={'OBJ': '/tmp/obj s pace',})
 
 @pytest.mark.xfail
 def test_xfail():

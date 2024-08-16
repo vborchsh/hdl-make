@@ -3,7 +3,7 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-PROJ_OBJ := /tmp/obj/../ghdl
+PROJ_OBJ := /tmp/obj__s__pace/../ghdl
 
 TOP_LIBRARY := gatetop
 TOP_MODULE := gate6
