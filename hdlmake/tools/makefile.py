@@ -127,6 +127,7 @@ class ToolMakefile(object):
         if not objdir:
             return ''
         objdir = objdir.replace('/', shell.makefile_slash_char())
+        objdir = objdir.replace(' ', '__')
         # If objdir find root of project and append that to objdir
         # Let objdir end with / or \ depending on OS with final '' argument.
         project_root = self.get_project_root()
@@ -143,8 +144,29 @@ class ToolMakefile(object):
             objdir,
             _project_root,
             self.TOOL_INFO.get('id', 'tool_without_id'),
-            '')
+        )
         return res
+
+    def makefile_objdir_concat(self, path=None):
+        """Return paths to makefile, prefix with objdir if set,
+        if objdir or path includes spaces, quote the concatenated string
+        path can either be None, str or list, if list each element is joined with / or \ depending on OS"""
+        if path is None:
+            return self.objdir_mk
+
+        # _path = path if string or joined path if list
+        p = shell.makefile_slash_char()
+        _path = path
+        if not _path:
+            _path = ''
+        if isinstance(path, list):
+            _path = p.join(path)
+
+        if self.objdir:
+            return p.join([self.objdir_mk, _path])
+        # path set, objdir not
+        return _path
+
 
     def makefile_setup(self, top_manifest, fileset, filename=None):
         """Set the Makefile configuration"""
@@ -230,9 +252,9 @@ class ToolMakefile(object):
 
     def makefile_clean(self):
         """Print the Makefile target for cleaning intermediate files"""
-        clean_targets_libs = '$(LIBS)'
+        clean_targets_libs = "$(LIBS)"
         if self.objdir:
-            clean_targets_libs = '$(addprefix {objdir},$(LIBS))'.format(objdir=self.objdir_mk)
+            clean_targets_libs = "$(addprefix {objdir},$(LIBS))".format(objdir=self.makefile_objdir_concat(''))
         self.writeln("CLEAN_TARGETS := {clean_targets_libs} ".format(
             clean_targets_libs=clean_targets_libs) +
             ' '.join(self.CLEAN_TARGETS["clean"]) + "\n")

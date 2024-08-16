@@ -92,7 +92,7 @@ class MakefileVsim(MakefileSim):
 
     def get_stamp_library_dir(self, lib):
         """Return the directory that contains the stamp files"""
-        return self.objdir_mk + lib + shell.makefile_slash_char() + "hdlmake"
+        return self.makefile_objdir_concat([lib, "hdlmake"])
 
     def get_stamp_library(self, lib):
         """Return the stamp file for :param lib:  It must be a proper file
@@ -118,10 +118,10 @@ class MakefileVsim(MakefileSim):
                     objdir=self.objdir_mk,
                     lib=lib,
                 )
-            self.writeln("\t(vlib {objdir}{lib} && vmap $(VMAP_FLAGS) {lib}{if_objdir__objdir_lib} "
-                         "&& {mkdir} {stampdir} && {touch} {stamplib}) || {rm} {objdir}{lib}".format(
-                objdir=self.objdir_mk,
-                if_objdir__objdir_lib=if_objdir__objdir_lib,
+            self.writeln("\t(vlib {objdir_lib} && vmap $(VMAP_FLAGS) {lib}{if_objdir__objdir_lib} "
+                         "&& {mkdir} {stampdir} && {touch} {stamplib}) || {rm} {objdir_lib}".format(
+                if_objdir__objdir_lib=" " + self.makefile_objdir_concat(lib) if self.objdir else "",
+                objdir_lib=self.makefile_objdir_concat(lib),
                 lib=lib, mkdir=shell.mkdir_command(), stampdir=stampdir,
                 touch=shell.touch_command(), stamplib=stamplib,
                 rm=shell.del_command()))

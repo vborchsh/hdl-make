@@ -3,7 +3,7 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-PROJ_OBJ := /tmp/obj/../ghdl/
+PROJ_OBJ := /tmp/obj/../ghdl
 
 TOP_LIBRARY := gatetop
 TOP_MODULE := gate6
@@ -21,23 +21,23 @@ VERILOG_OBJ :=
 VHDL_SRC := ../files/gate.vhdl \
 ../files/gate6.vhdl \
 
-VHDL_OBJ := $(PROJ_OBJ)gatelib/gate/.gate_vhdl \
-$(PROJ_OBJ)gatetop/gate6/.gate6_vhdl \
+VHDL_OBJ := $(PROJ_OBJ)/gatelib/gate/.gate_vhdl \
+$(PROJ_OBJ)/gatetop/gate6/.gate6_vhdl \
 
 LIBS := gatelib gatetop
-LIB_IND := $(PROJ_OBJ)gatelib/.gatelib $(PROJ_OBJ)gatetop/.gatetop
+LIB_IND := $(PROJ_OBJ)/gatelib/.gatelib $(PROJ_OBJ)/gatetop/.gatetop
 
 simulation: $(PROJ_OBJ) $(VERILOG_OBJ) $(VHDL_OBJ)
 		$(GHDL) -e $(GHDL_OPT) $(TOP_LIBRARY).$(TOP_MODULE)
 
 
-$(PROJ_OBJ)gatelib/gate/.gate_vhdl: ../files/gate.vhdl
+$(PROJ_OBJ)/gatelib/gate/.gate_vhdl: ../files/gate.vhdl
 		$(GHDL) -a --work=gatelib $(GHDL_OPT) $<
 		@mkdir -p $(dir $@) && touch $@
 
 
-$(PROJ_OBJ)gatetop/gate6/.gate6_vhdl: ../files/gate6.vhdl \
-$(PROJ_OBJ)gatelib/gate/.gate_vhdl
+$(PROJ_OBJ)/gatetop/gate6/.gate6_vhdl: ../files/gate6.vhdl \
+$(PROJ_OBJ)/gatelib/gate/.gate_vhdl
 		$(GHDL) -a --work=gatetop $(GHDL_OPT) $<
 		@mkdir -p $(dir $@) && touch $@
 
@@ -48,7 +48,7 @@ sim_pre_cmd:
 sim_post_cmd:
 		
 
-CLEAN_TARGETS := $(addprefix $(PROJ_OBJ),$(LIBS)) *.cf *.o $(TOP_MODULE) work
+CLEAN_TARGETS := $(addprefix $(PROJ_OBJ)/,$(LIBS)) *.cf *.o $(TOP_MODULE) work
 
 clean:
 		rm -rf $(CLEAN_TARGETS)

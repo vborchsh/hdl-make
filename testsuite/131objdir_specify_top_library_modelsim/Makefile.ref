@@ -3,7 +3,7 @@
 #  http://ohwr.org/projects/hdl-make/  #
 ########################################
 
-PROJ_OBJ := /tmp/obj/../modelsim/
+PROJ_OBJ := /tmp/obj/../modelsim
 
 TOP_LIBRARY := gatetop
 TOP_MODULE := gate6
@@ -24,12 +24,12 @@ VERILOG_OBJ :=
 VHDL_SRC := ../files/gate.vhdl \
 ../files/gate6.vhdl \
 
-VHDL_OBJ := $(PROJ_OBJ)gatelib/hdlmake/gate_vhdl \
-$(PROJ_OBJ)gatetop/hdlmake/gate6_vhdl \
+VHDL_OBJ := $(PROJ_OBJ)/gatelib/hdlmake/gate_vhdl \
+$(PROJ_OBJ)/gatetop/hdlmake/gate6_vhdl \
 
 INCLUDE_DIRS :=
 LIBS := gatelib gatetop
-LIB_IND := $(PROJ_OBJ)gatelib/hdlmake/gatelib-stamp $(PROJ_OBJ)gatetop/hdlmake/gatetop-stamp
+LIB_IND := $(PROJ_OBJ)/gatelib/hdlmake/gatelib-stamp $(PROJ_OBJ)/gatetop/hdlmake/gatetop-stamp
 
 simulation: $(PROJ_OBJ) modelsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)
 $(VERILOG_OBJ): modelsim.ini
@@ -38,18 +38,18 @@ $(VHDL_OBJ): $(LIB_IND) modelsim.ini
 modelsim.ini: $(MODELSIM_INI_PATH)/modelsim.ini
 		cp $< . 2>&1
 
-$(PROJ_OBJ)gatelib/hdlmake/gatelib-stamp:
-	(vlib $(PROJ_OBJ)gatelib && vmap $(VMAP_FLAGS) gatelib $(PROJ_OBJ)gatelib && mkdir -p $(PROJ_OBJ)gatelib/hdlmake && touch $(PROJ_OBJ)gatelib/hdlmake/gatelib-stamp) || rm -rf $(PROJ_OBJ)gatelib
+$(PROJ_OBJ)/gatelib/hdlmake/gatelib-stamp:
+	(vlib $(PROJ_OBJ)/gatelib && vmap $(VMAP_FLAGS) gatelib $(PROJ_OBJ)/gatelib && mkdir -p $(PROJ_OBJ)/gatelib/hdlmake && touch $(PROJ_OBJ)/gatelib/hdlmake/gatelib-stamp) || rm -rf $(PROJ_OBJ)/gatelib
 
-$(PROJ_OBJ)gatetop/hdlmake/gatetop-stamp:
-	(vlib $(PROJ_OBJ)gatetop && vmap $(VMAP_FLAGS) gatetop $(PROJ_OBJ)gatetop && mkdir -p $(PROJ_OBJ)gatetop/hdlmake && touch $(PROJ_OBJ)gatetop/hdlmake/gatetop-stamp) || rm -rf $(PROJ_OBJ)gatetop
+$(PROJ_OBJ)/gatetop/hdlmake/gatetop-stamp:
+	(vlib $(PROJ_OBJ)/gatetop && vmap $(VMAP_FLAGS) gatetop $(PROJ_OBJ)/gatetop && mkdir -p $(PROJ_OBJ)/gatetop/hdlmake && touch $(PROJ_OBJ)/gatetop/hdlmake/gatetop-stamp) || rm -rf $(PROJ_OBJ)/gatetop
 
-$(PROJ_OBJ)gatelib/hdlmake/gate_vhdl: ../files/gate.vhdl
+$(PROJ_OBJ)/gatelib/hdlmake/gate_vhdl: ../files/gate.vhdl
 		vcom $(VCOM_FLAGS) -work gatelib $< 
 		@touch $@
 
-$(PROJ_OBJ)gatetop/hdlmake/gate6_vhdl: ../files/gate6.vhdl \
-$(PROJ_OBJ)gatelib/hdlmake/gate_vhdl
+$(PROJ_OBJ)/gatetop/hdlmake/gate6_vhdl: ../files/gate6.vhdl \
+$(PROJ_OBJ)/gatelib/hdlmake/gate_vhdl
 		vcom $(VCOM_FLAGS) -work gatetop $< 
 		@touch $@
 
@@ -59,7 +59,7 @@ sim_pre_cmd:
 sim_post_cmd:
 		
 
-CLEAN_TARGETS := $(addprefix $(PROJ_OBJ),$(LIBS)) modelsim.ini transcript
+CLEAN_TARGETS := $(addprefix $(PROJ_OBJ)/,$(LIBS)) modelsim.ini transcript
 
 clean:
 		rm -rf $(CLEAN_TARGETS)
