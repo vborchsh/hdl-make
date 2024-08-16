@@ -115,7 +115,7 @@ def test_noact():
         hdlmake.main.hdlmake(['list-files'])
         hdlmake.main.hdlmake(['list-mods', '--with-files'])
 
-def test_ahdl006():
+def test_ahdl_006():
     run_compare(path="006ahdl", my_os='windows')
 
 def test_diamond():
@@ -127,74 +127,74 @@ def test_ghdl():
 def test_icestorm_009():
     run_compare_filter(filter="TOOL_PATH", path="009icestorm")
 
-def test_isim010():
+def test_isim_010():
     run_compare_xilinx(path="010isim")
 
-def test_isim_windows060():
+def test_isim_windows_060():
     run_compare_xilinx(path="060isim_windows",
                        my_os='windows', fakebin="windows_fakebin")
 
-def test_icarus012():
+def test_icarus_012():
     run_compare(path="012icarus")
 
 def test_icarus_include_083():
     run_compare(path="083icarus_include")
 
-def test_libero013():
+def test_libero_013():
     run_compare(path="013libero")
 
-def test_planahead014():
+def test_planahead_014():
     run_compare(path="014planahead")
 
-def test_quartus015():
+def test_quartus_015():
     run_compare(path="015quartus")
 
-def test_quartus016():
+def test_quartus_016():
     run_compare(path="016quartus_nofam")
 
-def test_quartus033():
+def test_quartus_033():
     run_compare(path="033quartus")
 
 def test_quartus_windows102():
     assert hdlmake.util.shell.check_windows_tools() is False
     run_compare(path="102quartus_windows", my_os='windows')
 
-def test_quartus034():
+def test_quartus_034():
     run([], path="034quartus_prop")
     os.remove("034quartus_prop/Makefile")
 
-def test_quartus035():
+def test_quartus_035():
     with pytest.raises(SystemExit) as _:
         run([], path="035quartus_err")
     print(os.getcwd())
 
-def test_quartus036():
+def test_quartus_036():
     with pytest.raises(SystemExit) as _:
         run([], path="036quartus_err")
 
-def test_quartus037():
+def test_quartus_037():
     with pytest.raises(SystemExit) as _:
         run([], path="037quartus_err")
 
-def test_quartus038():
+def test_quartus_038():
     with pytest.raises(SystemExit) as _:
         run([], path="038quartus_err")
 
-def test_quartus039():
+def test_quartus_039():
     with pytest.raises(SystemExit) as _:
         run([], path="039quartus_err")
     #os.remove('039quartus_err/Makefile')
 
-def test_riviera017():
+def test_riviera_017():
     run_compare(path="017riviera")
 
-def test_vivado018():
+def test_vivado_018():
     run_compare(path="018vivado")
 
-def test_vivado_props054():
+def test_vivado_props_054():
     run_compare(path="054vivado_props")
 
-def test_vivado_sim019():
+def test_vivado_sim_019():
     run_compare(path="019vsim")
 
 def test_git_fetch():
@@ -272,42 +272,42 @@ def test_err_fetch():
         run([], path="065fetch_pre_post")
         assert False
 
-def test_xci023():
+def test_xci_023():
     run_compare(path="023xci")
 
-def test_xci104():
+def test_xci_104():
     run_compare(path="104xci")
 
-def test_xci_json105():
+def test_xci_json_105():
     run_compare(path="105xci_json")
 
-def test_xcix106():
+def test_xcix_106():
     run_compare(path="106xcix")
 
-def test_vlog_parser024():
+def test_vlog_parser_024():
     run_compare(path="024vlog_parser")
 
-def test_vlog_parser025():
+def test_vlog_parser_025():
     run_compare(path="025vlog_parser")
 
-def test_vlog_parser099():
+def test_vlog_parser_099():
     run_compare(path="099vlog_parser")
 
-def test_vlog_inc103():
+def test_vlog_inc_103():
     run_compare(path="103vlog_inc")
 
-def test_gitsm_fetch026():
+def test_gitsm_fetch_026():
     with Config(path="026gitsm_fetch") as _:
         hdlmake.main.hdlmake(['fetch'])
         shutil.rmtree('ipcores')
 
-def test_vhdl_parser027():
+def test_vhdl_parser_027():
     run_compare(path="027vhdl_parser")
 
-def test_vhdl_parser100():
+def test_vhdl_parser_100():
     run_compare(path="100vhdl_parser")
 
-def test_vhdl_context101():
+def test_vhdl_context_101():
     run_compare(path="101vhdl_context")
 
 def test_manifest_print():
@@ -352,7 +352,7 @@ def test_no_files():
 def test_no_bin_061():
     run_compare_xilinx(path="061err_nobin", fakebin="no_fakebin")
 
-def test_local043():
+def test_local_043():
     run_compare(path="043local_fetch")
 
 def test_files_dir():
@@ -503,7 +503,7 @@ def test_err_syn_package():
 def test_err_syn_top_070():
     run_compare(path="070err_syntop")
 
-def test_extra_modules076():
+def test_extra_modules_076():
     run_compare(path="076extra_modules")
 
 def test_err_syntool():
@@ -545,7 +545,7 @@ def test_err_filetype():
         run([], path="092bad_filetype")
         assert False
 
-def test_multi_sat093():
+def test_multi_sat_093():
     with Config(path="093multi_sat"):
         hdlmake.main.hdlmake([])
         # Output is not deterministic
