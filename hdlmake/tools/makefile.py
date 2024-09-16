@@ -122,7 +122,15 @@ class ToolMakefile(object):
         return cwd
 
     def get_obj_dir(self):
-        """Return the directory that contains the obj files"""
+        """Return the directory that contains the obj files
+        Environment variable HDLMAKE_USE_OBJ must be 1 to enable using OBJ environment variable.
+        If HDLMAKE_USE_OBJ!=1: return ''.
+        If OBJ not set: return ''.
+        If HDLMAKE_USE_OBJ=1 and OBJ set return subdir of OBJ. subdir is based on repo workdir.
+        """
+        hdlmake_use_obj = os.environ.get('HDLMAKE_USE_OBJ', '')
+        if hdlmake_use_obj != '1':
+            return ''
         objdir = os.environ.get('OBJ', '')
         if not objdir:
             return ''

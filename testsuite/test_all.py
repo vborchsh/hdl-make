@@ -617,19 +617,35 @@ def test_specify_top_library_129():
     run_compare(path="129specify_top_library")
 
 def test_specify_top_library_explict_130():
-    run_compare(path="130specify_top_library_explicit")
+    run_compare(path="130specify_top_library_explicit",
+                extra_env={
+                    'HDLMAKE_USE_OBJ': '0',
+                    'OBJ': 'Unused_since_HDLMAKE_USE_OBJ!=1',
+                })
 
 def test_vivado_sim_131():
     # OBJdir is odd here, since "git rev-parse --show-toplevel" returns ..
-    run_compare(path="131objdir_specify_top_library_modelsim", extra_env={'OBJ': '/tmp/obj',})
+    run_compare(path="131objdir_specify_top_library_modelsim",
+                extra_env={
+                    'HDLMAKE_USE_OBJ': '1',
+                    'OBJ': '/tmp/obj',
+                })
 
 def test_vivado_sim_132():
     # OBJdir is odd here, since "git rev-parse --show-toplevel" returns ..
-    run_compare(path="132objdir_specify_top_library_ghdl", extra_env={'OBJ': '/tmp/obj',})
+    run_compare(path="132objdir_specify_top_library_ghdl",
+                extra_env={
+                    'HDLMAKE_USE_OBJ': '1',
+                    'OBJ': '/tmp/obj',
+                })
 
 def test_vivado_sim_133():
     # OBJdir is odd here, since "git rev-parse --show-toplevel" returns ..
-    run_compare(path="133objdir_with_spaces_specify_top_library_ghdl", extra_env={'OBJ': '/tmp/obj s pace',})
+    run_compare(path="133objdir_with_spaces_specify_top_library_ghdl",
+                extra_env={
+                    'HDLMAKE_USE_OBJ': '1',
+                    'OBJ': '/tmp/obj s pace',
+                })
 
 @pytest.mark.xfail
 def test_xfail():

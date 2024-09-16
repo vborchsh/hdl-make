@@ -1641,10 +1641,10 @@ Altera Quartus II / Prime specific variables:
 Environment variables
 =====================
 
-``OBJ``
+``OBJ`` and ``HDLMAKE_USE_OBJ``
 -------
 
-If environmentvariable ``OBJ`` is defined, then compilation obj-files are store in a subfolder hierarchy to ``OBJ``. The subfolder hierarchy is the root folder of the project.
+If environment variable ``OBJ`` is defined and environment variable ``HDLMAKE_USE_OBJ=1``, then compilation obj-files are store in a subfolder hierarchy to ``OBJ``. The subfolder hierarchy is the root folder of the project.
 To let the path be valid modified, eg ``:`` is removed on Windows.
 
 Implantation status
