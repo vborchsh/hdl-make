@@ -74,7 +74,7 @@ def hdlmake(args):
         action.setup()
 
         # Execute the appropriated action for the freshly created modules pool
-        _action_runner(action)
+        _action_runner(action, options.objdir)
     except Exception as e:
         import traceback
         logging.critical(e)
@@ -84,13 +84,13 @@ def hdlmake(args):
         quit(2)
 
 
-def _action_runner(action):
+def _action_runner(action, objdir):
     """Funtion that decodes and executed the action selected by the user"""
     cmd = action.options.command
     if cmd == "manifest-help":
         ManifestParser().print_help()
     elif cmd == "makefile" or cmd is None:
-        action.makefile()
+        action.makefile(objdir=objdir)
     elif cmd == "edalize":
         action.write_edalize()
     elif cmd == "fetch":
@@ -226,6 +226,9 @@ def _get_parser():
     parser.add_argument(
         "--fetchto", dest="fetchto", default=None,
         help="overrides the fetchto variable")
+    parser.add_argument(
+        "-o", "--obj", dest="objdir", default=None,
+        help="Store obj/build files in a subdirectory to obj")
     return parser
 
 

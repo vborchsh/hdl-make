@@ -56,7 +56,7 @@ class Commands(Action):
                     "\n ".join([str(m) for m in self.all_manifests
                                 if not m.isfetched])))
 
-    def makefile(self):
+    def makefile(self, objdir):
         """Write the Makefile for the current design"""
         # Handle --filename option.
         filename = self.options.__dict__.get('filename')
@@ -67,7 +67,8 @@ class Commands(Action):
         combined_fileset.add(self.privative_fileset)
         self.tool.write_makefile(self.top_manifest,
                                  combined_fileset,
-                                 filename=filename)
+                                 filename=filename,
+                                 objdir=objdir)
 
     def write_edalize(self):
         filename = "run.py"

@@ -48,10 +48,6 @@ class ToolMakefile(object):
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
-        self.objdir = self.get_obj_dir()
-        # Makefile objdir variants
-        self.objdir_mk = '$(PROJ_OBJ)' if self.objdir else ''
-        self.objdir_mk_spc = self.objdir_mk + ' ' if self.objdir else ''
         self._filestring = ""
         self._file = None
         self.fileset = None
@@ -120,6 +116,14 @@ class ToolMakefile(object):
 
         # Fall back return current dir as toplevel
         return cwd
+
+    def configure_obj_dir(self, option_objdir):
+        self.objdir = option_objdir
+        if not self.objdir:
+            self.objdir = self.get_obj_dir()
+        # Makefile objdir variants
+        self.objdir_mk = '$(PROJ_OBJ)' if self.objdir else ''
+        self.objdir_mk_spc = self.objdir_mk + ' ' if self.objdir else ''
 
     def get_obj_dir(self):
         """Return the directory that contains the obj files

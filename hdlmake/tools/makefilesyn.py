@@ -45,9 +45,10 @@ class MakefileSyn(ToolMakefile):
         super(MakefileSyn, self).__init__()
         self._tcl_controls = {}
 
-    def write_makefile(self, top_manifest, fileset, filename=None):
+    def write_makefile(self, top_manifest, fileset, filename=None, objdir=None):
         """Generate a Makefile for the specific synthesis tool"""
         _check_synthesis_manifest(top_manifest)
+        self.configure_obj_dir(objdir)
         self.makefile_setup(top_manifest, fileset, filename=filename)
         self.makefile_check_tool('syn_path')
         self.makefile_includes()

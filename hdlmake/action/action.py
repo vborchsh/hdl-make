@@ -49,6 +49,7 @@ class Action(object):
         self.privative_fileset = SourceFileSet()
         self.options = options
         self.top_library = None
+        self.objdir = self.options.objdir
 
     def new_module(self, parent, url, source, fetchto):
         """Add new module to the pool.
