@@ -63,7 +63,8 @@ class ToolXilinxProject:
         # Add all files at once.
         self.writeln("\t@echo add_files -norecurse '{' >> $@")
         for srcfile in self.fileset.sort():
-            if type(srcfile) in fileset_dict:
+            if type(srcfile) in fileset_dict \
+               and not isinstance(srcfile, TCLFile):
                 self.writeln("\t@echo '{}' >> $@".format(
                     shell.tclpath(srcfile.rel_path())))
         self.writeln("\t@echo '}' >> $@")
