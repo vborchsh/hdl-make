@@ -30,6 +30,7 @@ import six
 
 from ..util import shell
 from ..util import path as path_mod
+from ..sourcefiles.srcfile import SourceFile
 
 
 class ToolMakefile(object):
@@ -196,6 +197,28 @@ class ToolMakefile(object):
     def get_num_hdl_libs(self):
        num_libs = len(self.get_all_libs());
        return num_libs;
+
+    def _makefile_syn_files_cmd(self, fileset_dict):
+        """Subroutine of _makefile_syn_files, to output the command for each
+        source file.  It is present here to be also used for Xsim projects"""
+        # Add per file properties (like library)
+        for srcfile in self.fileset.sort():
+            command = fileset_dict.get(type(srcfile))
+            # Put the file in files.tcl only if it is supported.
+            if command is not None:
+                # Save the file for dependencies
+                self._all_sources.append(srcfile.rel_path())
+                # Libraries are defined only for hdl files.
+                if isinstance(srcfile, SourceFile):
+                    library = srcfile.library
+                else:
+                    library = None
+                if callable(command):
+                    command = command(srcfile)
+                cmd = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
+                                     library=library)
+                if cmd:
+                    self.writeln("\t@echo '{}' >> $@".format(cmd))
 
     def get_library_for_top_module(self):
        if self.get_num_hdl_libs() == 1:

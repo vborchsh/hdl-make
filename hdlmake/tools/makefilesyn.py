@@ -140,23 +140,8 @@ endif""")
             for command in self._tcl_controls["files"].split('\n'):
                 self.writeln('\t\t@echo {0} >> $@'.format(command))
 
-
-
         # Add each source file
-        for srcfile in self.fileset.sort():
-            command = fileset_dict.get(type(srcfile))
-            # Put the file in files.tcl only if it is supported.
-            if command is not None:
-                self._all_sources.append(srcfile.rel_path())
-                # Libraries are defined only for hdl files.
-                if isinstance(srcfile, SourceFile):
-                    library = srcfile.library
-                else:
-                    library = None
-                command = command.format(srcfile=shell.tclpath(srcfile.rel_path()),
-                                         library=library)
-                command = "\t\techo '{}' >> $@".format(command)
-                self.writeln(command)
+        self._makefile_syn_files_cmd(fileset_dict)
 
         self._makefile_syn_files_map_files_to_lib()
         self.writeln()
