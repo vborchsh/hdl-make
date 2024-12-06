@@ -37,12 +37,16 @@ class ToolMakefile(object):
 
     """Class that provides the Makefile writing methods and status"""
 
+    # HDL source files.  Those files are parseable.
     HDL_FILES = {}
+    # Extra files which are also supported by the tool (like block diagram,
+    # constraints, ...)
+    SUPPORTED_FILES = {}
+
     TOOL_INFO = {}
     STANDARD_LIBS = []
     SYSTEM_LIBS = []
     CLEAN_TARGETS = {}
-    SUPPORTED_FILES = {}
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
