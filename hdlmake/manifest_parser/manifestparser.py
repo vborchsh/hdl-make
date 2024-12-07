@@ -66,6 +66,10 @@ class ManifestParser(ConfigParser):
              'default': [],
              'help': "List of .mk files appended to toplevel makefile",
              'type': []},
+            {'name': 'incl_post_makefiles',
+             'default': [],
+             'help': "List of .mk files appended to the end of toplevel makefile, since they might use variables from toplevel makefile",
+             'type': []},
             {'name': 'files',
              'default': [],
              'help': "List of files from the current module",
@@ -82,6 +86,7 @@ class ManifestParser(ConfigParser):
         self.add_delimiter()
         self.add_type('include_dirs', type_new="")
         self.add_type('incl_makefiles', type_new='')
+        self.add_type('incl_post_makefiles', type_new='')
         self.add_type('files', type_new=[])
         self.add_allowed_key('modules', key="svn")
         self.add_allowed_key('modules', key="git")

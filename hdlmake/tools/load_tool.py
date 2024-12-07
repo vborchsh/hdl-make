@@ -13,6 +13,7 @@ def load_syn_tool(tool_name):
     from .diamond import ToolDiamond
     from .libero import ToolLibero
     from .liberosoc import ToolLiberoSoC
+    from .liberosoc11 import ToolLiberoSoC11
     from .icestorm import ToolIcestorm
     from .ghdl_syn import GhdlSyn
     available_tools = {'ise': ToolISE,
@@ -22,6 +23,7 @@ def load_syn_tool(tool_name):
                        'diamond': ToolDiamond,
                        'libero': ToolLibero,
                        'liberosoc': ToolLiberoSoC,
+                       'liberosoc11': ToolLiberoSoC11,
                        'icestorm': ToolIcestorm,
                        'ghdl': GhdlSyn}
     if tool_name in available_tools:
