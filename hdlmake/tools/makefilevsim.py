@@ -92,7 +92,7 @@ class MakefileVsim(MakefileSim):
 
     def get_stamp_library_dir(self, lib):
         """Return the directory that contains the stamp files"""
-        return lib + shell.makefile_slash_char() + "hdlmake"
+        return self.makefile_objdir_concat([lib, "hdlmake"])
 
     def get_stamp_library(self, lib):
         """Return the stamp file for :param lib:  It must be a proper file
@@ -112,8 +112,16 @@ class MakefileVsim(MakefileSim):
             stampdir = self.get_stamp_library_dir(lib)
             stamplib = self.get_stamp_library(lib)
             self.writeln("{}:".format(stamplib))
-            self.writeln("\t(vlib {lib} && vmap $(VMAP_FLAGS) {lib} "
-                         "&& {mkdir} {stampdir} && {touch} {stamplib}) || {rm} {lib}".format(
+            if_objdir__objdir_lib = ''
+            if self.objdir:
+                if_objdir__objdir_lib = " {objdir}{lib}".format(
+                    objdir=self.objdir_mk,
+                    lib=lib,
+                )
+            self.writeln("\t(vlib {objdir_lib} && vmap $(VMAP_FLAGS) {lib}{if_objdir__objdir_lib} "
+                         "&& {mkdir} {stampdir} && {touch} {stamplib}) || {rm} {objdir_lib}".format(
+                if_objdir__objdir_lib=" " + self.makefile_objdir_concat(lib) if self.objdir else "",
+                objdir_lib=self.makefile_objdir_concat(lib),
                 lib=lib, mkdir=shell.mkdir_command(), stampdir=stampdir,
                 touch=shell.touch_command(), stamplib=stamplib,
                 rm=shell.del_command()))
@@ -132,8 +140,11 @@ class MakefileVsim(MakefileSim):
         libs = self.get_all_libs()
         self._makefile_sim_libs_variables(libs)
         self.writeln(
-            "simulation: %s $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)" %
-            (' '.join(self.additional_deps)),)
+            "simulation: {objdir}{additional_deps} $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ)".format(
+                objdir = self.objdir_mk_spc,
+                additional_deps = ' '.join(self.additional_deps)
+            )
+        )
         self.writeln("$(VERILOG_OBJ): " + ' '.join(self.additional_deps))
         self.writeln("$(VHDL_OBJ): $(LIB_IND) " + ' '.join(self.additional_deps))
         self.writeln()

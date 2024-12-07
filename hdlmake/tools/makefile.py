@@ -26,7 +26,10 @@
 from __future__ import absolute_import
 import os
 import logging
+import re
 import six
+
+from subprocess import CalledProcessError
 
 from ..util import shell
 from ..util import path as path_mod
@@ -50,6 +53,10 @@ class ToolMakefile(object):
 
     def __init__(self):
         super(ToolMakefile, self).__init__()
+        self.objdir = self.get_obj_dir()
+        # Makefile objdir variants
+        self.objdir_mk = '$(PROJ_OBJ)' if self.objdir else ''
+        self.objdir_mk_spc = self.objdir_mk + ' ' if self.objdir else ''
         self._filestring = ""
         self._file = None
         self.fileset = None
@@ -80,6 +87,100 @@ class ToolMakefile(object):
         """Get the privative format file types supported by the tool"""
         return self.SUPPORTED_FILES
 
+    def get_project_root(self):
+        """Get/Guess project root
+        If dir is a git repo find the root of the git repo, of root module - not of otional submodule
+        """
+        # Try to get git toplevel and return
+        # Alternative method:
+        #   Use "git git rev-parse --show-cdup", which returns ../../../.. (uses slashes on both windows and linux)
+        #   Thren count number of slashes just as for svn
+        try:
+            command_out = shell.run_popen("git rev-parse --show-toplevel")
+            top_level = command_out.stdout.readlines()[0].strip().decode('utf-8')
+            return top_level.replace('/', shell.makefile_slash_char())
+        except CalledProcessError as process_error:
+            logging.debug("Can't find git toplevel. Cannot execute the shell command: %s",
+                process_error.output)
+        except IndexError:
+            logging.debug("Can't find git toplevel. Not a git repo.")
+
+        # Get cwd used for both svn(to get toplevel dir) and fallback
+        cwd = os.getcwd()
+
+        # Try to get git toplevel and return
+        try:
+            command_out = shell.run_popen("svn info")
+            svn_info_lines = [_.strip().decode('utf-8') for _ in command_out.stdout.readlines()]
+            idx = [_ for _, s in enumerate(svn_info_lines) if 'Relative URL:' in s][0]
+            svn_relative_url = svn_info_lines[idx]
+            levels_up = svn_relative_url.count('/') - 1
+            top_level = '/'.join(cwd.split(shell.makefile_slash_char())[0:-levels_up])
+            return top_level.replace('/', shell.makefile_slash_char())
+        except CalledProcessError as process_error:
+            logging.debug("Can't find svn toplevel. Cannot execute the shell command: %s",
+                process_error.output)
+        except IndexError:
+            logging.debug("Can't find svn toplevel. Not a svn repo.")
+
+        # Fall back return current dir as toplevel
+        return cwd
+
+    def get_obj_dir(self):
+        """Return the directory that contains the obj files
+        Environment variable HDLMAKE_USE_OBJ must be 1 to enable using OBJ environment variable.
+        If HDLMAKE_USE_OBJ!=1: return ''.
+        If OBJ not set: return ''.
+        If HDLMAKE_USE_OBJ=1 and OBJ set return subdir of OBJ. subdir is based on repo workdir.
+        """
+        hdlmake_use_obj = os.environ.get('HDLMAKE_USE_OBJ', '')
+        if hdlmake_use_obj != '1':
+            return ''
+        objdir = os.environ.get('OBJ', '')
+        if not objdir:
+            return ''
+        objdir = objdir.replace('/', shell.makefile_slash_char())
+        objdir = objdir.replace(' ', '__')
+        # If objdir find root of project and append that to objdir
+        # Let objdir end with / or \ depending on OS with final '' argument.
+        project_root = self.get_project_root()
+        # Skip root / (for linux etc.) of project_root
+        project_root = project_root.lstrip('/')
+        _project_root = project_root
+        if shell.check_windows_commands():
+            # Colon not allowed in path except <drive>:, remove it
+            _project_root = _project_root.replace(':', '')
+            # If project_root is a windows network drive, then
+            # it starts with '\\<share>\, remove all initial \
+            _project_root = re.sub(r'\\\\+', '', _project_root)
+        res = os.path.join(
+            objdir,
+            _project_root,
+            self.TOOL_INFO.get('id', 'tool_without_id'),
+        )
+        return res
+
+    def makefile_objdir_concat(self, path=None):
+        """Return paths to makefile, prefix with objdir if set,
+        if objdir or path includes spaces, quote the concatenated string
+        path can either be None, str or list, if list each element is joined with / or \ depending on OS"""
+        if path is None:
+            return self.objdir_mk
+
+        # _path = path if string or joined path if list
+        p = shell.makefile_slash_char()
+        _path = path
+        if not _path:
+            _path = ''
+        if isinstance(path, list):
+            _path = p.join(path)
+
+        if self.objdir:
+            return p.join([self.objdir_mk, _path])
+        # path set, objdir not
+        return _path
+
+
     def makefile_setup(self, top_manifest, fileset, filename=None):
         """Set the Makefile configuration"""
         self.manifest_dict = top_manifest.manifest_dict
@@ -98,6 +199,11 @@ class ToolMakefile(object):
         self.writeln("#  http://ohwr.org/projects/hdl-make/  #")
         self.writeln("########################################")
         self.writeln()
+        if self.objdir:
+            self.writeln("PROJ_OBJ := {objdir}".format(
+                         objdir=self.objdir,
+                         ))
+            self.writeln()
 
     def _get_path(self):
         """Get the directory in which the tool binary is at Host"""
@@ -159,7 +265,11 @@ class ToolMakefile(object):
 
     def makefile_clean(self):
         """Print the Makefile target for cleaning intermediate files"""
-        self.writeln("CLEAN_TARGETS := $(LIBS) " +
+        clean_targets_libs = "$(LIBS)"
+        if self.objdir:
+            clean_targets_libs = "$(addprefix {objdir},$(LIBS))".format(objdir=self.makefile_objdir_concat(''))
+        self.writeln("CLEAN_TARGETS := {clean_targets_libs} ".format(
+            clean_targets_libs=clean_targets_libs) +
             ' '.join(self.CLEAN_TARGETS["clean"]) + "\n")
         self.writeln("clean:")
         self.writeln("\t\t" + shell.del_command() + " $(CLEAN_TARGETS)")

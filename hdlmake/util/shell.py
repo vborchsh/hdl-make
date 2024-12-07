@@ -42,6 +42,17 @@ def set_commands_os(name):
     commands_os = name
 
 
+def run_popen(command):
+    """Execute a command in the shell and return output, no error handling"""
+    logging.debug("run_popen: {}".format(command))
+    return Popen(command,
+        stdout=PIPE,
+        stdin=PIPE,
+        stderr=PIPE,
+        close_fds=not check_windows_tools(), # FIXME: comment
+        shell=True)
+
+
 def run(command):
     """Execute a command in the shell and print the output lines as a list"""
     try:
@@ -135,6 +146,14 @@ def mkdir_command():
         return "mkdir"
     else:
         return "mkdir -p"
+
+
+def mkdir_command_no_fail_if_exists(directory):
+    """Get a string with the O.S. specific mkdir command including the dir"""
+    if check_windows_commands():
+        return "if not exist {directory} (mkdir {directory})".format(directory=directory)
+    else:
+        return "-mkdir -p {directory}".format(directory=directory)
 
 
 def touch_command():

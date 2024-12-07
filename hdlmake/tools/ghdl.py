@@ -58,13 +58,19 @@ class ToolGHDL(MakefileSim):
         """Print the GHDL options to the Makefile"""
         self.writeln("GHDL := ghdl")
         ghdl_opt = self.manifest_dict.get("ghdl_opt", '')
+        if self.objdir:
+            ghdl_opt += ' -P{objdir} --workdir={objdir}'.format(objdir=self.objdir_mk)
         self.writeln("GHDL_OPT := {ghdl_opt}\n".format(ghdl_opt=ghdl_opt))
 
     def _makefile_sim_compilation(self):
         """Print the GDHL simulation compilation target"""
         libs = self.get_all_libs()
         self._makefile_sim_libs_variables(libs)
-        self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
+        self.writeln(
+            "simulation: {objdir}$(VERILOG_OBJ) $(VHDL_OBJ)".format(
+                objdir = self.objdir_mk_spc,
+            )
+        )
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln('\n')
         self._makefile_sim_dep_files()

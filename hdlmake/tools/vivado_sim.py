@@ -49,13 +49,17 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
                                "work", "xsim.dir"],
                      'mrproper': ["*.wdb", "*.vcd"]}
 
-    SIMULATOR_CONTROLS = {'vlog': 'xvlog $(XVLOG_OPT) $<',
-                          'vhdl': 'xvhdl --work {work} $(XVHDL_OPT) $<',
-                          'compiler': 'xelab -debug all $(TOP_MODULE) '
-                                      '-s $(TOP_MODULE)'}
-
     def __init__(self):
         super(ToolVivadoSim, self).__init__()
+
+        # Specify objdir via optional =dir: --work work[=dir]
+        objdir_param = ''
+        if self.objdir:
+            objdir_param = '={objdir}'.format(objdir=self.objdir_mk)
+        self.SIMULATOR_CONTROLS = {'vlog': 'xvlog $(XVLOG_OPT) $<',
+                              'vhdl': 'xvhdl --work {work}%s $(XVHDL_OPT) $<' % objdir_param,
+                              'compiler': 'xelab -debug all $(TOP_MODULE) '
+                                          '-s $(TOP_MODULE)'}
 
     def _makefile_sim_project(self):
         """Generate a project file (to be used by vivado)"""
@@ -80,7 +84,11 @@ class ToolVivadoSim(ToolXilinxProject, MakefileSim):
         """Generate compile simulation Makefile target for Vivado Simulator"""
         libs = self.get_all_libs()
         self._makefile_sim_libs_variables(libs)
-        self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
+        self.writeln(
+            "simulation: {objdir}$(VERILOG_OBJ) $(VHDL_OBJ)".format(
+                objdir = self.objdir_mk_spc,
+            )
+        )
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln()
         self._makefile_sim_dep_files()

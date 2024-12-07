@@ -68,7 +68,11 @@ class ToolNVC(MakefileSim):
         """Print the NVC simulation compilation target"""
         libs = self.get_all_libs()
         self._makefile_sim_libs_variables(libs)
-        self.writeln("simulation: $(VERILOG_OBJ) $(VHDL_OBJ)")
+        self.writeln(
+            "simulation: {objdir}$(VERILOG_OBJ) $(VHDL_OBJ)".format(
+                objdir = self.objdir_mk_spc,
+            )
+        )
         self.writeln("\t\t" + self.SIMULATOR_CONTROLS['compiler'])
         self.writeln('\n')
         self._makefile_sim_dep_files()

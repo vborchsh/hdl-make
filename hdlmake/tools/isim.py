@@ -152,11 +152,13 @@ class ToolISim(MakefileSim):
         libs = self.get_all_libs()
         self._makefile_sim_libs_variables(libs)
         self.writeln("""\
-simulation: xilinxsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ) fuse
+simulation: {objdir}xilinxsim.ini $(LIB_IND) $(VERILOG_OBJ) $(VHDL_OBJ) fuse
 $(VERILOG_OBJ): $(LIB_IND) xilinxsim.ini
 $(VHDL_OBJ): $(LIB_IND) xilinxsim.ini
 
-""")
+""".format(
+    objdir = self.objdir_mk_spc,
+))
         self.writeln("xilinxsim.ini: $(XILINX_INI_PATH)" +
             shell.makefile_slash_char() + "xilinxsim.ini")
         self.writeln("\t\t" + shell.copy_command() + " $< .")

@@ -60,11 +60,10 @@ class MakefileSim(ToolMakefile):
     def get_stamp_file(self, dep_file):
         """Stamp file for source file :param file:"""
         name = dep_file.purename
-        p = shell.makefile_slash_char()
-        return p.join([dep_file.library, name, ".{}_{}".format(name, dep_file.extension())])
+        return self.makefile_objdir_concat([dep_file.library, name, ".{}_{}".format(name, dep_file.extension())])
 
     def get_stamp_library(self, lib):
-        return lib + shell.makefile_slash_char() + "." + lib
+        return self.makefile_objdir_concat([lib, "." + lib])
 
     def _makefile_touch_stamp_file(self):
         self.write("\t\t@" + shell.mkdir_command() + " $(dir $@)")
@@ -74,6 +73,15 @@ class MakefileSim(ToolMakefile):
         """Generic method to write the simulation Makefile local target"""
         self.writeln("#target for performing local simulation\n"
                      "local: sim_pre_cmd simulation sim_post_cmd\n")
+
+    def _makefile_sim_mkdir_objdir(self):
+        """Generic method to write the simulation Makefile objdir creation (mkdir objdir)"""
+        if self.objdir:
+            self.write("{objdir} : \n\t\t{mkdir_cmd} $@".format(
+                objdir=self.objdir_mk,
+                mkdir_cmd=shell.mkdir_command(),
+            ))
+            self.writeln()
 
     def _makefile_sim_sources_lang(self, name, klass):
         """Generic method to write the simulation Makefile HDL sources"""
@@ -93,6 +101,7 @@ class MakefileSim(ToolMakefile):
 
     def _makefile_sim_sources(self):
         """Generic method to write the simulation Makefile HDL sources"""
+        self._makefile_sim_mkdir_objdir()
         self._makefile_sim_sources_lang("VERILOG", VerilogFile)
         self._makefile_sim_sources_lang("VHDL", VHDLFile)
 
