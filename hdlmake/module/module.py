@@ -76,6 +76,7 @@ class Module(object):
         # Manifest Modules Properties
         self.modules = {'local': [], 'git': [], 'gitsm': [], 'svn': []}
         self.incl_makefiles = []                # List of paths of makefile files to include.
+        self.incl_post_makefiles = []           # List of paths of makefile files to include at the end of top makefile.
         self.library = None
         self.action = action
         self.top_manifest = action.get_top_manifest()
@@ -141,6 +142,7 @@ class Module(object):
         self._process_manifest_files()
         self._process_manifest_modules()
         self._process_manifest_makefiles()
+        self._process_manifest_post_makefiles()
 
     def _process_manifest_library(self):
         """Method processing the universal manifest directives;
@@ -323,6 +325,20 @@ class Module(object):
                 included_makefiles_aux = self.manifest_dict["incl_makefiles"][:]
         makefiles_paths = self._make_list_of_paths(included_makefiles_aux)
         self.incl_makefiles.extend(makefiles_paths)
+
+    def _process_manifest_post_makefiles(self):
+        """Get the extra post-makefiles defined in the HDLMake module"""
+        # Included Makefiles
+        included_post_makefiles_aux = []
+        if "incl_post_makefiles" in self.manifest_dict:
+            if isinstance(self.manifest_dict["incl_post_makefiles"],
+                    six.string_types):
+                included_post_makefiles_aux.append(
+                    self.manifest_dict["incl_post_makefiles"])
+            else:  # list
+                included_post_makefiles_aux = self.manifest_dict["incl_post_makefiles"][:]
+        post_makefiles_paths = self._make_list_of_paths(included_post_makefiles_aux)
+        self.incl_post_makefiles.extend(post_makefiles_paths)
 
     def submodules(self):
         """Get a list with all the submodules this module instance requires"""
