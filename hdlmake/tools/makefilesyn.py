@@ -7,8 +7,6 @@ import logging
 from .makefile import ToolMakefile
 from ..util import shell
 
-from ..sourcefiles.srcfile import VerilogFile, SVFile, SourceFile
-
 
 def _check_synthesis_manifest(top_manifest):
     """Check the manifest contains all the keys for a synthesis project"""
@@ -16,6 +14,11 @@ def _check_synthesis_manifest(top_manifest):
         if v not in top_manifest.manifest_dict:
             raise Exception(
                 "'{}' variable must be set in the top manifest.".format(v))
+    # Tools with multithread support
+    if "syn_jobs" in top_manifest.manifest_dict:
+        for v in ["vivado"]:
+            if v != top_manifest.manifest_dict["syn_tool"]:
+                logging.warning("'syn_jobs' is ignored for '{}' tool".format(top_manifest.manifest_dict["syn_tool"]))
 
 
 class MakefileSyn(ToolMakefile):
@@ -26,9 +29,9 @@ class MakefileSyn(ToolMakefile):
     """Makefile template to build and execute a command.
     Arguments:
     {0}: name of the stage (project, bitstream, ...)
-    {1}: prevous stage (for dependency)
+    {1}: previous stage (for dependency)
     {2}: name of the stage, in upper case
-    {3}: commands to create the tcp script
+    {3}: commands to create the tcl script
     {4}: touch command"""
     MAKEFILE_SYN_BUILD_CMD="""\
 {0}.tcl:
