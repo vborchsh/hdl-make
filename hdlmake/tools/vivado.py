@@ -71,7 +71,7 @@ class ToolVivado(ToolXilinx):
         XCIXFile:     ToolXilinx._XILINX_ANY_SOURCE_PROPERTY,
         BDFile:      ToolXilinx._XILINX_ANY_SOURCE_PROPERTY}
 
-    CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp",
+    CLEAN_TARGETS = {'clean': [".Xil", "*.jou", "*.log", "*.pb", "*.dmp", "*.xsa",
                                "$(PROJECT).cache", "$(PROJECT).data", "work",
                                "$(PROJECT).runs", "$(PROJECT).hw",
                                "$(PROJECT).sim", "$(PROJECT).gen",
@@ -80,9 +80,11 @@ class ToolVivado(ToolXilinx):
     CLEAN_TARGETS.update(ToolXilinx.CLEAN_TARGETS)
 
     TCL_CONTROLS = {'bitstream': '$(TCL_OPEN)\n'
-                                 'launch_runs impl_1 -to_step write_bitstream'
-                                 '\n'
+                                 'launch_runs impl_1 -to_step write_bitstream\n'
                                  'wait_on_run impl_1\n'
+                                 '$(TCL_CLOSE)',
+                    'prom': '$(TCL_OPEN)\n'
+                                 'write_hw_platform -fixed -force -include_bit -file $(PROJECT).xsa\n'
                                  '$(TCL_CLOSE)'}
 
     def __init__(self):
