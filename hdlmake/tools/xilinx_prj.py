@@ -25,7 +25,7 @@
 
 
 from __future__ import absolute_import
-from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile, SourceFile
+from ..sourcefiles.srcfile import VHDLFile, VerilogFile, SVFile, TCLFile
 from ..util import shell
 
 
