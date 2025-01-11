@@ -2,12 +2,10 @@
 
 from __future__ import absolute_import
 import os
-import sys
-import logging
 
 from .makefile import ToolMakefile
 from ..util import shell
-from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
+from ..sourcefiles.srcfile import VerilogFile, VHDLFile
 from ..util import path as path_mod
 
 def _check_simulation_manifest(top_manifest):

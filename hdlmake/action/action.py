@@ -26,10 +26,8 @@ from __future__ import print_function
 from __future__ import absolute_import
 import os
 import logging
-import sys
 
 from ..tools.load_tool import load_syn_tool, load_sim_tool
-from ..util import shell
 from ..sourcefiles import new_dep_solver as dep_solver
 from ..sourcefiles.srcfile import ParamFile, SourceFile, ManualFile
 from ..sourcefiles.sourcefileset import SourceFileSet

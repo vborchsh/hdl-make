@@ -29,7 +29,6 @@ from xml.etree import ElementTree as ET
 
 from .new_dep_solver import DepParser
 from .dep_file import DepRelation
-from ..sourcefiles.srcfile import create_source_file
 from ..sourcefiles.srcfile import VHDL_EXTENSIONS, VERILOG_EXTENSIONS, SV_EXTENSIONS
 
 class CXFParser(DepParser):

@@ -31,7 +31,6 @@ from xml.etree import ElementTree as ET
 
 from .new_dep_solver import DepParser
 from .dep_file import DepRelation
-from ..sourcefiles.srcfile import create_source_file
 
 
 class XCIParserBase(DepParser):
