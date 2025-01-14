@@ -24,7 +24,6 @@
 """Module providing support for NVC simulator"""
 
 from __future__ import absolute_import
-import string
 
 from .makefilesim import MakefileSim
 from ..sourcefiles.srcfile import VHDLFile

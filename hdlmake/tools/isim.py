@@ -28,7 +28,6 @@
 from __future__ import absolute_import
 import os
 import os.path
-import logging
 
 from .makefilesim import MakefileSim
 from ..util import shell

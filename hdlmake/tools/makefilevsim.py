@@ -24,13 +24,10 @@
 """Module providing common stuff for Modelsim, Vsim and riviera like simulators"""
 
 from __future__ import absolute_import
-import os
-import string
 
 from .makefilesim import MakefileSim
 from ..util import shell
 from ..sourcefiles.srcfile import VerilogFile, VHDLFile, SVFile
-from ..util import path as path_mod
 import six
 
 

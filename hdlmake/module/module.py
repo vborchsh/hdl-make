@@ -35,7 +35,6 @@ from glob import glob
 
 from ..util import path as path_mod
 from ..util import shell
-from ..fetch import git
 from ..manifest_parser.manifestparser import ManifestParser
 import six
 

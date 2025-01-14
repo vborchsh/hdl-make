@@ -1,7 +1,7 @@
 """Module providing the synthesis functionality for writing Makefiles"""
 
 from __future__ import absolute_import
-import os, sys
+import os
 import logging
 
 from .makefile import ToolMakefile

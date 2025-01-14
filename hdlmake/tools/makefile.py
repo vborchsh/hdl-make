@@ -26,10 +26,8 @@
 from __future__ import absolute_import
 import os
 import logging
-import six
 
 from ..util import shell
-from ..util import path as path_mod
 from ..sourcefiles.srcfile import SourceFile
 
 
