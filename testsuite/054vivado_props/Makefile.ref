@@ -109,6 +109,12 @@ par.tcl:
 		echo if { '$$'timing '&&' 1 } { >> $@
 		echo     exit 1 >> $@
 		echo } >> $@
+		echo if { '(' [get_property STATS.WNS [get_runs impl_1]] '<' 0 ')' '&&' 1 } { >> $@
+		echo     exit 1 >> $@
+		echo } >> $@
+		echo if { '(' [get_property STATS.WHS [get_runs impl_1]] '<' 0 ')' '&&' 1 } { >> $@
+		echo     exit 1 >> $@
+		echo } >> $@
 		echo $(TCL_CLOSE) >> $@
 
 par: synthesize par.tcl
