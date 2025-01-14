@@ -36,8 +36,7 @@ class ToolXilinx(ToolXilinxProject, MakefileSyn):
 
     CLEAN_TARGETS = {'mrproper': ["*.bit", "*.bin"]}
 
-    _XILINX_RUN = '''\
-$(TCL_OPEN)
+    _XILINX_RUN_BODY = '''\
 {1}
 reset_run {0}
 launch_runs {0}{njobs_string}
@@ -50,8 +49,10 @@ if {{ ! '$$'complete }} {{
 }}
 if {{ '$$'timing '&&' {fail_on_timing} }} {{
     exit 1
-}}
-$(TCL_CLOSE)'''
+}}'''
+
+    _XILINX_RUN = '$(TCL_OPEN)' + '\n' \
+            + _XILINX_RUN_BODY + '\n' + '$(TCL_CLOSE)'
 
     TCL_CONTROLS = {'create': 'create_project $(PROJECT) ./',
                     'open': 'open_project $(PROJECT_FILE)',

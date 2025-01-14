@@ -79,28 +79,18 @@ class ToolVivado(ToolXilinx):
                                "$(PROJECT_FILE)"]}
     CLEAN_TARGETS.update(ToolXilinx.CLEAN_TARGETS)
 
-    _XILINX_RUN_IMPL = '''\
-$(TCL_OPEN)
-{1}
-reset_run {0}
-launch_runs {0}{njobs_string}
-wait_on_run {0}
-set result [get_property STATUS [get_runs {0}]]
-set complete [string match \\"*Complete*\\" '$$'result]
-set timing [string match \\"*Failed Timing*\\" '$$'result]
-if {{ ! '$$'complete }} {{
-    exit 1
-}}
-if {{ '$$'timing '&&' {fail_on_timing} }} {{
-    exit 1
-}}
+    _XILINX_RUN_IMPL = _XILINX_RUN = '$(TCL_OPEN)' + '\n' \
+            + ToolXilinx._XILINX_RUN_BODY + '\n' + \
+'''\
 if {{ '(' [get_property STATS.WNS [get_runs {0}]] '<' 0 ')' '&&' {fail_on_timing} }} {{
     exit 1
 }}
 if {{ '(' [get_property STATS.WHS [get_runs {0}]] '<' 0 ')' '&&' {fail_on_timing} }} {{
     exit 1
 }}
-$(TCL_CLOSE)'''
+''' + \
+'$(TCL_CLOSE)'
+
 
     TCL_CONTROLS = {'bitstream': '$(TCL_OPEN)\n'
                                  'launch_runs impl_1 -to_step write_bitstream\n'
