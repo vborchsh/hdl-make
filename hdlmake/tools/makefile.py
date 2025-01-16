@@ -51,6 +51,7 @@ class ToolMakefile(object):
         self._filestring = ""
         self._file = None
         self.fileset = None
+        self.constrset = None
         self.manifest_dict = {}
         self._filename = "Makefile"
         self._all_sources = []
@@ -78,10 +79,11 @@ class ToolMakefile(object):
         """Get the privative format file types supported by the tool"""
         return self.SUPPORTED_FILES
 
-    def makefile_setup(self, top_manifest, fileset, filename=None):
+    def makefile_setup(self, top_manifest, fileset, constrset, filename=None):
         """Set the Makefile configuration"""
         self.manifest_dict = top_manifest.manifest_dict
         self.fileset = fileset
+        self.constrset = constrset
         if filename:
             self._filename = filename
         self._makefile_open()
@@ -202,7 +204,7 @@ class ToolMakefile(object):
 
     def _makefile_syn_files_cmd(self, fileset_dict):
         """Subroutine of _makefile_syn_files, to output the command for each
-        source file.  It is present here to be also used for Xsim projects"""
+        source file. It is present here to be also used for Xsim projects"""
         # Add per file properties (like library)
         for srcfile in self.fileset.sort():
             command = fileset_dict.get(type(srcfile))

@@ -68,6 +68,10 @@ class ManifestParser(ConfigParser):
              'default': [],
              'help': "List of files from the current module",
              'type': ''},
+            {'name': 'constraints',
+             'default': [],
+             'help': "List of constraints from the current module",
+             'type': ''},
             {'name': 'modules',
              'default': {},
              'help': "List of local modules",
@@ -81,6 +85,7 @@ class ManifestParser(ConfigParser):
         self.add_type('include_dirs', type_new="")
         self.add_type('incl_makefiles', type_new='')
         self.add_type('files', type_new=[])
+        self.add_type('constraints', type_new=[])
         self.add_allowed_key('modules', key="svn")
         self.add_allowed_key('modules', key="git")
         self.add_allowed_key('modules', key="gitsm")

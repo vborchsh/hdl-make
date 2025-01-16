@@ -63,10 +63,13 @@ class Commands(Action):
         self._check_all_fetched()
         self.build_file_set()
         self.solve_file_set()
+        self.build_constraints_set()
         combined_fileset = self.parseable_fileset
         combined_fileset.add(self.privative_fileset)
+        combined_constrset = self.constrset
         self.tool.write_makefile(self.top_manifest,
                                  combined_fileset,
+                                 combined_constrset,
                                  filename=filename)
 
     def write_edalize(self):
