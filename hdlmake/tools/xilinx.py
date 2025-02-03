@@ -34,7 +34,7 @@ class ToolXilinx(ToolXilinxProject, MakefileSyn):
 
     """Class providing the interface for Xilinx Vivado synthesis"""
 
-    CLEAN_TARGETS = {'mrproper': ["*.bit", "*.bin"]}
+    CLEAN_TARGETS = {'mrproper': ["*.bit", "*.bin", "*.xsa"]}
 
     _XILINX_RUN_BODY = '''\
 {1}

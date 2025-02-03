@@ -148,6 +148,6 @@ clean:
 		rm -rf project.tcl synthesize.tcl par.tcl bitstream.tcl prom.tcl files.tcl
 
 mrproper: clean
-		rm -rf *.bit *.bin
+		rm -rf *.bit *.bin *.xsa
 
 .PHONY: mrproper clean all
