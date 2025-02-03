@@ -1,0 +1,4 @@
+networkx
+pytest
+setuptools
+six

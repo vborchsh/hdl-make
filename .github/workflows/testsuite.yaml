@@ -1,0 +1,48 @@
+name: testsuite
+
+permissions:
+  checks: write
+  pull-requests: write # only required if `comment: true` was enabled
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  tests:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10"]
+        os: ["ubuntu-20.04", "ubuntu-22.04", "windows-latest"]
+        exclude:
+          - os: "windows-latest" # no windows support in tests at the moment
+
+    name: Python ${{matrix.python-version}} @ ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{matrix.python-version}}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{matrix.python-version}}
+
+      - name: Setup environment
+        run: |
+          pip install -r requirements.txt
+          pip install .
+
+      - name: Run regression tests
+        run: |
+          cd testsuite
+          pytest test_all.py --junitxml=$GITHUB_WORKSPACE/../testsuite_results.xml
+
+      - name: Publish tests reports
+        uses: mikepenz/action-junit-report@v5
+        if: always()
+        with:
+          report_paths: '/home/runner/work/hdl-make/testsuite_results.xml'
+          include_passed: true
