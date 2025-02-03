@@ -264,3 +264,49 @@ class ToolMakefile(object):
         ''' get_top_module
         '''
         return self.manifest_dict.get(self.ACTION_SHORTNAME + "_top", None)
+
+    def print_help(self):
+        ''' parse current folder's Makefile and print targets
+        '''
+        try:
+            with open(os.path.join("Makefile"), 'r') as pf:
+                print("List of available target for `make` in the current folder:")
+                for line in pf:
+                    line = line.strip()
+                    # Skip empty, comments and specific lines
+                    if not line or line[0] == '#':
+                        continue
+                    if '=' in line:
+                        continue
+                    if '@' in line:
+                        continue
+                    if '.PHONY' in line:
+                        continue
+
+                    if ':' in line:
+                        if line.endswith(':'):
+                            curr_target_name = line.split(':')[0].strip()
+                        else:
+                            if not ('\t' in line):
+                                curr_target = line.split(':')
+                                curr_target_name = curr_target[0].strip()
+                        if ".tcl" in curr_target_name:
+                            continue
+                        if curr_target_name == "all":
+                            print(f"{curr_target_name}: run up to `bitstream`")
+                        elif curr_target_name == "project":
+                            print(f"{curr_target_name}: create project file and environment")
+                        elif curr_target_name == "synthesize":
+                            print(f"{curr_target_name}: run synthesis")
+                        elif curr_target_name == "par":
+                            print(f"{curr_target_name}: run implementation (place & route)")
+                        elif curr_target_name == "bitstream":
+                            print(f"{curr_target_name}: generate bitstream file")
+                        elif curr_target_name == "prom":
+                            print(f"{curr_target_name}: generate files for flash or SDK")
+                        elif curr_target_name == "clean":
+                            print(f"{curr_target_name}: remove project files")
+                        elif curr_target_name == "mrproper":
+                            print(f"{curr_target_name}: call `clean` and remove artifacts")
+        except FileNotFoundError:
+            print("There is no `Makefile` in the current folder")

@@ -31,6 +31,7 @@ from .util import shell
 from .util.termcolor import colored
 
 from .manifest_parser.manifestparser import ManifestParser
+from .tools.makefile import ToolMakefile
 from .action.commands import Commands
 from ._version import __version__
 
@@ -107,6 +108,8 @@ def _action_runner(action):
         action.list_deps()
     elif cmd == "tree":
         action.generate_tree()
+    elif cmd == "makefile-help":
+        ToolMakefile().print_help()
     else:
         raise AssertionError
 
@@ -200,6 +203,10 @@ def _get_parser():
     subparsers.add_parser(
         "manifest-help",
         help="print manifest file variables description")
+    
+    subparsers.add_parser(
+        "makefile-help",
+        help="print available Makefile targets")
 
     parser.add_argument(
         '-v', '--version', action='version',
