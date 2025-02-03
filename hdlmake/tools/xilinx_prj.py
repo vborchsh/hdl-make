@@ -41,7 +41,7 @@ class ToolXilinxProject:
 
     _XILINX_VERILOG_PROPERTY = ""
 
-    # Dictionnary of commands per file type.
+    # Dictionary of commands per file type.
     HDL_FILES = {
         VHDLFile: _XILINX_VHDL_PROPERTY,
         VerilogFile: _XILINX_VERILOG_PROPERTY,
@@ -70,3 +70,17 @@ class ToolXilinxProject:
         self.writeln("\t@echo '}' >> $@")
         # Add per file properties (like library)
         self._makefile_syn_files_cmd(fileset_dict)
+
+    def write_commands_constraints(self):
+        """Write TCL commands (in a makefile) to populate a Xilinx project
+            with the constraints set
+           Xilinx redefine the function as it adds files in batch
+        """
+        constrset_dict = {}
+        constrset_dict.update(self.SUPPORTED_FILES)
+        # Select fileset for constraints
+        self.writeln("\t@echo set fset_name [get_filesets constrs_1] >> $@")
+        for srcfile in self.constrset: # Don't do sort, because files order is important
+            if type(srcfile) in constrset_dict:
+                self.writeln("\t@echo add_files -norecurse -fileset '{}' '{}' >> $@".format(
+                    "$$fset_name", shell.tclpath(srcfile.rel_path())))

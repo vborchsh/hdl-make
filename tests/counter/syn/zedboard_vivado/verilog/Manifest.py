@@ -10,5 +10,3 @@ syn_tool = "vivado"
 modules = {
   "local" : [ "../../../top/zedboard/verilog" ],
 }
-
-

@@ -45,6 +45,7 @@ class Action(object):
         self.system_libs = set()
         self.parseable_fileset = SourceFileSet()
         self.privative_fileset = SourceFileSet()
+        self.constrset = SourceFileSet()
         self.options = options
         self.top_library = None
 
@@ -217,6 +218,35 @@ class Action(object):
                 graph, self.parseable_fileset,
                 self.top_library, self.top_entity, extra_modules)
         dep_solver.check_graph(graph, self.parseable_fileset, system_libs, libs)
+
+    def _build_complete_constraints_set(self):
+        """Build constraints set with all the constraints listed in the complete pool"""
+        logging.debug("Begin build complete constraints set")
+        all_manifested_constraints = SourceFileSet()
+        # Use reversed order so keep order: dependencies first, local manifest last.
+        for manifest in reversed(self.all_manifests):
+            all_manifested_constraints.add(manifest.constraints)
+        logging.debug("End build complete constraints set")
+        return all_manifested_constraints
+    
+    def build_constraints_set(self):
+        """Initialize the parseable and privative constrset contents"""
+        all_constraints = self._build_complete_constraints_set()
+        for constr_aux in all_constraints:
+            if self.tool:
+                if isinstance(constr_aux, tuple(self.tool.get_parseable_files())):
+                    self.constrset.add(constr_aux)
+                elif isinstance(constr_aux, tuple(self.tool.get_privative_files())):
+                    self.constrset.add(constr_aux)
+                else:
+                    logging.debug("File not supported by the tool: %s",
+                                    constr_aux.path)
+            else:
+                # Not usual case: tool is not known
+                self.constrset.add(constr_aux)
+        if len(self.constrset) > 0:
+            logging.info("Detected %d supported files that can be parsed",
+                         len(self.constrset))
 
     def get_top_manifest(self):
         """Get the Top module from the pool"""

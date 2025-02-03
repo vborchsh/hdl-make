@@ -279,7 +279,7 @@ types:[<type 'int'>]
         return open(self.config_file, "r").read()
 
     def parse(self, config_file, extra_context=None):
-        """Parse the stored manifest plus arbitrary code.  Return a dictionnary
+        """Parse the stored manifest plus arbitrary code. Return a dictionary
         of variables defined in the manifest."""
         assert isinstance(extra_context, dict) or extra_context is None
 

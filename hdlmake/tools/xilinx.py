@@ -60,6 +60,7 @@ if {{ '$$'timing '&&' {fail_on_timing} }} {{
                     'project': '$(TCL_CREATE)\n'
                                '{0}\n'
                                'source files.tcl\n'
+                               'source constraints.tcl\n'
                                'update_compile_order -fileset sources_1\n'
                                'update_compile_order -fileset sim_1\n'
                                '$(TCL_CLOSE)',
@@ -97,6 +98,15 @@ if {{ '$$'timing '&&' {fail_on_timing} }} {{
         # Xilinx has no extra commands before source files.
         assert "files" not in self._tcl_controls
         self.write_commands_project()
+        self.writeln()
+
+    def _makefile_syn_constraints(self):
+        """Write the constraints TCL section of the Makefile"""
+        # Create constraints.tcl target
+        self.writeln('constraints.tcl:')
+        # Xilinx has no extra commands before constraints files.
+        assert "constraints" not in self._tcl_controls
+        self.write_commands_constraints()
         self.writeln()
 
     def _makefile_syn_tcl(self):
