@@ -387,6 +387,27 @@ ALTERA_FILE_DICT = {
     'gdf': GDFFile}
 
 
+# GOWIN FILES
+
+class CSTFile(File):
+    """This is the class providing the Gowin IDE physical constraints CST file"""
+    pass
+
+class IPCFile(File):
+    """This is the class providing the Gowin IDE IP core file"""
+    pass
+
+class MODFile(File):
+    """This is the class providing the Gowin IDE IP core modification file"""
+    pass
+
+
+GOWIN_FILE_DICT = {
+    'cst': CSTFile,
+    'ipc': IPCFile,
+    'mod': MODFile}
+
+
 VHDL_EXTENSIONS = (
     'vhd',
     'vhdl',
@@ -448,6 +469,8 @@ def create_source_file(path, module, include_dirs=None):
         new_file = LATTICE_FILE_DICT[extension](path=path, module=module)
     elif extension in MICROSEMI_FILE_DICT:
         new_file = MICROSEMI_FILE_DICT[extension](path=path, module=module)
+    elif extension in GOWIN_FILE_DICT:
+        new_file = GOWIN_FILE_DICT[extension](path=path, module=module)
     else:
         raise Exception("Unknown extension '{}' for file {}".format(extension, path))
     return new_file

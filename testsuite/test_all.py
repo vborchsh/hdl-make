@@ -621,6 +621,9 @@ def test_specify_top_library_explict_130():
 def test_vivado_jobs_133():
     run_compare(path="133vivado_jobs")
 
+def test_gowin_134():
+    run_compare(path="134gowin")
+
 @pytest.mark.xfail
 def test_xfail():
     """This is a self-consistency test: the test is known to fail"""

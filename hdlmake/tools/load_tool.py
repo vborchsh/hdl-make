@@ -15,6 +15,7 @@ def load_syn_tool(tool_name):
     from .liberosoc import ToolLiberoSoC
     from .icestorm import ToolIcestorm
     from .ghdl_syn import GhdlSyn
+    from .gowin import ToolGowin
     available_tools = {'ise': ToolISE,
                        'planahead':  ToolPlanAhead,
                        'vivado': ToolVivado,
@@ -23,7 +24,8 @@ def load_syn_tool(tool_name):
                        'libero': ToolLibero,
                        'liberosoc': ToolLiberoSoC,
                        'icestorm': ToolIcestorm,
-                       'ghdl': GhdlSyn}
+                       'ghdl': GhdlSyn,
+                       'gowin': ToolGowin}
     if tool_name in available_tools:
         logging.debug("Synthesis tool to be used found: %s", tool_name)
         return available_tools[tool_name]()
