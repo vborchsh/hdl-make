@@ -57,12 +57,9 @@ class ToolGowin(MakefileSyn):
     CLEAN_TARGETS = {'clean': ["$(PROJECT)", ".user"],
                      'mrproper': ["*.bin", "*.fi"]}
     
-    _GOWIN_RUN = 'source files.tcl\n' \
-                'set_device {device}{grade}{package} {family}\n' \
-                'set_option -output_base_name {project}'
-    
-    TCL_CONTROLS = {
-                    'create': 'create_project -dir . -name {project} -pn {device}{grade}{package} -device_version {family}',
+    TCL_CONTROLS = {'create': 'create_project -dir . -name {project} '\
+                     '-pn $(SYN_DEVICE)$(SYN_PACKAGE)$(SYN_GRADE) '\
+                     '-device_version $(SYN_FAMILY)',
                     'open': 'open_project {$(PROJECT)/$(PROJECT_FILE)}',
                     'close': 'run close',
                     'project': '$(TCL_CREATE)\n'
@@ -92,17 +89,7 @@ class ToolGowin(MakefileSyn):
     def _makefile_syn_tcl(self):
         """Create a Gowin synthesis project by TCL"""
         syn_project = self.manifest_dict["syn_project"]
-        syn_device = self.manifest_dict["syn_device"]
-        syn_grade = self.manifest_dict["syn_grade"]
-        syn_package = self.manifest_dict["syn_package"]
-        syn_family = "NA"
-        if "syn_family" in self.manifest_dict:
-            syn_family = "{0}".format(self.manifest_dict["syn_family"])
-        # Template substitute for 'create'.
+        # Template substitute for 'create'
         create_tmp = self._tcl_controls["create"]
-        self._tcl_controls["create"] = create_tmp.format(project=syn_project,
-                                                             device=syn_device,
-                                                             package=syn_package,
-                                                             family=syn_family,
-                                                             grade=syn_grade)
+        self._tcl_controls["create"] = create_tmp.format(project=syn_project)
         super(ToolGowin, self)._makefile_syn_tcl()

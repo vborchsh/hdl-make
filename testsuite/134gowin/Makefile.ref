@@ -18,7 +18,7 @@ SYN_DEVICE := GW2A
 SYN_PACKAGE := /I7
 SYN_GRADE := -LV18PG256C8
 
-TCL_CREATE := create_project -dir . -name tang_top -pn GW2A-LV18PG256C8/I7 -device_version NA
+TCL_CREATE := create_project -dir . -name tang_top -pn $(SYN_DEVICE)$(SYN_PACKAGE)$(SYN_GRADE) -device_version $(SYN_FAMILY)
 TCL_OPEN := open_project {$(PROJECT)/$(PROJECT_FILE)}
 TCL_CLOSE := run close
 ifneq ($(wildcard $(PROJECT_FILE)),)
